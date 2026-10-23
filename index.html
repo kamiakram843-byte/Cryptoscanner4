@@ -1,23 +1,640 @@
-<div class="metric" data-filter="BUY"
-     onclick="setFilter('BUY',this)">
-  BUY / SPOT ENTRY
-  <strong class="good" id="cBuy">0</strong>
-</div>
 
-<div class="metric" data-filter="SELL"
-     onclick="setFilter('SELL',this)">
-  SELL / EXIT
-  <strong class="bad" id="cSell">0</strong>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Binance Pro Crypto Scanner</title>
+<style>
+:root{--bg:#080d18;--panel:#111a2b;--line:#293750;--text:#e8eefb;--muted:#91a4c1;--green:#22c55e;--red:#f87171;--yellow:#fbbf24;--blue:#60a5fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px Arial,sans-serif}
+header{padding:20px;background:#0d1525;border-bottom:1px solid var(--line)}
+h1{font-size:23px;margin:0 0 7px}h2{font-size:17px;margin:0 0 13px}
+main{max-width:1800px;margin:auto;padding:14px}
+.sub,.muted,.small{color:var(--muted)}
+.small{font-size:12px;line-height:1.65}
+.controls,.cards,.grid{display:grid;gap:10px}
+.controls{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:12px}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));margin:14px 0}
+@media(min-width:800px){.cards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin:14px 0}
+.panel,.metric{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+.metric{cursor:pointer;min-height:92px;font-size:13px}
+.metric strong{display:block;font-size:25px;margin-top:10px}
+.metric:hover,.metric.active{border-color:var(--blue)}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+input,select,button{width:100%;padding:11px;border:1px solid var(--line);border-radius:7px;background:#0b1220;color:var(--text);font-size:14px}
+button{background:#1d4ed8;border:0;font-weight:bold;cursor:pointer}
+button.secondary{background:#26334a}
+button:disabled{opacity:.5}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1;min-width:95px}
+.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}
+#status{margin:12px 0;color:var(--yellow);overflow-wrap:anywhere;line-height:1.5}
+.tablewrap{overflow:auto;max-height:650px}
+table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}
+th,td{padding:10px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th{position:sticky;top:0;background:#172238;color:var(--muted);z-index:1}
+th:first-child,td:first-child{text-align:left}
+tr:hover{background:#18243a;cursor:pointer}
+iframe{width:100%;height:440px;border:0;border-radius:8px;background:#0b1220}
+.newsitem{padding:12px 0;border-bottom:1px solid var(--line)}
+.newsitem h3{font-size:15px;line-height:1.45;margin:0 0 7px}
+.newsitem p{line-height:1.6;margin:0 0 8px}
+a{color:#93c5fd;text-decoration:none}
+a:hover{text-decoration:underline}
+.pill{display:inline-block;padding:4px 7px;border-radius:5px;background:#26334a;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <h1>◈ BINANCE PRO CRYPTO SCANNER</h1>
+  <div class="sub">BTC-first market intelligence · Pullback & rebound · Risk management · Crypto news</div>
+</header>
 
-<div class="metric" data-filter="LONG"
-     onclick="setFilter('LONG',this)">
-  FUTURES LONG
-  <strong class="good" id="cLong">0</strong>
-</div>
+<main>
+  <div class="controls">
+    <div><label>Market</label>
+      <select id="market">
+        <option value="spot">Binance Spot</option>
+        <option value="futures">USDT-M Futures</option>
+      </select>
+    </div>
+    <div><label>Scan universe</label>
+      <select id="universe">
+        <option value="100">Top 100 USDT pairs</option>
+        <option value="250">Top 250 USDT pairs</option>
+        <option value="all" selected>All eligible USDT pairs</option>
+      </select>
+    </div>
+    <div><label>Signal mode</label>
+      <select id="mode">
+        <option value="balanced">Balanced</option>
+        <option value="strict">Strict RSI</option>
+      </select>
+    </div>
+    <div><label>Account equity (USDT)</label>
+      <input id="equity" type="number" min="0" value="1000">
+    </div>
+    <div><label>Risk per trade (%)</label>
+      <input id="risk" type="number" min="0.1" max="2" step="0.1" value="0.5">
+    </div>
+    <div><label>Minimum 24h volume</label>
+      <select id="liquidity">
+        <option value="100000">100,000 USDT</option>
+        <option value="500000" selected>500,000 USDT</option>
+        <option value="1000000">1 million USDT</option>
+        <option value="5000000">5 million USDT</option>
+      </select>
+    </div>
+  </div>
 
-<div class="metric" data-filter="SHORT"
-     onclick="setFilter('SHORT',this)">
-  FUTURES SHORT
-  <strong class="bad" id="cShort">0</strong>
-</div>
+  <div class="row">
+    <button id="scanBtn" onclick="startScan()">▶ Scan Binance</button>
+    <button class="secondary" onclick="loadNews()">↻ Refresh news</button>
+    <button class="secondary" onclick="resetFilters()">Reset filters</button>
+  </div>
+  <div id="status">Ready. Start a scan to fetch current market data.</div>
+
+  <div class="cards">
+    <div class="metric active" data-filter="ALL" onclick="setFilter('ALL',this)">All scanned<strong id="cAll">0</strong></div>
+    <div class="metric" data-filter="BUY" onclick="setFilter('BUY',this)">Spot BUY<strong class="good" id="cBuy">0</strong></div>
+    <div class="metric" data-filter="EXIT" onclick="setFilter('EXIT',this)">Spot SELL / EXIT<strong class="bad" id="cExit">0</strong></div>
+    <div class="metric" data-filter="LONG" onclick="setFilter('LONG',this)">Futures LONG<strong class="good" id="cLong">0</strong></div>
+    <div class="metric" data-filter="SHORT" onclick="setFilter('SHORT',this)">Futures SHORT<strong class="bad" id="cShort">0</strong></div>
+    <div class="metric" data-filter="BULLISH" onclick="setFilter('BULLISH',this)">Bullish trend<strong class="good" id="cBull">0</strong></div>
+    <div class="metric" data-filter="BEARISH" onclick="setFilter('BEARISH',this)">Bearish trend<strong class="bad" id="cBear">0</strong></div>
+    <div class="metric" data-filter="NEAREMA" onclick="setFilter('NEAREMA',this)">Near EMA<strong id="cEma">0</strong></div>
+    <div class="metric" data-filter="WATCH" onclick="setFilter('WATCH',this)">Watch / wait<strong id="cWatch">0</strong></div>
+  </div>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>₿ Bitcoin Market Intelligence</h2>
+      <div id="btcRegime" class="warn">Waiting for BTC analysis</div>
+      <p id="btcDetails" class="small">BTC's closed 1H and 4H candles determine the market regime. Sudden volatility can pause new entries.</p>
+    </section>
+    <section class="panel">
+      <h2>Selected Coin</h2>
+      <div id="selected" class="small">Select a coin from the table.</div>
+      <div class="row" style="margin-top:12px">
+        <button class="secondary" onclick="changeChart('15')">15m</button>
+        <button class="secondary" onclick="changeChart('60')">1H</button>
+        <button class="secondary" onclick="changeChart('240')">4H</button>
+        <button class="secondary" onclick="changeChart('D')">1D</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-bottom:14px">
+    <h2>TradingView Chart</h2>
+    <div id="chartMessage" class="small">Select a coin to load its chart.</div>
+    <iframe id="chart" title="TradingView chart" loading="lazy"></iframe>
+  </section>
+
+  <section class="panel" style="margin-bottom:14px">
+    <div class="row">
+      <h2 style="flex:2">Coin Signals & Risk Levels</h2>
+      <input id="search" placeholder="Search BTCUSDT, ETHUSDT…" oninput="renderTable()">
+      <select id="sort" onchange="renderTable()">
+        <option value="score">Best setup score</option>
+        <option value="volume">Highest volume</option>
+        <option value="change">24h change</option>
+        <option value="distance">Nearest EMA</option>
+      </select>
+    </div>
+    <p class="small">EP = estimated entry. SL = stop loss. Targets use ATR and nearby market structure. Quantity is a preliminary risk estimate, not an exchange-ready order quantity.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Coin</th><th>Price</th><th>24h %</th><th>Signal</th><th>Score</th>
+          <th>4H / 1H</th><th>RSI</th><th>EMA20 dist</th>
+          <th>EP</th><th>SL</th><th>TP1</th><th>TP2</th><th>TP3</th>
+          <th>Reward:risk</th><th>Qty estimate</th><th>24h volume</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="16">No scan results yet.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>Latest Crypto News</h2>
+      <div class="small">Headlines, source excerpts, and publication times. Excerpts are not independently verified summaries.</div>
+      <div id="news">Loading headlines…</div>
+    </section>
+    <section class="panel">
+      <h2>Signal rules & safety</h2>
+      <p class="small">
+        <b>Trend:</b> EMA20/50/200 on closed 1H and 4H candles.<br>
+        <b>Entry:</b> EMA pullback or rejection plus candle confirmation.<br>
+        <b>BTC filter:</b> trend alignment and volatility-shock detection.<br>
+        <b>Volume:</b> compare the last closed candle against recent average volume.<br>
+        <b>Risk:</b> preliminary sizing based on equity, risk percent, and stop distance.<br><br>
+        Signals are estimates, not guarantees. No orders are placed. Backtest before live trading.
+      </p>
+    </section>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r,ms));
+const fmt = v => Number.isFinite(v)
+  ? v.toLocaleString("en-US",{maximumFractionDigits:v<1?8:3}) : "—";
+const pct = v => Number.isFinite(v)?v.toFixed(2)+"%":"—";
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+let results=[],activeFilter="ALL",selectedCoin="BTCUSDT";
+let chartInterval="60",scanning=false,btc=null,scanId=0;
+
+const SPOT="https://data-api.binance.vision";
+const FUTURES="https://fapi.binance.com";
+
+function endpoint(path){
+  return ($("market").value==="spot"?SPOT+"/api/v3":FUTURES+"/fapi/v1")+path;
+}
+
+async function getJSON(url,retries=2){
+  for(let i=0;i<=retries;i++){
+    try{
+      const r=await fetch(url);
+      if(!r.ok)throw Error("HTTP "+r.status);
+      return await r.json();
+    }catch(e){
+      if(i===retries)throw e;
+      await sleep(700*(i+1));
+    }
+  }
+}
+
+function klineURL(symbol,tf,limit=220){
+  return endpoint("/klines?symbol="+encodeURIComponent(symbol)+
+    "&interval="+tf+"&limit="+limit);
+}
+function parseKlines(raw){
+  return raw.map(k=>({
+    time:+k[0],open:+k[1],high:+k[2],low:+k[3],
+    close:+k[4],volume:+k[5],closeTime:+k[6],
+    quoteVolume:+k[7]
+  }));
+}
+function closedBars(raw){
+  return parseKlines(raw).filter(k=>k.closeTime<Date.now());
+}
+
+function ema(values,period){
+  if(values.length<period)return NaN;
+  const a=2/(period+1);
+  let e=values.slice(0,period).reduce((x,y)=>x+y,0)/period;
+  for(let i=period;i<values.length;i++)e=values[i]*a+e*(1-a);
+  return e;
+}
+function rsi(values,period=14){
+  if(values.length<period+1)return NaN;
+  let gain=0,loss=0;
+  for(let i=1;i<=period;i++){
+    const d=values[i]-values[i-1];
+    if(d>0)gain+=d;else loss-=d;
+  }
+  gain/=period;loss/=period;
+  for(let i=period+1;i<values.length;i++){
+    const d=values[i]-values[i-1];
+    gain=(gain*(period-1)+Math.max(d,0))/period;
+    loss=(loss*(period-1)+Math.max(-d,0))/period;
+  }
+  if(loss===0)return 100;
+  return 100-100/(1+gain/loss);
+}
+function atr(bars,period=14){
+  if(bars.length<period+1)return NaN;
+  const tr=[];
+  for(let i=1;i<bars.length;i++){
+    const b=bars[i],p=bars[i-1];
+    tr.push(Math.max(b.high-b.low,Math.abs(b.high-p.close),Math.abs(b.low-p.close)));
+  }
+  return tr.slice(-period).reduce((a,b)=>a+b,0)/period;
+}
+
+function indicators(bars){
+  const c=bars.map(b=>b.close);
+  const last=bars[bars.length-1],prev=bars[bars.length-2];
+  const e20=ema(c,20),e50=ema(c,50),e200=ema(c,200);
+  const a=atr(bars),r=rsi(c);
+  const avgVol=bars.slice(-21,-1).reduce((s,b)=>s+b.volume,0)/20;
+  const mean=c.slice(-20).reduce((s,v)=>s+v,0)/20;
+  const sd=Math.sqrt(c.slice(-20).reduce((s,v)=>s+(v-mean)**2,0)/20);
+  const bullishCandle=last.close>last.open&&(
+    last.close>prev.high||
+    (prev.close<prev.open&&last.close>prev.open&&last.open<prev.close)
+  );
+  const bearishCandle=last.close<last.open&&(
+    last.close<prev.low||
+    (prev.close>prev.open&&last.close<prev.open&&last.open>prev.close)
+  );
+  const volRatio=avgVol?last.volume/avgVol:0;
+  const recentHigh=Math.max(...bars.slice(-21,-1).map(b=>b.high));
+  const recentLow=Math.min(...bars.slice(-21,-1).map(b=>b.low));
+  const trend=last.close>e200&&e20>e50?"BULLISH":
+    last.close<e200&&e20<e50?"BEARISH":"RANGING";
+  return {last,prev,e20,e50,e200,a,r,avgVol,volRatio,
+    upper:mean+2*sd,lower:mean-2*sd,recentHigh,recentLow,
+    bullishCandle,bearishCandle,trend};
+}
+
+function analyzeBTC(h1,h4){
+  const a=indicators(h1),b=indicators(h4);
+  const shock=a.a/a.last.close>0.025||
+    Math.abs(a.last.close/a.prev.close-1)>0.025;
+  let regime="RANGING";
+  if(shock)regime="VOLATILITY SHOCK";
+  else if(a.trend==="BULLISH"&&b.trend==="BULLISH")regime="BULLISH";
+  else if(a.trend==="BEARISH"&&b.trend==="BEARISH")regime="BEARISH";
+  return {regime,h1:a,h4:b,shock};
+}
+
+function scoreCoin(h1,h4,btcState,ticker){
+  const a=indicators(h1),b=indicators(h4);
+  const price=a.last.close;
+  const dist20=(price-a.e20)/a.e20*100;
+  const dist50=(price-a.e50)/a.e50*100;
+  const nearEMA=Math.abs(dist20)<=1.2||Math.abs(dist50)<=1.5;
+  const nearSupport=price>=Math.min(a.e20,a.e50)*0.985&&
+                    price<=Math.max(a.e20,a.e50)*1.015;
+  const nearResistance=nearSupport;
+  const alignedBull=b.trend==="BULLISH"&&a.trend!=="BEARISH";
+  const alignedBear=b.trend==="BEARISH"&&a.trend!=="BULLISH";
+  const strict=$("mode").value==="strict";
+  const volumeOK=a.volRatio>=1.05;
+  const notExtended=dist20<2.5;
+  const notDumping=dist20>-2.5;
+
+  let buyScore=0,sellScore=0;
+  if(b.trend==="BULLISH")buyScore+=25;
+  if(a.trend==="BULLISH")buyScore+=15;
+  if(nearEMA)buyScore+=15;
+  if(nearSupport)buyScore+=10;
+  if(a.bullishCandle)buyScore+=15;
+  if(volumeOK)buyScore+=10;
+  if((a.r>=40&&a.r<=68)||a.r<=30)buyScore+=10;
+
+  if(b.trend==="BEARISH")sellScore+=25;
+  if(a.trend==="BEARISH")sellScore+=15;
+  if(nearEMA)sellScore+=15;
+  if(nearResistance)sellScore+=10;
+  if(a.bearishCandle)sellScore+=15;
+  if(volumeOK)sellScore+=10;
+  if((a.r>=32&&a.r<=60)||a.r>=80)sellScore+=10;
+
+  if(strict){
+    if(a.r>30)buyScore-=20;
+    if(a.r<80)sellScore-=20;
+  }
+
+  if(btcState.regime==="BULLISH"){buyScore+=10;sellScore-=10}
+  if(btcState.regime==="BEARISH"){sellScore+=10;buyScore-=10}
+  if(btcState.shock){buyScore-=25;sellScore-=25}
+  if(!notExtended)buyScore-=20;
+  if(!notDumping)sellScore-=20;
+
+  buyScore=clamp(buyScore,0,100);
+  sellScore=clamp(sellScore,0,100);
+
+  let signal="WATCH",side="",score=Math.max(buyScore,sellScore);
+  const futures=$("market").value==="futures";
+  const threshold=65;
+
+  if(buyScore>=threshold&&buyScore>sellScore&&
+     a.bullishCandle&&alignedBull&&notExtended&&!btcState.shock){
+    signal=futures?"LONG":"BUY";side="LONG";score=buyScore;
+  }else if(sellScore>=threshold&&sellScore>buyScore&&
+     a.bearishCandle&&alignedBear&&notDumping&&!btcState.shock){
+    signal=futures?"SHORT":"EXIT";side="SHORT";score=sellScore;
+  }
+
+  // ATR stop and three risk-based target levels.
+  // These are estimates; they do not guarantee fills or profitability.
+  const entry=price;
+  const stopDist=Math.max(a.a*1.5,price*0.003);
+  const sl=side==="LONG"?entry-stopDist:
+           side==="SHORT"?entry+stopDist:NaN;
+  const risk=Number.isFinite(sl)?Math.abs(entry-sl):NaN;
+  let tp1=side==="LONG"?entry+risk:side==="SHORT"?entry-risk:NaN;
+  let tp2=side==="LONG"?entry+2*risk:side==="SHORT"?entry-2*risk:NaN;
+  let tp3=side==="LONG"?entry+3*risk:side==="SHORT"?entry-3*risk:NaN;
+
+  // Avoid placing a target beyond nearby structure without showing that risk.
+  if(side==="LONG"){
+    if(a.recentHigh>entry&&a.recentHigh<tp3)tp3=a.recentHigh;
+    if(a.recentHigh>entry&&a.recentHigh<tp2)tp2=a.recentHigh;
+    if(a.recentHigh>entry&&a.recentHigh<tp1)tp1=a.recentHigh;
+  }else if(side==="SHORT"){
+    if(a.recentLow<entry&&a.recentLow>tp3)tp3=a.recentLow;
+    if(a.recentLow<entry&&a.recentLow>tp2)tp2=a.recentLow;
+    if(a.recentLow<entry&&a.recentLow>tp1)tp1=a.recentLow;
+  }
+
+  const equity=Math.max(0,Number($("equity").value)||0);
+  const riskPct=clamp(Number($("risk").value)||0.5,0.1,2)/100;
+  const qty=Number.isFinite(risk)&&risk>0?equity*riskPct/risk:NaN;
+
+  let reason="Waiting for confirmation";
+  if(btcState.shock)reason="BTC volatility shock";
+  else if(!nearEMA)reason="Not near EMA entry zone";
+  else if(signal==="WATCH"&&a.trend==="RANGING")reason="Trend not confirmed";
+  else if(signal==="WATCH"&&!a.bullishCandle&&!a.bearishCandle)reason="Waiting for confirmation candle";
+  else if(signal==="WATCH"&&(!alignedBull&&!alignedBear))reason="1H / 4H trend mismatch";
+  else if(signal==="BUY"||signal==="LONG")reason="Bullish trend + EMA zone + candle confirmation";
+  else if(signal==="EXIT"||signal==="SHORT")reason="Bearish trend + rejection + candle confirmation";
+
+  return {
+    symbol:"",price,change:Number(ticker.priceChangePercent)||0,
+    volume:Number(ticker.quoteVolume)||0,signal,side,score,
+    trend1:a.trend,trend4:b.trend,rsi:a.r,dist20,dist50,nearEMA,
+    entry,sl,tp1,tp2,tp3,rr:side?3:NaN,qty,
+    volRatio:a.volRatio,atr:a.a,reason
+  };
+}
+
+async function fetchBars(symbol,tf){
+  return closedBars(await getJSON(klineURL(symbol,tf,220)));
+}
+
+async function workerPool(items,limit,fn,id){
+  let next=0,done=0;
+  const workers=Array.from({length:limit},async()=>{
+    while(next<items.length){
+      if(id!==scanId)return;
+      const item=items[next++];
+      try{await fn(item)}catch(e){}
+      done++;
+      if(done%5===0){
+        $("status").textContent="Scanning: "+done+" / "+items.length+
+          " pairs processed. Keep this tab open.";
+      }
+      await sleep(120);
+    }
+  });
+  await Promise.all(workers);
+}
+
+async function startScan(){
+  if(scanning)return;
+  scanning=true;
+  const id=++scanId;
+  $("scanBtn").disabled=true;
+  results=[];btc=null;renderTable();
+  $("status").textContent="Connecting to Binance public market data…";
+
+  try{
+    const isSpot=$("market").value==="spot";
+    const info=await getJSON(endpoint("/exchangeInfo"));
+    const tickers=await getJSON(endpoint("/ticker/24hr"));
+    const tickerMap=new Map(tickers.map(t=>[t.symbol,t]));
+
+    const symbols=info.symbols.filter(s=>
+      s.status==="TRADING"&&s.quoteAsset==="USDT"&&
+      (isSpot?s.isSpotTradingAllowed!==false:s.contractType==="PERPETUAL")&&
+      !s.symbol.includes("_")
+    );
+
+    const minVol=Number($("liquidity").value);
+    let universe=symbols.map(s=>({symbol:s.symbol,t:tickerMap.get(s.symbol)}))
+      .filter(x=>x.t&&Number(x.t.quoteVolume)>=minVol)
+      .sort((a,b)=>Number(b.t.quoteVolume)-Number(a.t.quoteVolume));
+
+    const count=$("universe").value;
+    if(count!=="all")universe=universe.slice(0,Number(count));
+
+    $("status").textContent="Fetching BTC confirmation candles…";
+    const [bh1,bh4]=await Promise.all([
+      fetchBars("BTCUSDT","1h"),fetchBars("BTCUSDT","4h")
+    ]);
+    btc=analyzeBTC(bh1,bh4);
+    updateBTC();
+
+    $("status").textContent="Scanning "+universe.length+
+      " eligible pairs. This may take several minutes…";
+
+    await workerPool(universe,4,async x=>{
+      if(id!==scanId)return;
+      const [h1,h4]=await Promise.all([
+        fetchBars(x.symbol,"1h"),fetchBars(x.symbol,"4h")
+      ]);
+      if(h1.length<205||h4.length<205)return;
+      const row=scoreCoin(h1,h4,btc,x.t);
+      row.symbol=x.symbol;
+      results.push(row);
+      if(results.length%10===0)renderTable();
+    },id);
+
+    if(id===scanId){
+      renderTable();
+      $("status").textContent="Scan complete: "+results.length+
+        " pairs analyzed. Updated "+new Date().toLocaleTimeString()+
+        ". Select a counter to filter the results.";
+    }
+  }catch(e){
+    $("status").textContent="Scan error: "+e.message+
+      ". Check internet/API availability and retry.";
+  }finally{
+    if(id===scanId){
+      scanning=false;
+      $("scanBtn").disabled=false;
+    }
+  }
+}
+
+function updateBTC(){
+  if(!btc)return;
+  $("btcRegime").textContent="BTC REGIME: "+btc.regime;
+  $("btcRegime").className=btc.regime==="BULLISH"?"good":
+    btc.regime==="BEARISH"||btc.regime==="VOLATILITY SHOCK"?"bad":"warn";
+  $("btcDetails").textContent=
+    "BTC "+fmt(btc.h1.last.close)+
+    " | 1H "+btc.h1.trend+" | 4H "+btc.h4.trend+
+    " | RSI "+fmt(btc.h1.r)+" | EMA20 "+fmt(btc.h1.e20)+
+    (btc.shock?" | Volatility shock: new entries paused.":"");
+}
+
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll(".metric").forEach(m=>m.classList.remove("active"));
+  if(el)el.classList.add("active");
+  renderTable();
+}
+function resetFilters(){
+  $("search").value="";
+  setFilter("ALL",document.querySelector('[data-filter="ALL"]'));
+}
+
+function renderTable(){
+  $("cAll").textContent=results.length;
+  $("cBuy").textContent=results.filter(x=>x.signal==="BUY").length;
+  $("cExit").textContent=results.filter(x=>x.signal==="EXIT").length;
+  $("cLong").textContent=results.filter(x=>x.signal==="LONG").length;
+  $("cShort").textContent=results.filter(x=>x.signal==="SHORT").length;
+  $("cBull").textContent=results.filter(x=>x.trend1==="BULLISH"||x.trend4==="BULLISH").length;
+  $("cBear").textContent=results.filter(x=>x.trend1==="BEARISH"||x.trend4==="BEARISH").length;
+  $("cEma").textContent=results.filter(x=>x.nearEMA).length;
+  $("cWatch").textContent=results.filter(x=>x.signal==="WATCH").length;
+
+  let arr=results.filter(x=>{
+    if(activeFilter!=="ALL"&&activeFilter!=="BULLISH"&&activeFilter!=="BEARISH"&&
+       activeFilter!=="NEAREMA"&&x.signal!==activeFilter)return false;
+    if(activeFilter==="BULLISH"&&!(x.trend1==="BULLISH"||x.trend4==="BULLISH"))return false;
+    if(activeFilter==="BEARISH"&&!(x.trend1==="BEARISH"||x.trend4==="BEARISH"))return false;
+    if(activeFilter==="NEAREMA"&&!x.nearEMA)return false;
+    if(activeFilter==="WATCH"&&x.signal!=="WATCH")return false;
+    return x.symbol.includes($("search").value.trim().toUpperCase());
+  });
+
+  const sort=$("sort").value;
+  arr.sort((a,b)=>sort==="volume"?b.volume-a.volume:
+    sort==="change"?b.change-a.change:
+    sort==="distance"?Math.abs(a.dist20)-Math.abs(b.dist20):b.score-a.score);
+
+  $("rows").innerHTML=arr.map(x=>{
+    const cls=["BUY","LONG"].includes(x.signal)?"good":
+      ["EXIT","SHORT"].includes(x.signal)?"bad":"warn";
+    return `<tr onclick="selectCoin('${x.symbol}')">
+      <td><b>${x.symbol}</b></td>
+      <td>${fmt(x.price)}</td>
+      <td class="${x.change>=0?'good':'bad'}">${pct(x.change)}</td>
+      <td class="${cls}">${x.signal}</td>
+      <td>${Math.round(x.score)}</td>
+      <td>${x.trend4}/${x.trend1}</td>
+      <td>${fmt(x.rsi)}</td>
+      <td>${pct(x.dist20)}</td>
+      <td>${fmt(x.entry)}</td>
+      <td>${fmt(x.sl)}</td>
+      <td>${fmt(x.tp1)}</td>
+      <td>${fmt(x.tp2)}</td>
+      <td>${fmt(x.tp3)}</td>
+      <td>${Number.isFinite(x.rr)?'1R / 2R / 3R':'—'}</td>
+      <td>${fmt(x.qty)}</td>
+      <td>${fmt(x.volume)}</td>
+    </tr>`;
+  }).join("")||'<tr><td colspan="16">No matching pairs. Change filters or scan again.</td></tr>';
+}
+
+function selectCoin(symbol){
+  selectedCoin=symbol;
+  const x=results.find(r=>r.symbol===symbol);
+  $("selected").innerHTML=x?`
+    <b>${x.symbol}</b> · ${fmt(x.price)}<br>
+    Signal: <span class="${["BUY","LONG"].includes(x.signal)?"good":["EXIT","SHORT"].includes(x.signal)?"bad":"warn"}">${x.signal}</span>
+    · Score ${Math.round(x.score)}/100<br>
+    <span class="small">
+    ${x.reason}<br>
+    4H ${x.trend4} · 1H ${x.trend1} · RSI ${fmt(x.rsi)}<br>
+    EMA20 distance ${pct(x.dist20)} · ATR ${fmt(x.atr)}<br>
+    Entry ${fmt(x.entry)} · SL ${fmt(x.sl)}<br>
+    TP1 ${fmt(x.tp1)} · TP2 ${fmt(x.tp2)} · TP3 ${fmt(x.tp3)}<br>
+    Estimated quantity ${fmt(x.qty)} units; verify exchange filters and fees.
+    </span>`:"No coin selected";
+  loadChart();
+}
+
+function changeChart(tf){
+  chartInterval=tf;
+  loadChart();
+}
+function loadChart(){
+  const symbol=selectedCoin||"BTCUSDT";
+  const interval=chartInterval;
+  $("chartMessage").textContent=symbol+" · "+
+    ({"15":"15 minutes","60":"1 hour","240":"4 hours","D":"1 day"}[interval]||interval);
+  $("chart").src="https://s.tradingview.com/widgetembed/?symbol="+
+    encodeURIComponent("BINANCE:"+symbol)+"&interval="+interval+
+    "&hidesidetoolbar=0&symboledit=1&saveimage=0&toolbarbg=%230d1525"+
+    "&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1";
+}
+
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+async function loadNews(){
+  const box=$("news");
+  box.textContent="Loading recent crypto headlines…";
+  try{
+    const data=await getJSON("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
+    const articles=(data.Data||[]).slice(0,25);
+    if(!articles.length)throw Error("No articles returned");
+
+    box.innerHTML=articles.map(n=>{
+      const title=escapeHTML(n.title||"Crypto news");
+      const source=escapeHTML(n.source||"News source");
+      const body=String(n.body||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();
+      const excerpt=escapeHTML(body.length>320?body.slice(0,317).replace(/\s+\S*$/,"")+"...":body||"Open the original report for details.");
+      const date=n.published_on?new Date(n.published_on*1000).toLocaleString():"Time unavailable";
+      const url=/^https?:\/\//i.test(n.url||"")?n.url:"https://www.cryptocompare.com/";
+      return `<article class="newsitem">
+        <h3><a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${title}</a></h3>
+        <p>${excerpt}</p>
+        <div class="small">${source} · ${escapeHTML(date)}</div>
+      </article>`;
+    }).join("");
+  }catch(e){
+    box.innerHTML='News provider unavailable. Visit <a href="https://www.coindesk.com/" target="_blank" rel="noopener">CoinDesk</a> or try again later.';
+  }
+}
+
+$("market").addEventListener("change",()=>{
+  scanId++;
+  scanning=false;
+  $("scanBtn").disabled=false;
+  results=[];btc=null;
+  renderTable();
+  $("status").textContent="Market changed. Run a new scan.";
+});
+
+loadNews();
+</script>
+</body>
+</html>
