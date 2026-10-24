@@ -1,338 +1,864 @@
-<DOCTYPE html>
+HTML
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Crypto Quantum Scanner</title>
-    <!-- Tailwind CSS Engine for Dashboard UI Rendering -->
-    <script src="https://jsdelivr.net"></script>
-    <style>
-        @import url('https://googleapis.com');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b0e11;
-            color: #eaecef;
-        }
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #151a21;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2b3139;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #474f59;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quantum Scanner Pro</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+ --bg:#0b0e11;--panel:#181a20;--panel2:#121418;
+ --border:#2b3139;--text:#eaecef;--muted:#848e9c;
+ --gold:#f0b90b;--green:#0ecb81;--red:#f6465d;
+ --blue:#60a5fa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;font-size:13px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.mono{font-family:"JetBrains Mono",monospace}
+header,.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px}
+header{margin:14px;padding:16px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:15px}
+h1{font-size:21px;margin:0;font-weight:800;letter-spacing:-.5px}
+h2,h3{margin:0;font-size:13px}
+.sub{color:var(--muted);font-size:11px;margin-top:6px}
+.gold{color:var(--gold)}
+.muted{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#252a32;border:1px solid var(--border);padding:6px 9px;border-radius:7px;font-size:11px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--green)}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:#252a32;color:var(--text);border-radius:7px;padding:9px 11px;font-size:11px;font-weight:700}
+.btn:hover{filter:brightness(1.18)}
+.btn.goldbtn{background:var(--gold);color:#111;border-color:var(--gold)}
+.btn.active{border-color:var(--gold);color:var(--gold)}
+input,select{background:#12161c;color:var(--text);border:1px solid #353b45;border-radius:7px;padding:10px;outline:none;min-width:0}
+input:focus,select:focus{border-color:var(--gold)}
+main{padding:0 14px 14px;display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:14px;align-items:start}
+.stack{display:grid;gap:14px;min-width:0}
+.panel{overflow:hidden;min-width:0}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px;border-bottom:1px solid var(--border);background:#15171c}
+.panelbody{padding:14px}
+.navgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.navbtn{border:1px solid var(--border);border-radius:7px;background:#252a32;color:#ddd;padding:10px 4px;font-size:10px;font-weight:700}
+.navbtn.active{border-color:var(--gold);color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:12px}
+.stat{padding:12px;border:1px solid var(--border);background:#14171c;border-radius:9px;cursor:pointer;text-align:left;min-width:0}
+.stat:hover,.stat.active{border-color:var(--gold)}
+.stat label{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-bottom:8px}
+.stat strong{font-size:23px;display:block}
+.stat small{color:var(--muted);font-size:10px}
+.green{color:var(--green)!important}
+.red{color:var(--red)!important}
+.goldtext{color:var(--gold)!important}
+.blue{color:var(--blue)!important}
+.tablewrap{overflow:auto;max-height:650px}
+table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:11px}
+th{position:sticky;top:0;z-index:2;background:#20242b;color:var(--muted);font-size:10px;text-transform:uppercase;text-align:left}
+td,th{padding:12px 10px;border-bottom:1px solid #272c34}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#242a33}
+tbody tr.selected{background:#252b33;outline:1px solid var(--gold)}
+.coinname{font-weight:800;color:#fff}
+.coinsub{font-size:10px;color:var(--muted);margin-top:4px}
+.badge{display:inline-block;border-radius:5px;padding:5px 7px;font-size:10px;font-weight:800}
+.badge-long,.badge-bull{background:#10372a;color:var(--green)}
+.badge-short,.badge-bear{background:#401f29;color:var(--red)}
+.badge-wait{background:#38301a;color:var(--gold)}
+.badge-neutral{background:#252a32;color:#b0b8c4}
+.levels{white-space:normal;min-width:160px;line-height:1.8}
+.levels span{display:inline-block;margin-right:7px}
+.chartbox{height:360px;background:#101318}
+.chartbox iframe{height:100%;width:100%;border:0}
+.charttools{display:flex;gap:6px;flex-wrap:wrap}
+.newslist{display:grid;gap:10px;max-height:520px;overflow:auto}
+.newsitem{padding:11px;background:#121418;border:1px solid var(--border);border-radius:8px}
+.newsitem a{color:#eaecef;text-decoration:none;font-weight:600;line-height:1.5}
+.newsitem a:hover{color:var(--gold)}
+.newsmeta{color:var(--muted);font-size:10px;margin-top:7px;line-height:1.5}
+.impact{display:inline-block;font-size:9px;font-weight:800;padding:4px 6px;border-radius:4px;margin-top:7px}
+.notice{font-size:11px;line-height:1.7;color:var(--muted)}
+#statusline{padding:10px 14px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--border)}
+footer{padding:12px 18px 22px;color:var(--muted);font-size:11px;line-height:1.7}
+@media(max-width:1000px){
+ header{grid-template-columns:1fr 1fr}
+ header .alerts{grid-column:1/-1}
+ main{grid-template-columns:1fr}
+ .chartbox{height:390px}
+}
+@media(max-width:600px){
+ header{margin:8px;padding:12px;grid-template-columns:1fr}
+ header .alerts{grid-column:auto}
+ main{padding:0 8px 8px;gap:9px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr));padding:8px}
+ .stat{padding:10px}
+ .stat strong{font-size:21px}
+ .navgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .panelbody,.panelhead{padding:11px}
+ .chartbox{height:340px}
+}
+</style>
 </head>
-<body class="p-4 lg:p-6 min-h-screen">
+<body>
 
-    <!-- TOP TELEMETRY AUDIO CHIME & HEADER -->
-    <header class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 items-center bg-[#181a20] p-4 rounded-xl border border-[#2b3139]">
-        <div>
-            <h1 class="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                ⚡ QUANTUM<span class="text-[#f0b90b]">SCANNER</span>
-            </h1>
-            <p class="text-xs text-gray-400 mt-1">Binance Engine & Risk Automation Matrix</p>
-        </div>
-        
-        <!-- PAKISTAN TIME & SESSION TRACKING -->
-        <div class="flex flex-col items-center justify-center border-y md:border-y-0 md:border-x border-[#2b3139] py-2 md:py-0">
-            <div id="pk-time" class="text-lg font-bold text-[#eaecef] tracking-widest mono">00:00:00 PKT</div>
-            <div id="market-session" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#2b3139] text-[#f0b90b] mt-1 uppercase tracking-wider">
-                Detecting Session...
-            </div>
-        </div>
+<header>
+ <div>
+  <h1>⚡ QUANTUM<span class="gold"> SCANNER</span></h1>
+  <div class="sub">BINANCE SPOT DATA · TECHNICAL ANALYSIS TERMINAL</div>
+  <div class="controls" style="margin-top:12px">
+   <button class="btn goldbtn" id="scanBtn">↻ SCAN NOW</button>
+   <button class="btn" id="autoBtn">AUTO: ON</button>
+  </div>
+ </div>
 
-        <!-- TELEMETRY ALERTS CONTROLS -->
-        <div class="flex items-center justify-end gap-4 text-xs text-gray-400">
-            <div class="flex items-center gap-2">
-                <input type="checkbox" id="audio-toggle" checked class="w-4 h-4 accent-[#f0b90b] cursor-pointer">
-                <label for="audio-toggle" class="cursor-pointer text-white font-medium select-none">🔊 Audio Alerts</label>
-            </div>
-            <span class="text-gray-600">|</span>
-            <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
-                <span>Binance Live</span>
-            </div>
-        </div>
-    </header>
+ <div style="text-align:center">
+  <div class="mono" id="pk-time" style="font-size:23px;font-weight:700">--:--:-- PKT</div>
+  <div id="market-session" class="pill gold" style="margin-top:8px">Detecting session...</div>
+  <div class="sub" id="date-pk">Pakistan Standard Time</div>
+ </div>
 
-    <!-- CORE INTERFACE CONTENT GRID -->
-    <main class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-        
-        <!-- LEFT SCREENER CONTROL BOX & DATA STREAM MATRIX -->
-        <section class="xl:col-span-8 space-y-6">
-            
-            <!-- MASTER QUICK-FILTER ANCHOR BUTTON MATRIX -->
-            <div class="bg-[#181a20] p-4 rounded-xl border border-[#2b3139] shadow-xl">
-                <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Master Navigation Filters</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                    <button onclick="scrollToGroup('all-cards')" class="bg-[#2b3139] hover:bg-[#363c4e] text-white py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-center">
-                        🌐 All Assets
-                    </button>
-                    <button onclick="scrollToGroup('long-signals')" class="bg-emerald-950/50 text-emerald-400 hover:bg-emerald-900/60 border border-emerald-800/50 py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-center">
-                        📈 Long Signals
-                    </button>
-                    <button onclick="scrollToGroup('short-signals')" class="bg-rose-950/50 text-rose-400 hover:bg-rose-900/60 border border-rose-800/50 py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-center">
-                        📉 Short Signals
-                    </button>
-                    <button onclick="scrollToGroup('bullish-regime')" class="bg-[#1e1a11] text-[#f0b90b] hover:bg-[#2b2518] border border-[#f0b90b]/20 py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-center">
-                        🐂 Bullish Trend
-                    </button>
-                    <button onclick="scrollToGroup('bearish-regime')" class="bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-700 py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-center col-span-2 sm:col-span-1">
-                        🐻 Bearish Trend
-                    </button>
-                </div>
-            </div>
+ <div class="alerts" style="display:flex;justify-content:flex-end;gap:12px;align-items:center;flex-wrap:wrap">
+  <label style="display:flex;gap:6px;align-items:center;cursor:pointer">
+   <input type="checkbox" id="audio-toggle" style="accent-color:var(--gold)">
+   Audio alerts
+  </label>
+  <span class="pill"><span class="dot" id="connection-dot"></span><span id="connection">Connecting</span></span>
+ </div>
+</header>
 
-            <!-- CORE DATA SCREENER TABLE DISPLAY -->
-            <div class="bg-[#181a20] rounded-xl border border-[#2b3139] shadow-2xl overflow-hidden">
-                <div class="p-4 border-b border-[#2b3139] flex justify-between items-center bg-[#15171c]" id="list-anchor-target">
-                    <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                        📋 Live Data Screener Output Matrix
-                    </h2>
-                    <span id="ticker-counter" class="text-xs bg-[#2b3139] px-2 py-0.5 rounded text-gray-400 mono">Parsing Systems...</span>
-                </div>
+<main>
+ <section class="stack">
+  <div class="panel">
+   <div class="panelhead">
+    <h2>MASTER NAVIGATION</h2>
+    <span class="muted">Tap to filter</span>
+   </div>
+   <div class="panelbody">
+    <div class="navgrid">
+     <button class="navbtn active" data-filter="ALL">🌐 ALL ASSETS</button>
+     <button class="navbtn" data-filter="LONG">📈 LONG</button>
+     <button class="navbtn" data-filter="SHORT">📉 SHORT</button>
+     <button class="navbtn" data-filter="BULL">🐂 BULLISH</button>
+     <button class="navbtn" data-filter="BEAR">🐻 BEARISH</button>
+    </div>
+   </div>
+   <div class="stats">
+    <button class="stat" data-filter="ALL">
+     <label>WATCHLIST PAIRS</label><strong id="count-all">10</strong><small>Tracked assets</small>
+    </button>
+    <button class="stat" data-filter="LONG">
+     <label>LONG SIGNALS</label><strong class="green" id="count-long">0</strong><small>Potential bullish setup</small>
+    </button>
+    <button class="stat" data-filter="SHORT">
+     <label>SHORT BIAS</label><strong class="red" id="count-short">0</strong><small>Potential bearish setup</small>
+    </button>
+    <button class="stat" data-filter="BULL">
+     <label>BULLISH REGIME</label><strong class="goldtext" id="count-bull">0</strong><small>EMA trend filter</small>
+    </button>
+    <button class="stat" data-filter="BEAR">
+     <label>BEARISH REGIME</label><strong class="red" id="count-bear">0</strong><small>EMA trend filter</small>
+    </button>
+    <button class="stat" data-filter="WAIT">
+     <label>WAIT SIGNALS</label><strong class="goldtext" id="count-wait">0</strong><small>No confirmed setup</small>
+    </button>
+    <button class="stat" data-filter="VOLUME">
+     <label>VOLUME SPIKES</label><strong class="blue" id="count-volume">0</strong><small>Above average volume</small>
+    </button>
+    <button class="stat" data-filter="ALL">
+     <label>LAST UPDATE</label><strong id="update-count" style="font-size:14px">--</strong><small>Local Pakistan time</small>
+    </button>
+   </div>
+  </div>
 
-                <div class="overflow-x-auto w-full">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-[#121418] text-gray-400 text-xs font-semibold uppercase tracking-wider border-b border-[#2b3139]">
-                                <th class="p-4">Symbol</th>
-                                <th class="p-4">24h Vol</th>
-                                <th class="p-4">Trend Regime</th>
-                                <th class="p-4">Signal Status</th>
-                                <th class="p-4">Execution Targets (EP / SL / Take Profits)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scanner-table-body" class="divide-y divide-[#232830]">
-                            <!-- Rows generate dynamically here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+  <div class="panel" id="list-panel">
+   <div class="panelhead">
+    <div>
+     <h2>📋 LIVE SCANNER MATRIX</h2>
+     <div class="sub" id="list-subtitle">Click a coin to isolate it and open its chart.</div>
+    </div>
+    <span class="pill mono" id="ticker-counter">Loading</span>
+   </div>
 
-        <!-- RIGHT TERMINAL CONTAINER: TELEMETRY ENGINE & INTEL FEED -->
-        <section class="xl:col-span-4 space-y-6">
-            
-            <!-- TRADINGVIEW LIVE FRAME FRAMEWORK -->
-            <div class="bg-[#181a20] rounded-xl border border-[#2b3139] p-4 shadow-2xl">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 id="chart-title" class="text-xs font-bold text-white uppercase tracking-wider">TradingView Live Frame</h3>
-                    <div class="flex gap-1">
-                        <button onclick="loadTradingViewChart('15')" class="text-[10px] bg-gray-800 px-2 py-0.5 rounded text-gray-300 font-medium hover:bg-gray-700 cursor-pointer">15M</button>
-                        <button onclick="loadTradingViewChart('60')" class="text-[10px] bg-gray-800 px-2 py-0.5 rounded text-gray-300 font-medium hover:bg-gray-700 cursor-pointer">1H</button>
-                        <button onclick="loadTradingViewChart('240')" class="text-[10px] bg-gray-800 px-2 py-0.5 rounded text-gray-300 font-medium hover:bg-gray-700 cursor-pointer">4H</button>
-                    </div>
-                </div>
-                <div class="w-full aspect-[4/3] rounded-lg overflow-hidden border border-[#2b3139] bg-[#121418]">
-                    <div id="tradingview_terminal_widget" class="w-full h-full"></div>
-                </div>
-            </div>
+   <div class="panelbody">
+    <div class="controls">
+     <input id="coin-search" placeholder="Search BTCUSDT..." style="flex:1;min-width:140px">
+     <select id="min-volume">
+      <option value="0">All volumes</option>
+      <option value="1000000">Volume &gt; $1M</option>
+      <option value="10000000">Volume &gt; $10M</option>
+      <option value="50000000">Volume &gt; $50M</option>
+     </select>
+     <select id="sort-by">
+      <option value="signal">Sort: Signal</option>
+      <option value="volume">Sort: Volume</option>
+      <option value="change">Sort: 24h Change</option>
+      <option value="symbol">Sort: Coin Name</option>
+     </select>
+     <button class="btn" id="clear-selection">Show All</button>
+    </div>
+   </div>
 
-            <!-- NEWS INTELLIGENCE DATA HOUSING -->
-            <div class="bg-[#181a20] rounded-xl border border-[#2b3139] p-4 shadow-2xl">
-                <h3 class="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                    📰 Fundamental Intel Feed
-                </h3>
-                <div id="crypto-news-container" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
-                    <!-- News snippets dynamically load here -->
-                </div>
-            </div>
-        </section>
-    </main>
+   <div id="statusline">Connecting to Binance public market data...</div>
 
-    <!-- AUTOMATED INLINE LOGIC SCRIPTS ENGINE -->
-    <script type="text/javascript" src="https://tradingview.com"></script>
-    <script>
-        const CORE_WATCHLIST = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'BNBUSDT', 'AVAXUSDT', 'ADAUSDT', 'LINKUSDT', 'NEARUSDT', 'SUIUSDT'];
-        let ACTIVE_SYMBOL_SELECTION = 'BTCUSDT';
-        let ALREADY_SIGNALED_ASSETS = new Set();
+   <div class="tablewrap">
+    <table>
+     <thead>
+      <tr>
+       <th>Symbol / Price</th>
+       <th>24h Vol</th>
+       <th>24h %</th>
+       <th>Trend</th>
+       <th>Signal</th>
+       <th>RSI</th>
+       <th>Pullback</th>
+       <th>Rebound</th>
+       <th>EP / SL / Targets</th>
+      </tr>
+     </thead>
+     <tbody id="scanner-table-body">
+      <tr><td colspan="9">Waiting for market data...</td></tr>
+     </tbody>
+    </table>
+   </div>
 
-        // 1. SYNTHESIZE PAKISTAN TIMES AND SESSIONS
-        function calculatePakistanTimeAndSession() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const pkDate = new Date(utc + (3600000 * 5)); // Hard-coded UTC+5 Offset
-            
-            const hours = pkDate.getHours();
-            const minutes = String(pkDate.getMinutes()).padStart(2, '0');
-            const seconds = String(pkDate.getSeconds()).padStart(2, '0');
-            
-            document.getElementById('pk-time').innerText = String(hours).padStart(2, '0') + ":" + minutes + ":" + seconds + " PKT";
+   <div class="panelbody controls" style="justify-content:space-between">
+    <span class="muted" id="page-info">Page 1</span>
+    <div class="controls">
+     <button class="btn" id="prev-page">← Previous</button>
+     <button class="btn" id="next-page">Next →</button>
+    </div>
+   </div>
+  </div>
+ </section>
 
-            let sessionName = "London/NY Intersect Mode";
-            if (hours >= 5 && hours < 13) {
-                sessionName = "☕ Asian Trading Session";
-            } else if (hours >= 13 && hours < 17) {
-                sessionName = "🇪🇺 European Open Session";
-            } else if (hours >= 17 && hours < 21) {
-Use code with caution.
-sessionName = "🇺🇸 Wall Street Volatility Core";
-} else {
-sessionName = "🌃 Pacific Rim / Night Scalp Mode";
-}
-document.getElementById('market-session').innerText = sessionName;
-}
-setInterval(calculatePakistanTimeAndSession, 1000);
-// 2. DYNAMIC TRADINGVIEW TERMINAL INJECTION ENGINE
-function loadTradingViewChart(timeframe = '15') {
-document.getElementById('chart-title').innerText = ACTIVE_SYMBOL_SELECTION + " - " + timeframe + "M Matrix Frame";
-new TradingView.widget({
-"width": "100%",
-"height": "100%",
-"symbol": "BINANCE:" + ACTIVE_SYMBOL_SELECTION,
-"interval": timeframe,
-"timezone": "Asia/Karachi",
-"theme": "dark",
-"style": "1",
-"locale": "en",
-"toolbar_bg": "#14151a",
-"enable_publishing": false,
-"hide_side_toolbar": false,
-"allow_symbol_change": true,
-"container_id": "tradingview_terminal_widget"
-});
-}
-function focusAssetTerminal(symbol) {
-ACTIVE_SYMBOL_SELECTION = symbol;
-loadTradingViewChart('15');
-}
-// 3. SCROLL FOCUS ASSIGNMENT CONTROL ROUTER
-function scrollToGroup(targetClass) {
-const row = document.querySelector("." + targetClass);
-if (row) {
-row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-row.classList.add('bg-[#2b3139]');
-setTimeout(() => row.classList.remove('bg-[#2b3139]'), 1500);
-} else {
-document.getElementById('list-anchor-target').scrollIntoView({ behavior: 'smooth' });
-}
-}
-// 4. SIGNAL SYNTHESIZER AND HIGH-PRECISION RISK CALCULATORS
-function processTechnicalMetrics(candles, ticker) {
-const closes = candles.map(c => parseFloat(c[4])); // Correct index for Binance K-line Close price
-const close = parseFloat(ticker.lastPrice);
-const rawVol = parseFloat(ticker.quoteVolume);
-const formattedVol = rawVol >= 1e9 ? "$" + (rawVol/1e9).toFixed(2) + "B" : "$" + (rawVol/1e6).toFixed(2) + "M";
-// Calculate internal 20 EMA structure
-let k = 2 / (20 + 1);
-let ema = closes[closes.length - 1] || close;
-if(closes.length > 0) {
-let sum = 0;
-for(let i=0; i<Math.min(20, closes.length); i++) sum += closes[i];
-ema = sum / Math.min(20, closes.length);
-for (let i = Math.min(20, closes.length); i < closes.length; i++) {
-ema = closes[i] * k + ema * (1 - k);
-}
-}
-const pullbackPrice = close * 0.988;
-const reboundPrice = close * 1.012;
-const regime = close > ema ? 'BULLISH' : 'BEARISH';
-// Signal Generation Logic
-let signal = 'NEUTRAL';
-if (regime === 'BULLISH' && close < (ema * 1.003)) signal = 'LONG';
-if (regime === 'BEARISH' && close > (ema * 0.997)) signal = 'SHORT';
-// Multi-Tier Target Allocations Matrix
-let ep = close;
-let sl, tp1, tp2, tp3;
-if (signal === 'LONG' || regime === 'BULLISH') {
-sl = ep * 0.98;
-tp1 = ep * 1.015;
-tp2 = ep * 1.03;
-tp3 = ep * 1.05;
-} else {
-sl = ep * 1.02;
-tp1 = ep * 0.985;
-tp2 = ep * 0.97;
-tp3 = ep * 0.95;
-}
-return { vol: formattedVol, regime, signal, pullbackPrice, reboundPrice, ep, sl, tp1, tp2, tp3 };
-}
-// 5. AUDIO CHIME ALERTS GENERATION FUNCTION
-function playSignalChime(type) {
-if (!document.getElementById('audio-toggle').checked) return;
-try {
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
-const osc = ctx.createOscillator();
-const gain = ctx.createGain();
-osc.connect(gain);
-gain.connect(ctx.destination);
-if (type === 'LONG') {
-osc.type = 'triangle';
-osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-osc.frequency.exponentialRampToValueAtTime(880.00, ctx.currentTime + 0.15);
-gain.gain.setValueAtTime(0.15, ctx.currentTime);
-gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-osc.start(); osc.stop(ctx.currentTime + 0.3);
-} else if (type === 'SHORT') {
-osc.type = 'sawtooth';
-osc.frequency.setValueAtTime(392.00, ctx.currentTime);
-osc.frequency.linearRampToValueAtTime(220.00, ctx.currentTime + 0.2);
-gain.gain.setValueAtTime(0.2, ctx.currentTime);
-gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-osc.start(); osc.stop(ctx.currentTime + 0.35);
-}
-} catch (e) { console.error("Audio block error:", e); }
-}
-// 6. PIPELINE REFRESH ENGINE FOR DATA MATRIX
-async function runScannerEnginePipeline() {
-try {
-const tickerRes = await fetch('binance.com');
-const tickers = await tickerRes.json();
-const filtered = tickers.filter(t => CORE_WATCHLIST.includes(t.symbol));
-const tbody = document.getElementById('scanner-table-body');
-tbody.innerHTML = '';
-document.getElementById('ticker-counter').innerText = filtered.length + " Pipelines Online";
-for (let tick of filtered) {
-const klineRes = await fetch("binance.com" + tick.symbol + "&interval=15m&limit=30");
-const candles = await klineRes.json();
-if (!candles || candles.length === 0) continue;
-const data = processTechnicalMetrics(candles, tick);
-// Audio trigger alert system hook
-if ((data.signal === 'LONG' || data.signal === 'SHORT') && !ALREADY_SIGNALED_ASSETS.has(tick.symbol + data.signal)) {
-playSignalChime(data.signal);
-ALREADY_SIGNALED_ASSETS.add(tick.symbol + data.signal);
-}
-// Master Routing Configuration Assigners
-let rowClass = 'all-cards ';
-if (data.signal === 'LONG') rowClass += 'long-signals ';
-else if (data.signal === 'SHORT') rowClass += 'short-signals ';
-rowClass += data.regime === 'BULLISH' ? 'bullish-regime' : 'bearish-regime';
-const precision = parseFloat(tick.lastPrice) > 100 ? 2 : 4;
-tbody.innerHTML += `
-)${parseFloat(tick.lastPrice).toFixed(precision)}
-${data.vol}
-`;
-}
-} catch (err) { console.error("Pipeline breakdown:", err); }
-}
-// 7. FUNDAMENTAL DATA REFUGE ARCHITECTURE
-function loadSystemNewsFeed() {
-const container = document.getElementById('crypto-news-container');
-const items = [
-{ source: "QuantResearch", title: "Bitcoin derivatives open interest reaches structural highs near macro cost floors.", time: "5m ago" },
-{ source: "MacroNetwork", title: "Crude volatility spikes to multi-month highs pushing capital back into energy indices.", time: "22m ago" },
-{ source: "Binance Engine", title: "Layer-1 protocols display sudden decoupling metrics led by local velocity spikes.", time: "1h ago" }
+ <section class="stack">
+  <div class="panel" id="chart-panel">
+   <div class="panelhead">
+    <div>
+     <h2>📈 TRADINGVIEW CHART</h2>
+     <div class="sub" id="chart-title">BINANCE:BTCUSDT</div>
+    </div>
+    <span class="pill">LIVE WIDGET</span>
+   </div>
+   <div class="panelbody">
+    <div class="charttools">
+     <button class="btn" data-tf="15">15M</button>
+     <button class="btn active" data-tf="60">1H</button>
+     <button class="btn" data-tf="240">4H</button>
+     <button class="btn" data-tf="D">1D</button>
+     <button class="btn" id="open-binance">Open Binance ↗</button>
+    </div>
+   </div>
+   <div class="chartbox">
+    <iframe id="chart-frame" title="TradingView chart" loading="lazy" allowfullscreen></iframe>
+   </div>
+   <div class="panelbody notice">
+    Chart data is supplied by TradingView. Scanner calculations use Binance Spot candles.
+   </div>
+  </div>
+
+  <div class="panel">
+   <div class="panelhead">
+    <h2>📰 FUNDAMENTAL INTEL FEED</h2>
+    <button class="btn" id="refresh-news">↻ Refresh</button>
+   </div>
+   <div class="panelbody">
+    <div class="sub" id="news-status">Fetching news from provider...</div>
+    <div class="newslist" id="crypto-news-container" style="margin-top:12px">
+     <div class="muted">Loading news...</div>
+    </div>
+   </div>
+  </div>
+
+  <div class="panel">
+   <div class="panelhead"><h2>⚙️ SCANNER INFORMATION</h2></div>
+   <div class="panelbody notice">
+    <p><b class="gold">Signal method:</b> 15-minute candles, EMA20, EMA50, RSI14, ATR14 and volume comparison.</p>
+    <p><b class="gold">LONG:</b> A potential bullish setup, not an instruction to buy.</p>
+    <p><b class="gold">SHORT:</b> A potential bearish setup. This scanner does not execute futures trades.</p>
+    <p><b class="gold">EP:</b> Reference entry. <b>SL:</b> Reference stop-loss. <b>TP:</b> Take-profit levels.</p>
+    <p><b class="gold">News impact:</b> Keyword-based classification only. Headlines may be mixed, incomplete or misleading.</p>
+   </div>
+  </div>
+ </section>
+</main>
+
+<footer>
+ QUANTUM SCANNER PRO · Educational tool only, not financial advice. Signals are heuristic estimates, not guaranteed predictions. Risk management, slippage, fees, liquidity and changing market conditions can affect results. No trades are executed by this page.
+</footer>
+
+<script>
+"use strict";
+
+/* CONFIGURATION */
+const API="https://data-api.binance.vision";
+const NEWS_API="https://min-api.cryptocompare.com/data/v2/news/?lang=EN";
+const WATCHLIST=[
+ "BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT","BNBUSDT",
+ "AVAXUSDT","ADAUSDT","LINKUSDT","NEARUSDT","SUIUSDT"
 ];
-container.innerHTML = '';
-items.forEach(i => {
-container.innerHTML += <div class="p-2.5 rounded-lg bg-[#121418] border border-[#2b3139] hover:border-gray-600 transition"> <div class="flex justify-between items-center text-[10px] text-gray-500 mb-1 font-semibold"> <span class="text-[#f0b90b]">${i.source}</span><span>${i.time}</span> </div> <h4 class="text-xs font-medium text-gray-200 leading-normal">${i.title}</h4> </div>;
-});
+const $=id=>document.getElementById(id);
+
+let marketData=[];
+let activeFilter="ALL";
+let selectedOnly=null;
+let currentPage=1;
+const PAGE_SIZE=20;
+let isScanning=false;
+let autoScan=true;
+let scanTimer=null;
+let newsTimer=null;
+let selectedSymbol="BTCUSDT";
+let timeframe="60";
+let searchTimer=null;
+let audioContext=null;
+let lastAlertBySymbol=new Map();
+
+/* SAFE FORMATTING */
+function esc(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
 }
-// BOOTSTRAP INITIAL SYSTEM EXECUTION
-runScannerEnginePipeline();
-loadTradingViewChart('15');
-loadSystemNewsFeed();
-// Systemic automatic update loop adjustments
-setInterval(runScannerEnginePipeline, 12000); // Polling ticks every 12 seconds
-setInterval(loadSystemNewsFeed, 300000);     // News frame refreshes every 5 minutes
+function price(n){
+ if(!Number.isFinite(n))return "—";
+ return n.toLocaleString("en-US",{maximumFractionDigits:n<1?8:4});
+}
+function money(n){
+ if(!Number.isFinite(n))return "—";
+ if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B";
+ if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M";
+ if(n>=1e3)return "$"+(n/1e3).toFixed(1)+"K";
+ return "$"+n.toFixed(0);
+}
+function pct(n){
+ return Number.isFinite(n)?(n>0?"+":"")+n.toFixed(2)+"%":"—";
+}
+function pkTime(){
+ return new Intl.DateTimeFormat("en-PK",{
+  timeZone:"Asia/Karachi",
+  hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false
+ }).format(new Date());
+}
+function updateClock(){
+ const now=new Date();
+ $("pk-time").textContent=pkTime()+" PKT";
+ $("date-pk").textContent=new Intl.DateTimeFormat("en-PK",{
+  timeZone:"Asia/Karachi",weekday:"short",day:"2-digit",month:"short",year:"numeric"
+ }).format(now);
+
+ const h=Number(new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Karachi",hour:"2-digit",hourCycle:"h23"
+ }).format(now));
+
+ let label="🌃 Overnight / Asia-Pacific";
+ if(h>=5&&h<13)label="☕ Asian Trading Hours";
+ else if(h>=13&&h<17)label="🇪🇺 Europe / London Hours";
+ else if(h>=17&&h<22)label="🇺🇸 US Market Hours";
+ $("market-session").textContent=label;
+}
+updateClock();
+setInterval(updateClock,1000);
+
+/* BINANCE PUBLIC MARKET DATA */
+async function getJSON(url){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),12000);
+ try{
+  const res=await fetch(url,{cache:"no-store",signal:controller.signal});
+  if(!res.ok)throw Error("HTTP "+res.status);
+  return await res.json();
+ }finally{
+  clearTimeout(timer);
+ }
+}
+
+function ema(values,period){
+ if(values.length<period)return NaN;
+ let result=values.slice(0,period).reduce((a,b)=>a+b,0)/period;
+ const alpha=2/(period+1);
+ for(let i=period;i<values.length;i++){
+  result=values[i]*alpha+result*(1-alpha);
+ }
+ return result;
+}
+
+function rsi(values,period=14){
+ if(values.length<period+1)return 50;
+ let gain=0,loss=0;
+ for(let i=values.length-period;i<values.length;i++){
+  const delta=values[i]-values[i-1];
+  if(delta>0)gain+=delta;
+  else loss-=delta;
+ }
+ if(loss===0)return gain===0?50:100;
+ const rs=(gain/period)/(loss/period);
+ return 100-100/(1+rs);
+}
+
+function analyse(symbol,ticker,candles){
+ // Ignore the currently forming candle.
+ const k=candles.slice(0,-1);
+ if(k.length<51)return null;
+
+ const highs=k.map(c=>+c[2]);
+ const lows=k.map(c=>+c[3]);
+ const closes=k.map(c=>+c[4]);
+ const volumes=k.map(c=>+c[5]);
+ const n=closes.length;
+ const last=+ticker.lastPrice;
+ const e20=ema(closes,20);
+ const e50=ema(closes,50);
+ const currentRsi=rsi(closes,14);
+
+ const trs=[];
+ for(let i=Math.max(1,n-14);i<n;i++){
+  trs.push(Math.max(
+   highs[i]-lows[i],
+   Math.abs(highs[i]-closes[i-1]),
+   Math.abs(lows[i]-closes[i-1])
+  ));
+ }
+ const atr=trs.length?trs.reduce((a,b)=>a+b,0)/trs.length:last*.01;
+ const avgVol=volumes.slice(-20).reduce((a,b)=>a+b,0)/20;
+ const volumeRatio=avgVol?volumes[n-1]/avgVol:1;
+
+ const support=Math.min(...lows.slice(-20));
+ const resistance=Math.max(...highs.slice(-20));
+ const bullish=last>e20&&e20>e50;
+ const bearish=last<e20&&e20<e50;
+
+ let signal="WAIT";
+ // Signals require trend agreement, RSI confirmation and non-extreme momentum.
+ if(bullish&&currentRsi>=50&&currentRsi<70&&last<=e20+atr*.5){
+  signal="LONG";
+ }
+ if(bearish&&currentRsi<=50&&currentRsi>30&&last>=e20-atr*.5){
+  signal="SHORT";
+ }
+
+ const direction=signal==="LONG"?1:signal==="SHORT"?-1:0;
+ const ep=last;
+ const sl=direction?ep-direction*1.5*atr:NaN;
+
+ return {
+  symbol,price:last,change:+ticker.priceChangePercent,
+  volume:+ticker.quoteVolume,ema20:e20,ema50:e50,rsi:currentRsi,
+  atr,support,resistance,bullish,bearish,signal,volumeRatio,
+  pullback:Math.max(support,last-atr),
+  rebound:last+atr*.5,
+  ep,sl,
+  tp1:direction?ep+direction*atr:NaN,
+  tp2:direction?ep+direction*2*atr:NaN,
+  tp3:direction?ep+direction*3*atr:NaN
+ };
+}
+
+/* AUDIO ALERTS
+   A user interaction may be required by the browser to enable audio. */
+async function enableAudio(){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  if(!audioContext)audioContext=new AC();
+  if(audioContext.state==="suspended")await audioContext.resume();
+ }catch(e){
+  console.warn("Audio is unavailable",e);
+ }
+}
+$("audio-toggle").addEventListener("change",async()=>{
+ if($("audio-toggle").checked)await enableAudio();
+});
+
+function playChime(signal){
+ if(!$("audio-toggle").checked||!audioContext||audioContext.state!=="running")return;
+ try{
+  const osc=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+  const now=audioContext.currentTime;
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
+  osc.type=signal==="LONG"?"triangle":"sawtooth";
+  osc.frequency.setValueAtTime(signal==="LONG"?590:390,now);
+  osc.frequency.exponentialRampToValueAtTime(signal==="LONG"?880:220,now+.22);
+  gain.gain.setValueAtTime(.13,now);
+  gain.gain.exponentialRampToValueAtTime(.001,now+.28);
+  osc.start(now);
+  osc.stop(now+.3);
+ }catch(e){console.warn(e)}
+}
+
+/* SCANNER ENGINE */
+async function runScanner(){
+ if(isScanning)return;
+ isScanning=true;
+ $("scanBtn").disabled=true;
+ $("connection").textContent="Loading...";
+ $("connection-dot").style.background="var(--gold)";
+ $("statusline").textContent="Fetching current prices and 15-minute candles...";
+ try{
+  const tickers=await getJSON(API+"/api/v3/ticker/24hr");
+  const tickerMap=new Map(tickers.map(t=>[t.symbol,t]));
+  const symbols=WATCHLIST.filter(s=>tickerMap.has(s));
+
+  // Limit concurrent requests to reduce API pressure.
+  let index=0;
+  const results=[];
+  const workers=Array.from({length:3},async()=>{
+   while(index<symbols.length){
+    const symbol=symbols[index++];
+    try{
+     const candles=await getJSON(
+      API+"/api/v3/klines?symbol="+encodeURIComponent(symbol)+"&interval=15m&limit=80"
+     );
+     const row=analyse(symbol,tickerMap.get(symbol),candles);
+     if(row)results.push(row);
+    }catch(e){
+     console.warn("Could not analyze "+symbol,e);
+    }
+   }
+  });
+  await Promise.all(workers);
+
+  if(!results.length)throw Error("No technical data returned");
+
+  results.sort((a,b)=>b.volume-a.volume);
+  marketData=results;
+
+  for(const row of marketData){
+   const previous=lastAlertBySymbol.get(row.symbol);
+   if(row.signal!=="WAIT"&&previous!==row.signal){
+    playChime(row.signal);
+   }
+   lastAlertBySymbol.set(row.symbol,row.signal);
+  }
+
+  $("connection").textContent="Connected";
+  $("connection-dot").style.background="var(--green)";
+  $("update-count").textContent=pkTime();
+  $("statusline").textContent=
+   "Updated "+pkTime()+" PKT · Completed 15-minute candles · Public Spot data";
+  updateStats();
+  renderTable();
+ }catch(e){
+  $("connection").textContent="Connection issue";
+  $("connection-dot").style.background="var(--red)";
+  $("statusline").textContent=
+   "Could not refresh market data: "+e.message+
+   ". Check internet access, then press SCAN NOW.";
+ }finally{
+  isScanning=false;
+  $("scanBtn").disabled=false;
+ }
+}
+
+function updateStats(){
+ const count=fn=>marketData.filter(fn).length;
+ $("count-all").textContent=marketData.length;
+ $("count-long").textContent=count(x=>x.signal==="LONG");
+ $("count-short").textContent=count(x=>x.signal==="SHORT");
+ $("count-bull").textContent=count(x=>x.bullish);
+ $("count-bear").textContent=count(x=>x.bearish);
+ $("count-wait").textContent=count(x=>x.signal==="WAIT");
+ $("count-volume").textContent=count(x=>x.volumeRatio>=1.5);
+ $("ticker-counter").textContent=marketData.length+" pairs";
+}
+
+function badge(label,kind){
+ const cls=kind==="LONG"||kind==="BULLISH"?"badge-long":
+  kind==="SHORT"||kind==="BEARISH"?"badge-short":
+  kind==="WAIT"?"badge-wait":"badge-neutral";
+ return '<span class="badge '+cls+'">'+esc(label)+'</span>';
+}
+
+/* SEARCH, FILTERS, PAGINATION */
+function filteredRows(){
+ const query=$("coin-search").value.trim().toUpperCase();
+ const minVol=+$("min-volume").value;
+ const sort=$("sort-by").value;
+
+ let list=marketData.filter(x=>{
+  if(selectedOnly&&x.symbol!==selectedOnly)return false;
+  if(!selectedOnly){
+   if(activeFilter==="LONG"&&x.signal!=="LONG")return false;
+   if(activeFilter==="SHORT"&&x.signal!=="SHORT")return false;
+   if(activeFilter==="BULL"&&!x.bullish)return false;
+   if(activeFilter==="BEAR"&&!x.bearish)return false;
+   if(activeFilter==="WAIT"&&x.signal!=="WAIT")return false;
+   if(activeFilter==="VOLUME"&&x.volumeRatio<1.5)return false;
+  }
+  if(!x.symbol.includes(query))return false;
+  if(!selectedOnly&&x.volume<minVol)return false;
+  return true;
+ });
+
+ if(sort==="volume")list.sort((a,b)=>b.volume-a.volume);
+ else if(sort==="change")list.sort((a,b)=>b.change-a.change);
+ else if(sort==="symbol")list.sort((a,b)=>a.symbol.localeCompare(b.symbol));
+ else list.sort((a,b)=>{
+  const rank={LONG:0,SHORT:1,WAIT:2};
+  return rank[a.signal]-rank[b.signal]||b.volume-a.volume;
+ });
+
+ if(query&&!selectedOnly){
+  const i=list.findIndex(x=>x.symbol===query);
+  if(i>0)list.unshift(list.splice(i,1)[0]);
+ }
+ return list;
+}
+
+function renderTable(){
+ const all=filteredRows();
+ const pages=Math.max(1,Math.ceil(all.length/PAGE_SIZE));
+ currentPage=Math.max(1,Math.min(currentPage,pages));
+ const shown=all.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
+
+ $("page-info").textContent="Page "+currentPage+"/"+pages+" · "+all.length+" coins";
+ $("prev-page").disabled=currentPage<=1;
+ $("next-page").disabled=currentPage>=pages;
+
+ $("scanner-table-body").innerHTML=shown.map(x=>{
+  const trend=x.bullish?"BULLISH":x.bearish?"BEARISH":"SIDEWAYS";
+  const trendKind=x.bullish?"BULLISH":x.bearish?"BEARISH":"WAIT";
+  const priceClass=x.change>=0?"green":"red";
+  const signalClass=x.signal==="LONG"?"green":x.signal==="SHORT"?"red":"goldtext";
+  return `
+  <tr data-symbol="${esc(x.symbol)}" class="${selectedOnly===x.symbol?"selected":""}">
+   <td>
+    <div class="coinname">${esc(x.symbol)}</div>
+    <div class="coinsub">${price(x.price)}</div>
+   </td>
+   <td>${money(x.volume)}</td>
+   <td class="${priceClass}">${pct(x.change)}</td>
+   <td>${badge(trend,trendKind)}</td>
+   <td>${badge(x.signal,x.signal)}</td>
+   <td>${x.rsi.toFixed(1)}</td>
+   <td>${price(x.pullback)}</td>
+   <td>${price(x.rebound)}</td>
+   <td class="levels">
+    <span class="green">EP ${price(x.ep)}</span><br>
+    <span class="red">SL ${price(x.sl)}</span><br>
+    <span class="green">T1 ${price(x.tp1)}</span>
+    <span class="green">T2 ${price(x.tp2)}</span>
+    <span class="green">T3 ${price(x.tp3)}</span>
+   </td>
+  </tr>`;
+ }).join("")||'<tr><td colspan="9" style="padding:25px;color:#848e9c">No matching coins. Clear the search or press Show All.</td></tr>';
+
+ $("list-subtitle").textContent=selectedOnly?
+  "Showing only "+selectedOnly+" · Press Show All to restore the list.":
+  "Click a coin to isolate it and open its chart.";
+}
+
+function setFilter(filter){
+ activeFilter=filter;
+ selectedOnly=null;
+ currentPage=1;
+ $("coin-search").value="";
+ $("min-volume").value="0";
+
+ document.querySelectorAll("[data-filter]").forEach(b=>{
+  b.classList.toggle("active",b.dataset.filter===filter);
+ });
+ renderTable();
+ $("list-panel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function showOnlyCoin(symbol){
+ selectedOnly=symbol;
+ activeFilter="ALL";
+ currentPage=1;
+ $("coin-search").value="";
+ $("min-volume").value="0";
+
+ document.querySelectorAll("[data-filter]").forEach(b=>{
+  b.classList.toggle("active",b.dataset.filter==="ALL");
+ });
+
+ loadTradingViewChart(timeframe,symbol);
+ renderTable();
+ $("list-panel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function searchCoin(){
+ const q=$("coin-search").value.trim().toUpperCase();
+ selectedOnly=null;
+ if(q){
+  activeFilter="ALL";
+  $("min-volume").value="0";
+  document.querySelectorAll("[data-filter]").forEach(b=>{
+   b.classList.toggle("active",b.dataset.filter==="ALL");
+  });
+ }
+ currentPage=1;
+ renderTable();
+
+ if(!q){
+  $("list-panel").scrollIntoView({behavior:"smooth",block:"start"});
+  return;
+ }
+
+ const exact=marketData.find(x=>x.symbol===q);
+ if(exact){
+  requestAnimationFrame(()=>{
+   const row=[...document.querySelectorAll("#scanner-table-body tr")]
+    .find(r=>r.dataset.symbol===q);
+   if(row){
+    row.scrollIntoView({behavior:"smooth",block:"center"});
+    row.classList.add("selected");
+   }
+  });
+ }else{
+  $("list-panel").scrollIntoView({behavior:"smooth",block:"start"});
+ }
+}
+
+/* TRADINGVIEW EMBED */
+function loadTradingViewChart(tf="60",symbol=selectedSymbol){
+ timeframe=tf;
+ selectedSymbol=symbol;
+ $("chart-title").textContent="BINANCE:"+symbol+" · "+tf+" chart";
+ const interval=encodeURIComponent(tf);
+ const sym=encodeURIComponent("BINANCE:"+symbol);
+ $("chart-frame").src=
+  "https://www.tradingview.com/widgetembed/?symbol="+sym+
+  "&interval="+interval+
+  "&theme=dark&style=1&locale=en"+
+  "&timezone=Asia%2FKarachi&hide_side_toolbar=0"+
+  "&allow_symbol_change=1&withdateranges=1&saveimage=0";
+ document.querySelectorAll("[data-tf]").forEach(b=>{
+  b.classList.toggle("active",b.dataset.tf===tf);
+ });
+}
+$("open-binance").addEventListener("click",()=>{
+ const pair=selectedSymbol.replace(/USDT$/,"_USDT");
+ window.open("https://www.binance.com/en/trade/"+pair,"_blank","noopener,noreferrer");
+});
+
+/* REAL NEWS FEED: no fabricated headlines */
+function classifyNews(title,body){
+ const text=(title+" "+body).toLowerCase();
+
+ if(/hack|exploit|security breach|fraud|lawsuit|ban\b|liquidation cascade|exchange insolvency/.test(text)){
+  return {label:"POTENTIAL BEARISH RISK",color:"var(--red)"};
+ }
+ if(/etf approval|etf approved|record inflow|institutional adoption|reserve adoption|regulatory approval/.test(text)){
+  return {label:"POTENTIAL BULLISH CATALYST",color:"var(--green)"};
+ }
+ return {label:"MIXED · VERIFY",color:"var(--gold)"};
+}
+
+async function loadNews(){
+ $("news-status").textContent="Fetching current headlines...";
+ try{
+  const result=await getJSON(NEWS_API);
+  if(result.Response==="Error"||!Array.isArray(result.Data)||!result.Data.length){
+   throw Error("No headlines returned");
+  }
+
+  const articles=result.Data.slice(0,15);
+  $("crypto-news-container").innerHTML=articles.map(a=>{
+   const title=a.title||"Untitled report";
+   const source=a.source||"Unknown source";
+   const url=/^https?:\/\//i.test(a.url||"")?a.url:"";
+   const time=a.published_on?
+    new Date(a.published_on*1000).toLocaleString("en-PK",{
+     timeZone:"Asia/Karachi",dateStyle:"medium",timeStyle:"short"
+    }):"Time unavailable";
+   const impact=classifyNews(title,a.body||"");
+
+   return `<article class="newsitem">
+    ${url?
+     `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>`:
+     `<div>${esc(title)}</div>`}
+    <div><span class="impact" style="color:${impact.color};background:#252a32">${impact.label}</span></div>
+    <div class="newsmeta">${esc(source)} · ${esc(time)} PKT</div>
+   </article>`;
+  }).join("");
+
+  $("news-status").textContent="Updated "+pkTime()+" PKT · "+articles.length+" headlines";
+ }catch(e){
+  $("news-status").textContent="Live news provider unavailable";
+  $("crypto-news-container").innerHTML=`
+   <div class="newsitem">
+    <div>Headlines could not be retrieved. Check internet access or provider availability.</div>
+    <div class="newsmeta">No fabricated news is shown when the feed fails.</div>
+   </div>
+   <div class="newsitem"><a href="https://www.coindesk.com/" target="_blank" rel="noopener noreferrer">Open CoinDesk ↗</a></div>
+   <div class="newsitem"><a href="https://cointelegraph.com/" target="_blank" rel="noopener noreferrer">Open Cointelegraph ↗</a></div>
+   <div class="newsitem"><a href="https://www.binance.com/en/square" target="_blank" rel="noopener noreferrer">Open Binance Square ↗</a></div>`;
+ }
+}
+
+/* EVENT HANDLERS */
+$("scanBtn").addEventListener("click",runScanner);
+
+$("autoBtn").addEventListener("click",()=>{
+ autoScan=!autoScan;
+ $("autoBtn").textContent="AUTO: "+(autoScan?"ON":"OFF");
+ $("autoBtn").classList.toggle("active",autoScan);
+ if(scanTimer)clearInterval(scanTimer);
+ scanTimer=autoScan?setInterval(runScanner,60000):null;
+});
+
+document.querySelectorAll("[data-filter]").forEach(button=>{
+ button.addEventListener("click",()=>setFilter(button.dataset.filter));
+});
+
+$("scanner-table-body").addEventListener("click",e=>{
+ const row=e.target.closest("tr[data-symbol]");
+ if(row)showOnlyCoin(row.dataset.symbol);
+});
+
+$("coin-search").addEventListener("input",()=>{
+ clearTimeout(searchTimer);
+ searchTimer=setTimeout(searchCoin,180);
+});
+
+$("min-volume").addEventListener("change",()=>{currentPage=1;renderTable()});
+$("sort-by").addEventListener("change",()=>{currentPage=1;renderTable()});
+
+$("clear-selection").addEventListener("click",()=>{
+ selectedOnly=null;
+ activeFilter="ALL";
+ currentPage=1;
+ $("coin-search").value="";
+ $("min-volume").value="0";
+ $("sort-by").value="signal";
+ document.querySelectorAll("[data-filter]").forEach(b=>{
+  b.classList.toggle("active",b.dataset.filter==="ALL");
+ });
+ renderTable();
+ $("list-panel").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+$("prev-page").addEventListener("click",()=>{
+ currentPage=Math.max(1,currentPage-1);
+ renderTable();
+});
+$("next-page").addEventListener("click",()=>{
+ currentPage++;
+ renderTable();
+});
+
+document.querySelectorAll("[data-tf]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  loadTradingViewChart(button.dataset.tf,selectedSymbol);
+ });
+});
+
+$("refresh-news").addEventListener("click",loadNews);
+
+/* STARTUP */
+loadTradingViewChart("60","BTCUSDT");
+renderTable();
+runScanner();
+loadNews();
+
+scanTimer=setInterval(()=>{if(autoScan)runScanner()},60000);
+newsTimer=setInterval(loadNews,300000);
+</script>
+</body>
+</html>
