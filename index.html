@@ -6,18 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crypto Scanner Pro</title>
 <style>
-:root{
- --bg:#080d18;--panel:#111a2b;--panel2:#19253b;
- --border:#2a3852;--text:#edf3ff;--muted:#9aabc4;
- --green:#00e6a0;--red:#ff6278;--yellow:#ffd166;--blue:#65a8ff
+:root {
+  --bg:#080d18; --panel:#111a2b; --panel2:#19253b;
+  --border:#2b3a54; --text:#edf3ff; --muted:#9aabc4;
+  --green:#00e6a0; --red:#ff6278; --yellow:#ffd166; --blue:#65a8ff;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:14px Arial,sans-serif}
 header{padding:18px;background:var(--panel);border-bottom:1px solid var(--border)}
-h1{font-size:24px;margin:0 0 10px}
+h1{margin:0 0 10px;font-size:24px}
 h2{font-size:17px;margin:0 0 13px}
 p{line-height:1.5}
-.wrap{max-width:1550px;margin:auto;padding:12px}
+.wrap{max-width:1600px;margin:auto;padding:12px}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px}
 .controls,.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 button,input,select{font:inherit;color:var(--text);background:#0b1425;border:1px solid var(--border);border-radius:8px;padding:10px}
@@ -26,8 +26,8 @@ button:hover{border-color:var(--green)}
 button:disabled{opacity:.5;cursor:not-allowed}
 .primary{background:var(--green);color:#06150f;border-color:var(--green)}
 .active{border-color:var(--green);color:var(--green)}
-input[type="text"],input[type="search"]{flex:1;min-width:140px}
-.clock{color:var(--green);font-weight:bold;font-size:16px}
+input[type="search"]{flex:1;min-width:150px}
+.clock{font-size:16px;color:var(--green);font-weight:bold}
 .muted{color:var(--muted)}
 .green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}
 .progress{height:9px;border-radius:20px;background:#29364c;overflow:hidden;margin:12px 0}
@@ -37,8 +37,8 @@ input[type="text"],input[type="search"]{flex:1;min-width:140px}
 .stat small{display:block;color:var(--muted);margin-bottom:7px}
 .stat strong{font-size:20px}
 .filters{margin:12px 0}
-.tablewrap{overflow:auto;max-height:600px;border:1px solid var(--border);border-radius:8px}
-table{border-collapse:collapse;width:100%;min-width:1250px}
+.tablewrap{overflow:auto;max-height:650px;border:1px solid var(--border);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:1350px}
 th,td{padding:10px 9px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
 th{position:sticky;top:0;background:#1b2940;z-index:2}
 tbody tr{cursor:pointer}
@@ -62,146 +62,182 @@ footer{color:var(--muted);padding:10px 2px 25px;line-height:1.6}
 </style>
 </head>
 <body>
+
 <header>
- <h1>⚡ Crypto Scanner Pro</h1>
- <div id="clock" class="clock">Loading Pakistan time...</div>
- <p class="muted">Binance market scanner · RSI reversal · Long/Short · TradingView charts</p>
+  <h1>⚡ Crypto Scanner Pro</h1>
+  <div id="clock" class="clock">Loading Pakistan time...</div>
+  <p class="muted">Live Binance data · Separate signals · Planned entries · TradingView charts</p>
 </header>
 
 <main class="wrap">
+
 <section class="panel">
- <h2>Scanner Settings</h2>
- <div class="controls">
-  <select id="market">
-   <option value="spot">Binance Spot</option>
-   <option value="futures">Binance USDⓈ-M Futures</option>
-  </select>
-  <select id="interval">
-   <option value="15m">15 minutes</option>
-   <option value="30m">30 minutes</option>
-   <option value="1h" selected>1 hour</option>
-   <option value="4h">4 hours</option>
-   <option value="1d">1 day</option>
-  </select>
-  <select id="maxCoins">
-   <option value="100">Top 100 coins</option>
-   <option value="250" selected>Top 250 coins</option>
-   <option value="500">Top 500 coins</option>
-   <option value="all">All USDT pairs</option>
-  </select>
-  <button id="startBtn" class="primary" onclick="startScan()">▶ Start Scan</button>
-  <button id="stopBtn" onclick="stopScan()" disabled>■ Stop</button>
- </div>
- <div class="progress"><div id="progressBar"></div></div>
- <div id="status" class="muted">Ready. Press Start Scan.</div>
- <div class="stats">
-  <div class="stat"><small>Pairs Loaded</small><strong id="loaded">0</strong></div>
-  <div class="stat"><small>Scanned</small><strong id="scanned">0</strong></div>
-  <div class="stat"><small>Long Setups</small><strong class="green" id="longs">0</strong></div>
-  <div class="stat"><small>Short Setups</small><strong class="red" id="shorts">0</strong></div>
- </div>
+  <h2>Scanner Settings</h2>
+  <div class="controls">
+    <select id="market">
+      <option value="spot">Binance Spot</option>
+      <option value="futures">Binance USDⓈ-M Futures</option>
+    </select>
+
+    <select id="interval">
+      <option value="15m">15 minutes</option>
+      <option value="30m">30 minutes</option>
+      <option value="1h" selected>1 hour</option>
+      <option value="4h">4 hours</option>
+      <option value="1d">1 day</option>
+    </select>
+
+    <select id="maxCoins">
+      <option value="100">Top 100</option>
+      <option value="250" selected>Top 250</option>
+      <option value="500">Top 500</option>
+      <option value="all">All USDT pairs</option>
+    </select>
+
+    <button id="startBtn" class="primary" onclick="startScan()">▶ Start Scan</button>
+    <button id="stopBtn" onclick="stopScan()" disabled>■ Stop</button>
+  </div>
+
+  <div class="progress"><div id="progressBar"></div></div>
+  <div id="status" class="muted">Ready. Press Start Scan.</div>
+
+  <div class="stats">
+    <div class="stat"><small>Pairs Loaded</small><strong id="loaded">0</strong></div>
+    <div class="stat"><small>Scanned</small><strong id="scanned">0</strong></div>
+    <div class="stat"><small>Long Signals</small><strong class="green" id="longs">0</strong></div>
+    <div class="stat"><small>Short Signals</small><strong class="red" id="shorts">0</strong></div>
+  </div>
 </section>
 
-<section class="panel">
- <h2>Coin List & Separate Filters</h2>
- <div class="controls">
-  <input id="search" type="search" placeholder="Search coin, e.g. BTCUSDT" oninput="renderTable()">
-  <select id="sortBy" onchange="renderTable()">
-   <option value="score">Best score</option>
-   <option value="volume">Highest volume</option>
-   <option value="change">24h change</option>
-   <option value="rsi">RSI low to high</option>
-  </select>
-  <label class="muted"><input id="btcFilter" type="checkbox" style="min-width:auto"> Follow BTC direction</label>
- </div>
+<section class="panel" id="listPanel">
+  <h2>Coin Search and Signal List</h2>
 
- <div class="filters">
-  <button class="active" data-filter="all" onclick="setFilter('all',this)">All Coins</button>
-  <button data-filter="long" onclick="setFilter('long',this)">🟢 Long Only</button>
-  <button data-filter="short" onclick="setFilter('short',this)">🔴 Short Only</button>
-  <button data-filter="bullish" onclick="setFilter('bullish',this)">📈 Bullish Only</button>
-  <button data-filter="bearish" onclick="setFilter('bearish',this)">📉 Bearish Only</button>
-  <button data-filter="oversold" onclick="setFilter('oversold',this)">Oversold</button>
-  <button data-filter="overbought" onclick="setFilter('overbought',this)">Overbought</button>
-  <button data-filter="waiting" onclick="setFilter('waiting',this)">Waiting</button>
- </div>
+  <div class="controls">
+    <input id="search" type="search" placeholder="Enter BTC, BTCUSDT, ETH, SOL..." autocomplete="off">
+    <button class="primary" id="searchBtn" onclick="searchCoin()">Search Coin</button>
 
- <p class="muted small">Click any coin row or its chart button to display only that coin in the chart below.</p>
- <div class="tablewrap">
-  <table>
-   <thead><tr>
-    <th>Coin</th><th>Signal</th><th>Score</th><th>Price</th>
-    <th>24h Volume USDT</th><th>24h %</th><th>RSI</th>
-    <th>Pullback %</th><th>Rebound %</th><th>Entry</th>
-    <th>Stop Loss</th><th>TP1</th><th>TP2</th><th>TP3</th><th>Chart</th>
-   </tr></thead>
-   <tbody id="coinRows">
-    <tr><td colspan="15" class="muted">No data yet. Start a scan.</td></tr>
-   </tbody>
-  </table>
- </div>
+    <select id="sortBy" onchange="renderTable()">
+      <option value="score">Best signal score</option>
+      <option value="volume">Highest volume</option>
+      <option value="change">24h change</option>
+      <option value="rsi">Lowest RSI</option>
+    </select>
+
+    <label class="muted">
+      <input id="btcFilter" type="checkbox" style="min-width:auto">
+      Follow BTC direction
+    </label>
+  </div>
+
+  <div class="filters">
+    <button class="active" data-filter="all" onclick="setFilter('all',this)">All Coins</button>
+    <button data-filter="long" onclick="setFilter('long',this)">🟢 Long Only</button>
+    <button data-filter="short" onclick="setFilter('short',this)">🔴 Short Only</button>
+    <button data-filter="bullish" onclick="setFilter('bullish',this)">📈 Bullish Only</button>
+    <button data-filter="bearish" onclick="setFilter('bearish',this)">📉 Bearish Only</button>
+    <button data-filter="oversold" onclick="setFilter('oversold',this)">Oversold</button>
+    <button data-filter="overbought" onclick="setFilter('overbought',this)">Overbought</button>
+    <button data-filter="waiting" onclick="setFilter('waiting',this)">Waiting</button>
+  </div>
+
+  <p id="searchMessage" class="muted small">Search within scanned results, or search a symbol directly from Binance.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Signal</th>
+          <th>Score</th>
+          <th>Market Price</th>
+          <th>24h Volume</th>
+          <th>24h Change</th>
+          <th>RSI</th>
+          <th>Pullback</th>
+          <th>Rebound</th>
+          <th>EP / Trigger</th>
+          <th>Stop Loss</th>
+          <th>TP1</th>
+          <th>TP2</th>
+          <th>TP3</th>
+          <th>Chart</th>
+        </tr>
+      </thead>
+      <tbody id="coinRows">
+        <tr><td colspan="15" class="muted">No results yet. Start scanning or search for a coin.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted small">
+    Pullback and rebound are numeric percentage values without the percent symbol.
+    EP means planned entry trigger, not current market price.
+  </p>
 </section>
 
 <section class="panel" id="chartPanel">
- <h2>Selected Coin Chart</h2>
- <div class="controls" style="margin-bottom:12px">
-  <strong id="chartSymbol">BTCUSDT</strong>
-  <select id="chartInterval" onchange="loadChart()">
-   <option value="15">15 minutes</option>
-   <option value="30">30 minutes</option>
-   <option value="60" selected>1 hour</option>
-   <option value="240">4 hours</option>
-   <option value="D">1 day</option>
-   <option value="W">1 week</option>
-  </select>
-  <button onclick="selectChart('BTCUSDT')">BTC</button>
-  <button onclick="selectChart('ETHUSDT')">ETH</button>
- </div>
- <div class="chartbox">
-  <iframe id="chartFrame" title="Selected coin TradingView chart" loading="lazy"></iframe>
- </div>
- <p class="muted small">Only the currently selected symbol is loaded in this chart.</p>
+  <h2>Selected Coin Chart</h2>
+  <div class="controls" style="margin-bottom:12px">
+    <strong id="chartSymbol">BTCUSDT</strong>
+    <select id="chartInterval" onchange="loadChart()">
+      <option value="15">15 minutes</option>
+      <option value="30">30 minutes</option>
+      <option value="60" selected>1 hour</option>
+      <option value="240">4 hours</option>
+      <option value="D">1 day</option>
+      <option value="W">1 week</option>
+    </select>
+    <button onclick="selectChart('BTCUSDT')">BTC</button>
+    <button onclick="selectChart('ETHUSDT')">ETH</button>
+  </div>
+  <div class="chartbox">
+    <iframe id="chartFrame" title="Selected coin chart" loading="lazy"></iframe>
+  </div>
+  <p class="muted small">Click a coin row or its Chart button to switch this chart to that coin.</p>
 </section>
 
 <section class="grid">
- <div class="panel">
-  <h2>Trade Checklist</h2>
-  <div class="checks">
-   <label><input type="checkbox" class="check"> RSI reversal or extreme</label>
-   <label><input type="checkbox" class="check"> Rejection wick confirmed</label>
-   <label><input type="checkbox" class="check"> Support or resistance checked</label>
-   <label><input type="checkbox" class="check"> Volume confirms the move</label>
-   <label><input type="checkbox" class="check"> Stop loss selected</label>
-   <label><input type="checkbox" class="check"> Risk/reward acceptable</label>
+  <div class="panel">
+    <h2>Trade Checklist</h2>
+    <div class="checks">
+      <label><input type="checkbox" class="check"> RSI reversal or extreme</label>
+      <label><input type="checkbox" class="check"> Rejection candle confirmed</label>
+      <label><input type="checkbox" class="check"> Support or resistance checked</label>
+      <label><input type="checkbox" class="check"> Volume supports the move</label>
+      <label><input type="checkbox" class="check"> Stop loss planned</label>
+      <label><input type="checkbox" class="check"> Risk/reward acceptable</label>
+    </div>
+    <div class="result" style="margin-top:12px">
+      Checklist: <strong id="checkCount">0 / 6</strong><br>
+      <span id="checkAdvice" class="muted">Review conditions before trading.</span>
+    </div>
   </div>
-  <div class="result" style="margin-top:12px">
-   Checklist: <strong id="checkCount">0 / 6</strong><br>
-   <span id="checkAdvice" class="muted">Review the conditions before trading.</span>
+
+  <div class="panel">
+    <h2>RSI Backtest Simulator</h2>
+    <div class="controls">
+      <select id="btSymbol"><option value="BTCUSDT">BTCUSDT</option></select>
+      <select id="btSide">
+        <option value="both">Long + Short</option>
+        <option value="long">Long only</option>
+        <option value="short">Short only</option>
+      </select>
+      <button class="primary" onclick="runBacktest()">Run Backtest</button>
+    </div>
+    <div id="btResult" class="result" style="margin-top:12px">Run a scan first.</div>
   </div>
- </div>
- <div class="panel">
-  <h2>RSI Backtest Simulator</h2>
-  <div class="controls">
-   <select id="btSymbol"><option value="BTCUSDT">BTCUSDT</option></select>
-   <select id="btSide">
-    <option value="both">Long + Short</option>
-    <option value="long">Long only</option>
-    <option value="short">Short only</option>
-   </select>
-   <button class="primary" onclick="runBacktest()">Run Backtest</button>
-  </div>
-  <div id="btResult" class="result" style="margin-top:12px">Run a scan first.</div>
- </div>
 </section>
 
 <section class="panel">
- <h2>Connection Diagnostics</h2>
- <div id="diagnostics" class="muted">Not tested yet.</div>
- <button onclick="testConnection()">Test Binance Connection</button>
+  <h2>Connection Diagnostics</h2>
+  <div id="diagnostics" class="muted">Not tested yet.</div>
+  <button onclick="testConnection()">Test Binance Connection</button>
 </section>
 
 <footer>
-This tool uses public market data and does not place orders. Signals, entry prices, stop losses and targets are estimates, not guarantees. Always verify before trading. API access can be blocked or rate-limited by your network.
+  This tool uses public market data and does not place orders. Signals and price levels are estimates.
+  EP is a proposed breakout/breakdown trigger. Stops and targets are technical calculations, not guaranteed
+  outcomes. API access can be restricted by your network.
 </footer>
 </main>
 
@@ -209,405 +245,752 @@ This tool uses public market data and does not place orders. Signals, entry pric
 "use strict";
 
 const $ = id => document.getElementById(id);
+
 const state = {
- rows:[], candles:new Map(), filter:"all", running:false,
- stop:false, done:0, total:0, errors:0, btcTrend:"neutral",
- selectedSymbol:"BTCUSDT"
+  rows: [],
+  candles: new Map(),
+  filter: "all",
+  running: false,
+  stop: false,
+  done: 0,
+  total: 0,
+  errors: 0,
+  btcTrend: "neutral",
+  selectedSymbol: "BTCUSDT"
 };
 
-/* Clock */
-function updateClock(){
- $("clock").textContent="Pakistan time: "+new Date().toLocaleString("en-PK",{
-  timeZone:"Asia/Karachi",dateStyle:"medium",timeStyle:"medium",hour12:true
- });
+/* CLOCK */
+function updateClock() {
+  $("clock").textContent = "Pakistan time: " +
+    new Date().toLocaleString("en-PK", {
+      timeZone: "Asia/Karachi",
+      dateStyle: "medium",
+      timeStyle: "medium",
+      hour12: true
+    });
 }
 updateClock();
-setInterval(updateClock,1000);
+setInterval(updateClock, 1000);
 
-function setStatus(s){$("status").textContent=s}
-function setProgress(n){$("progressBar").style.width=Math.max(0,Math.min(100,n))+"%"}
-function fmtPrice(n){
- if(!Number.isFinite(n))return "—";
- if(n>=1000)return n.toLocaleString("en-US",{maximumFractionDigits:2});
- if(n>=1)return n.toFixed(4);
- if(n>=.01)return n.toFixed(6);
- return n.toPrecision(5);
-}
-function fmtNum(n){
- if(!Number.isFinite(n))return "—";
- if(n>=1e9)return (n/1e9).toFixed(2)+"B";
- if(n>=1e6)return (n/1e6).toFixed(2)+"M";
- if(n>=1e3)return (n/1e3).toFixed(2)+"K";
- return n.toFixed(2);
-}
-function fmtPct(n){return Number.isFinite(n)?(n>0?"+":"")+n.toFixed(2)+"%":"—"}
-
-function baseUrls(){
- return $("market").value==="futures"
-  ? ["https://fapi.binance.com"]
-  : ["https://api.binance.com","https://data-api.binance.vision"];
+function setStatus(text) {
+  $("status").textContent = text;
 }
 
-async function api(path,params={},timeout=15000){
- const query=new URLSearchParams(params).toString();
- let lastError;
- for(const base of baseUrls()){
-  if(state.stop&&state.running)throw new Error("Scan stopped");
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),timeout);
-  try{
-   const res=await fetch(base+path+(query?"?"+query:""),{
-    signal:controller.signal,cache:"no-store"
-   });
-   if(!res.ok)throw new Error("HTTP "+res.status);
-   return await res.json();
-  }catch(e){
-   lastError=e;
-   if(e.message==="Scan stopped")throw e;
-  }finally{clearTimeout(timer)}
- }
- throw lastError||new Error("Binance API unavailable");
-}
-function pathFor(name){
- return ($("market").value==="futures"?"/fapi/v1/":"/api/v3/")+name;
+function setProgress(value) {
+  $("progressBar").style.width =
+    Math.max(0, Math.min(100, value)) + "%";
 }
 
-/* RSI */
-function calcRSI(closes,period=14){
- if(closes.length<period+1)return [];
- let gain=0,loss=0;
- for(let i=1;i<=period;i++){
-  const d=closes[i]-closes[i-1];
-  if(d>0)gain+=d;else loss-=d;
- }
- let ag=gain/period,al=loss/period;
- const out=Array(period).fill(null);
- out.push(al===0?100:100-100/(1+ag/al));
- for(let i=period+1;i<closes.length;i++){
-  const d=closes[i]-closes[i-1];
-  ag=(ag*(period-1)+Math.max(0,d))/period;
-  al=(al*(period-1)+Math.max(0,-d))/period;
-  out.push(al===0?100:100-100/(1+ag/al));
- }
- return out;
-}
-function ema(values,period){
- if(!values.length)return [];
- const a=2/(period+1),out=[values[0]];
- for(let i=1;i<values.length;i++)out.push(values[i]*a+out[i-1]*(1-a));
- return out;
-}
-function analyze(candles,ticker){
- const closes=candles.map(k=>+k[4]);
- const highs=candles.map(k=>+k[2]);
- const lows=candles.map(k=>+k[3]);
- const vols=candles.map(k=>+k[5]);
- const rsi=calcRSI(closes);
- const e9=ema(closes,9),e21=ema(closes,21);
- const i=closes.length-1;
- const price=closes[i],r=rsi[i],prevR=rsi[i-1];
- const start=Math.max(0,i-19);
- let high=-Infinity,low=Infinity;
- for(let j=start;j<=i;j++){
-  high=Math.max(high,highs[j]);low=Math.min(low,lows[j]);
- }
- const trs=[];
- for(let j=1;j<candles.length;j++){
-  trs.push(Math.max(highs[j]-lows[j],
-   Math.abs(highs[j]-closes[j-1]),Math.abs(lows[j]-closes[j-1])));
- }
- const recentTR=trs.slice(-14);
- const atr=recentTR.reduce((a,b)=>a+b,0)/Math.max(1,recentTR.length);
- const last=candles[i];
- const o=+last[1],h=+last[2],l=+last[3],c=+last[4];
- const range=Math.max(h-l,1e-12);
- const lowerWick=Math.max(0,Math.min(1,(Math.min(o,c)-l)/range));
- const upperWick=Math.max(0,Math.min(1,(h-Math.max(o,c))/range));
- const recentVol=vols.slice(-20);
- const avgVol=recentVol.reduce((a,b)=>a+b,0)/Math.max(1,recentVol.length);
- const volRatio=avgVol>0?vols[i]/avgVol:1;
- const trendUp=e9[i]>e21[i],trendDown=e9[i]<e21[i];
- const upCandle=c>o,downCandle=c<o;
- const bullRev=r<=35&&r>prevR&&upCandle;
- const bearRev=r>=65&&r<prevR&&downCandle;
-
- let signal="WAIT",score=0;
- if(bullRev){
-  signal="LONG";
-  score=55+(r<=30?15:0)+(trendUp?10:0)+(lowerWick>.3?10:0)+(volRatio>1.2?10:0);
- }else if(bearRev){
-  signal="SHORT";
-  score=55+(r>=70?15:0)+(trendDown?10:0)+(upperWick>.3?10:0)+(volRatio>1.2?10:0);
- }else if(r<=30&&r>prevR){
-  signal="WATCH LONG";score=45+(trendUp?10:0);
- }else if(r>=70&&r<prevR){
-  signal="WATCH SHORT";score=45+(trendDown?10:0);
- }else if(trendUp){
-  signal="BULLISH";score=35+(upCandle?10:0);
- }else if(trendDown){
-  signal="BEARISH";score=35+(downCandle?10:0);
- }
-
- const side=signal==="LONG"||signal==="WATCH LONG"||signal==="BULLISH"?"long":
-  signal==="SHORT"||signal==="WATCH SHORT"||signal==="BEARISH"?"short":"neutral";
- const entry=price,risk=Math.max(atr*1.5,price*.003);
- const sl=side==="short"?entry+risk:entry-risk;
- const dir=side==="short"?-1:1;
- return {
-  symbol:ticker.symbol,signal,side,score:Math.min(100,score),rsi:r,
-  price,volume:+ticker.quoteVolume||0,change:+ticker.priceChangePercent||0,
-  pullback:high>0?(high-price)/high*100:0,
-  rebound:low>0?(price-low)/low*100:0,
-  entry,sl,tp1:entry+dir*risk,tp2:entry+dir*risk*2,tp3:entry+dir*risk*3
- };
+function fmtPrice(n) {
+  if (!Number.isFinite(n)) return "—";
+  if (n >= 1000) return n.toLocaleString("en-US", {maximumFractionDigits: 2});
+  if (n >= 1) return n.toFixed(4);
+  if (n >= 0.01) return n.toFixed(6);
+  return n.toPrecision(5);
 }
 
-/* Market list */
-async function loadUniverse(){
- const info=await api(pathFor("exchangeInfo"));
- const tickers=await api(pathFor("ticker/24hr"));
- const allowed=new Set(info.symbols.filter(s=>
-  s.status==="TRADING"&&s.quoteAsset==="USDT"&&
-  (s.isSpotTradingAllowed!==false)&&
-  ($("market").value!=="futures"||s.contractType==="PERPETUAL")
- ).map(s=>s.symbol));
- let list=tickers.filter(t=>allowed.has(t.symbol)&&+t.lastPrice>0);
- list.sort((a,b)=>(+b.quoteVolume||0)-(+a.quoteVolume||0));
- const limit=$("maxCoins").value;
- if(limit!=="all")list=list.slice(0,Number(limit));
- return list;
+function fmtNum(n) {
+  if (!Number.isFinite(n)) return "—";
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(2) + "K";
+  return n.toFixed(2);
 }
 
-async function scanOne(ticker){
- const candles=await api(pathFor("klines"),{
-  symbol:ticker.symbol,interval:$("interval").value,limit:100
- },12000);
- if(!Array.isArray(candles)||candles.length<25)throw new Error("Insufficient candles");
- state.candles.set(ticker.symbol,candles);
- return analyze(candles,ticker);
+function fmtPct(n) {
+  return Number.isFinite(n) ? (n > 0 ? "+" : "") + n.toFixed(2) + "%" : "—";
 }
 
-async function startScan(){
- if(state.running)return;
- state.running=true;state.stop=false;state.rows=[];state.candles.clear();
- state.done=0;state.total=0;state.errors=0;state.btcTrend="neutral";
- $("startBtn").disabled=true;$("stopBtn").disabled=false;
- $("loaded").textContent="0";$("scanned").textContent="0";
- $("longs").textContent="0";$("shorts").textContent="0";
- setProgress(0);setStatus("Connecting to Binance...");
- $("coinRows").innerHTML='<tr><td colspan="15">Loading market pairs...</td></tr>';
+/* BINANCE API */
+function baseUrls() {
+  return $("market").value === "futures"
+    ? ["https://fapi.binance.com"]
+    : ["https://api.binance.com", "https://data-api.binance.vision"];
+}
 
- try{
-  const tickers=await loadUniverse();
-  if(state.stop)return;
-  if(!tickers.length)throw new Error("No eligible USDT pairs returned.");
-  state.total=tickers.length;$("loaded").textContent=String(state.total);
-  setStatus("Loaded "+state.total+" pairs. Scanning candles...");
-  let next=0;
-  async function worker(){
-   while(!state.stop){
-    const index=next++;
-    if(index>=tickers.length)return;
-    try{
-     const row=await scanOne(tickers[index]);
-     state.rows.push(row);
-     if(row.symbol==="BTCUSDT")state.btcTrend=row.side;
-    }catch(e){if(e.message!=="Scan stopped")state.errors++}
-    state.done++;
-    $("scanned").textContent=String(state.done);
-    setProgress(state.done/state.total*100);
-    $("longs").textContent=String(state.rows.filter(r=>r.signal==="LONG"||r.signal==="WATCH LONG").length);
-    $("shorts").textContent=String(state.rows.filter(r=>r.signal==="SHORT"||r.signal==="WATCH SHORT").length);
-    if(state.done%4===0||state.done===state.total)renderTable();
-    setStatus((state.stop?"Stopping":"Scanning")+" · "+state.done+"/"+state.total+
-      " · Results "+state.rows.length+" · Failed "+state.errors);
-    await new Promise(resolve=>setTimeout(resolve,100));
-   }
+function apiPath(name) {
+  return ($("market").value === "futures" ? "/fapi/v1/" : "/api/v3/") + name;
+}
+
+async function api(path, params = {}, timeout = 15000) {
+  const query = new URLSearchParams(params).toString();
+  let lastError = null;
+
+  for (const base of baseUrls()) {
+    if (state.stop && state.running) throw new Error("Scan stopped");
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      const response = await fetch(
+        base + path + (query ? "?" + query : ""),
+        {signal: controller.signal, cache: "no-store"}
+      );
+
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      if (error.message === "Scan stopped") throw error;
+    } finally {
+      clearTimeout(timer);
+    }
   }
-  await Promise.all(Array.from({length:Math.min(5,tickers.length)},worker));
-  renderTable();updateBacktestCoins();
-  if(state.stop)setStatus("Scan stopped. Analyzed "+state.rows.length+" pairs.");
-  else{
-   setProgress(100);
-   setStatus("Scan finished: "+state.rows.length+" analyzed; "+state.errors+" failed.");
+
+  throw lastError || new Error("Binance API unavailable");
+}
+
+/* TECHNICAL INDICATORS */
+function calcRSI(closes, period = 14) {
+  if (closes.length < period + 1) return [];
+
+  let gains = 0, losses = 0;
+
+  for (let i = 1; i <= period; i++) {
+    const change = closes[i] - closes[i - 1];
+    if (change > 0) gains += change;
+    else losses -= change;
   }
-  $("diagnostics").textContent="Last scan: "+new Date().toLocaleString()+
-   ". Successful: "+state.rows.length+". Failed: "+state.errors+".";
- }catch(e){
-  setStatus("Scanner error: "+e.message);
-  $("diagnostics").textContent="API error: "+e.message+
-   ". Check internet access and try Test Binance Connection.";
- }finally{
-  state.running=false;$("startBtn").disabled=false;$("stopBtn").disabled=true;
- }
-}
-function stopScan(){state.stop=true;setStatus("Stopping scan...")}
 
-/* Independent category filters */
-function setFilter(filter,button){
- state.filter=filter;
- document.querySelectorAll("[data-filter]").forEach(b=>b.classList.remove("active"));
- button.classList.add("active");
- renderTable();
-}
-function passesFilter(r){
- switch(state.filter){
-  case "long":return r.signal==="LONG"||r.signal==="WATCH LONG";
-  case "short":return r.signal==="SHORT"||r.signal==="WATCH SHORT";
-  case "bullish":return r.signal==="BULLISH"||r.signal==="LONG";
-  case "bearish":return r.signal==="BEARISH"||r.signal==="SHORT";
-  case "oversold":return r.rsi<=30;
-  case "overbought":return r.rsi>=70;
-  case "waiting":return r.signal==="WAIT";
-  default:return true;
- }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  const result = Array(period).fill(null);
+
+  result.push(avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss));
+
+  for (let i = period + 1; i < closes.length; i++) {
+    const change = closes[i] - closes[i - 1];
+    avgGain = (avgGain * (period - 1) + Math.max(0, change)) / period;
+    avgLoss = (avgLoss * (period - 1) + Math.max(0, -change)) / period;
+    result.push(avgLoss === 0 ? 100 : 100 - 100 / (1 + avgGain / avgLoss));
+  }
+
+  return result;
 }
 
-/* Click anywhere on a row to select its coin. */
-function renderTable(){
- const q=$("search").value.trim().toUpperCase();
- let rows=state.rows.filter(r=>r.symbol.includes(q)&&passesFilter(r));
- if($("btcFilter").checked&&state.btcTrend!=="neutral"){
-  rows=rows.filter(r=>r.side==="neutral"||r.side===state.btcTrend);
- }
- const sort=$("sortBy").value;
- rows.sort((a,b)=>sort==="volume"?b.volume-a.volume:
-  sort==="change"?b.change-a.change:
-  sort==="rsi"?a.rsi-b.rsi:b.score-a.score);
+function ema(values, period) {
+  if (!values.length) return [];
+  const alpha = 2 / (period + 1);
+  const result = [values[0]];
 
- if(!rows.length){
-  $("coinRows").innerHTML='<tr><td colspan="15" class="muted">No matching coins. Run a scan or choose another filter.</td></tr>';
-  return;
- }
+  for (let i = 1; i < values.length; i++) {
+    result.push(values[i] * alpha + result[i - 1] * (1 - alpha));
+  }
 
- $("coinRows").innerHTML=rows.map(r=>{
-  const cls=r.side==="long"?"green":r.side==="short"?"red":"yellow";
-  const changeCls=r.change>=0?"green":"red";
-  const selected=r.symbol===state.selectedSymbol?"selected":"";
-  return `<tr class="${selected}" data-symbol="${r.symbol}">
-   <td><strong>${r.symbol}</strong></td>
-   <td class="${cls}"><strong>${r.signal}</strong></td>
-   <td>${r.score}/100</td>
-   <td>${fmtPrice(r.price)}</td>
-   <td>${fmtNum(r.volume)}</td>
-   <td class="${changeCls}">${fmtPct(r.change)}</td>
-   <td>${Number.isFinite(r.rsi)?r.rsi.toFixed(1):"—"}</td>
-   <td>${r.pullback.toFixed(2)}%</td>
-   <td>${r.rebound.toFixed(2)}%</td>
-   <td>${fmtPrice(r.entry)}</td>
-   <td class="red">${fmtPrice(r.sl)}</td>
-   <td class="green">${fmtPrice(r.tp1)}</td>
-   <td class="green">${fmtPrice(r.tp2)}</td>
-   <td class="green">${fmtPrice(r.tp3)}</td>
-   <td><button type="button" data-chart="${r.symbol}">View chart</button></td>
-  </tr>`;
- }).join("");
+  return result;
+}
 
- $("coinRows").querySelectorAll("tr[data-symbol]").forEach(tr=>{
-  tr.addEventListener("click",()=>selectChart(tr.dataset.symbol,false));
- });
- $("coinRows").querySelectorAll("button[data-chart]").forEach(btn=>{
-  btn.addEventListener("click",e=>{
-   e.stopPropagation();selectChart(btn.dataset.chart,true);
+function analyze(candles, ticker) {
+  const closes = candles.map(k => +k[4]);
+  const highs = candles.map(k => +k[2]);
+  const lows = candles.map(k => +k[3]);
+  const volumes = candles.map(k => +k[5]);
+  const rsi = calcRSI(closes);
+  const ema9 = ema(closes, 9);
+  const ema21 = ema(closes, 21);
+
+  const i = closes.length - 1;
+  const price = closes[i];
+  const currentRSI = rsi[i];
+  const previousRSI = rsi[i - 1];
+  const last = candles[i];
+  const open = +last[1];
+  const high = +last[2];
+  const low = +last[3];
+  const close = +last[4];
+
+  const recentStart = Math.max(0, candles.length - 20);
+  let rangeHigh = -Infinity;
+  let rangeLow = Infinity;
+
+  for (let j = recentStart; j < candles.length; j++) {
+    rangeHigh = Math.max(rangeHigh, highs[j]);
+    rangeLow = Math.min(rangeLow, lows[j]);
+  }
+
+  const trs = [];
+  for (let j = 1; j < candles.length; j++) {
+    trs.push(Math.max(
+      highs[j] - lows[j],
+      Math.abs(highs[j] - closes[j - 1]),
+      Math.abs(lows[j] - closes[j - 1])
+    ));
+  }
+
+  const atrValues = trs.slice(-14);
+  const atr = atrValues.reduce((a, b) => a + b, 0) /
+    Math.max(1, atrValues.length);
+
+  const candleRange = Math.max(high - low, 1e-12);
+  const lowerWick = Math.max(0, Math.min(1, (Math.min(open, close) - low) / candleRange));
+  const upperWick = Math.max(0, Math.min(1, (high - Math.max(open, close)) / candleRange));
+
+  const recentVol = volumes.slice(-20);
+  const avgVol = recentVol.reduce((a, b) => a + b, 0) /
+    Math.max(1, recentVol.length);
+  const volumeRatio = avgVol > 0 ? volumes[i] / avgVol : 1;
+
+  const trendUp = ema9[i] > ema21[i];
+  const trendDown = ema9[i] < ema21[i];
+  const bullishCandle = close > open;
+  const bearishCandle = close < open;
+
+  const bullishReversal = currentRSI <= 35 &&
+    currentRSI > previousRSI && bullishCandle;
+  const bearishReversal = currentRSI >= 65 &&
+    currentRSI < previousRSI && bearishCandle;
+
+  let signal = "WAIT";
+  let score = 0;
+
+  if (bullishReversal) {
+    signal = "LONG";
+    score = 55 + (currentRSI <= 30 ? 15 : 0) +
+      (trendUp ? 10 : 0) + (lowerWick > 0.3 ? 10 : 0) +
+      (volumeRatio > 1.2 ? 10 : 0);
+  } else if (bearishReversal) {
+    signal = "SHORT";
+    score = 55 + (currentRSI >= 70 ? 15 : 0) +
+      (trendDown ? 10 : 0) + (upperWick > 0.3 ? 10 : 0) +
+      (volumeRatio > 1.2 ? 10 : 0);
+  } else if (currentRSI <= 30 && currentRSI > previousRSI) {
+    signal = "WATCH LONG";
+    score = 45 + (trendUp ? 10 : 0);
+  } else if (currentRSI >= 70 && currentRSI < previousRSI) {
+    signal = "WATCH SHORT";
+    score = 45 + (trendDown ? 10 : 0);
+  } else if (trendUp) {
+    signal = "BULLISH";
+    score = 35 + (bullishCandle ? 10 : 0);
+  } else if (trendDown) {
+    signal = "BEARISH";
+    score = 35 + (bearishCandle ? 10 : 0);
+  }
+
+  /*
+    Planned EP:
+    Long = breakout above the previous completed candle's high.
+    Short = breakdown below the previous completed candle's low.
+    Neutral = use the direction of the EMA trend as a watch trigger.
+  */
+  const prior = candles[i - 1];
+  const priorHigh = +prior[2];
+  const priorLow = +prior[3];
+  const buffer = Math.max(atr * 0.05, price * 0.0002);
+
+  let side = "neutral";
+  if (["LONG", "WATCH LONG", "BULLISH"].includes(signal)) side = "long";
+  if (["SHORT", "WATCH SHORT", "BEARISH"].includes(signal)) side = "short";
+
+  let ep;
+  if (side === "long") {
+    ep = priorHigh + buffer;
+  } else if (side === "short") {
+    ep = priorLow - buffer;
+  } else if (trendUp) {
+    ep = priorHigh + buffer;
+  } else if (trendDown) {
+    ep = priorLow - buffer;
+  } else {
+    ep = price;
+  }
+
+  /*
+    Structural stop:
+    Long stop below recent swing low; short stop above recent swing high.
+    ATR buffer allows some room for normal candle movement.
+  */
+  const swingStart = Math.max(0, candles.length - 10);
+  let swingLow = Infinity;
+  let swingHigh = -Infinity;
+
+  for (let j = swingStart; j < candles.length; j++) {
+    swingLow = Math.min(swingLow, lows[j]);
+    swingHigh = Math.max(swingHigh, highs[j]);
+  }
+
+  let sl, risk, tp1, tp2, tp3;
+  const direction = side === "short" ? -1 : 1;
+
+  if (direction === 1) {
+    sl = Math.min(swingLow - atr * 0.15, ep - atr);
+    risk = ep - sl;
+    tp1 = ep + risk;
+    tp2 = ep + risk * 2;
+    tp3 = ep + risk * 3;
+  } else {
+    sl = Math.max(swingHigh + atr * 0.15, ep + atr);
+    risk = sl - ep;
+    tp1 = ep - risk;
+    tp2 = ep - risk * 2;
+    tp3 = ep - risk * 3;
+  }
+
+  // Prevent invalid negative targets on extremely volatile low-priced coins.
+  if (tp3 <= 0) {
+    tp1 = ep * 0.99;
+    tp2 = ep * 0.98;
+    tp3 = ep * 0.97;
+  }
+
+  return {
+    symbol: ticker.symbol,
+    signal,
+    side,
+    score: Math.min(100, score),
+    price,
+    volume: +ticker.quoteVolume || 0,
+    change: +ticker.priceChangePercent || 0,
+    rsi: currentRSI,
+    // Numeric percentage values; the table intentionally omits the % symbol.
+    pullback: rangeHigh > 0 ? (rangeHigh - price) / rangeHigh * 100 : 0,
+    rebound: rangeLow > 0 ? (price - rangeLow) / rangeLow * 100 : 0,
+    entry: ep,
+    sl, tp1, tp2, tp3,
+    atr,
+    candles
+  };
+}
+
+/* LOAD TRADING PAIRS */
+async function loadUniverse() {
+  const info = await api(apiPath("exchangeInfo"));
+  const tickers = await api(apiPath("ticker/24hr"));
+
+  const symbols = new Set(info.symbols.filter(s =>
+    s.status === "TRADING" &&
+    s.quoteAsset === "USDT" &&
+    (s.isSpotTradingAllowed !== false) &&
+    ($("market").value !== "futures" || s.contractType === "PERPETUAL")
+  ).map(s => s.symbol));
+
+  let list = tickers.filter(t => symbols.has(t.symbol) && +t.lastPrice > 0);
+  list.sort((a, b) => (+b.quoteVolume || 0) - (+a.quoteVolume || 0));
+
+  if ($("maxCoins").value !== "all") {
+    list = list.slice(0, Number($("maxCoins").value));
+  }
+  return list;
+}
+
+/* SCAN A SINGLE SYMBOL */
+async function scanOne(ticker) {
+  const candles = await api(apiPath("klines"), {
+    symbol: ticker.symbol,
+    interval: $("interval").value,
+    limit: 100
+  }, 12000);
+
+  if (!Array.isArray(candles) || candles.length < 25) {
+    throw new Error("Insufficient candles for " + ticker.symbol);
+  }
+
+  state.candles.set(ticker.symbol, candles);
+  return analyze(candles, ticker);
+}
+
+/* MAIN SCAN */
+async function startScan() {
+  if (state.running) return;
+
+  state.running = true;
+  state.stop = false;
+  state.rows = [];
+  state.candles.clear();
+  state.done = 0;
+  state.total = 0;
+  state.errors = 0;
+  state.btcTrend = "neutral";
+
+  $("startBtn").disabled = true;
+  $("stopBtn").disabled = false;
+  $("loaded").textContent = "0";
+  $("scanned").textContent = "0";
+  $("longs").textContent = "0";
+  $("shorts").textContent = "0";
+  $("coinRows").innerHTML = '<tr><td colspan="15">Loading pairs...</td></tr>';
+  setProgress(0);
+  setStatus("Connecting to Binance...");
+
+  try {
+    const tickers = await loadUniverse();
+    if (state.stop) return;
+    if (!tickers.length) throw new Error("No USDT pairs returned.");
+
+    state.total = tickers.length;
+    $("loaded").textContent = String(state.total);
+    setStatus("Loaded " + state.total + " pairs. Starting scan...");
+
+    let nextIndex = 0;
+
+    async function worker() {
+      while (!state.stop) {
+        const index = nextIndex++;
+        if (index >= tickers.length) return;
+
+        try {
+          const row = await scanOne(tickers[index]);
+          state.rows.push(row);
+          if (row.symbol === "BTCUSDT") state.btcTrend = row.side;
+        } catch (error) {
+          if (error.message !== "Scan stopped") state.errors++;
+        }
+
+        state.done++;
+        $("scanned").textContent = String(state.done);
+        $("longs").textContent = String(state.rows.filter(r =>
+          r.signal === "LONG" || r.signal === "WATCH LONG").length);
+        $("shorts").textContent = String(state.rows.filter(r =>
+          r.signal === "SHORT" || r.signal === "WATCH SHORT").length);
+
+        setProgress(state.done / state.total * 100);
+        setStatus((state.stop ? "Stopping" : "Scanning") +
+          " · " + state.done + "/" + state.total +
+          " · Results " + state.rows.length +
+          " · Failed " + state.errors);
+
+        if (state.done % 4 === 0 || state.done === state.total) renderTable();
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    await Promise.all(Array.from(
+      {length: Math.min(5, tickers.length)}, () => worker()
+    ));
+
+    renderTable();
+    updateBacktestCoins();
+
+    setStatus(state.stop
+      ? "Scan stopped. Analyzed " + state.rows.length + " pairs."
+      : "Scan complete. Analyzed " + state.rows.length +
+        " pairs; failed requests: " + state.errors + ".");
+
+    $("diagnostics").textContent = "Last scan: " +
+      new Date().toLocaleString() + ". Successful: " +
+      state.rows.length + ". Failed: " + state.errors + ".";
+  } catch (error) {
+    setStatus("Scanner error: " + error.message);
+    $("diagnostics").textContent = "Error: " + error.message +
+      ". Check your internet and Binance API access.";
+  } finally {
+    state.running = false;
+    $("startBtn").disabled = false;
+    $("stopBtn").disabled = true;
+  }
+}
+
+function stopScan() {
+  state.stop = true;
+  setStatus("Stopping scan...");
+}
+
+/* FILTERS */
+function setFilter(filter, button) {
+  state.filter = filter;
+
+  document.querySelectorAll("[data-filter]").forEach(b =>
+    b.classList.remove("active")
+  );
+  button.classList.add("active");
+
+  renderTable();
+
+  // Move directly to the filtered list.
+  $("listPanel").scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+function passesFilter(row) {
+  switch (state.filter) {
+    case "long":
+      return row.signal === "LONG" || row.signal === "WATCH LONG";
+    case "short":
+      return row.signal === "SHORT" || row.signal === "WATCH SHORT";
+    case "bullish":
+      return row.signal === "BULLISH" || row.signal === "LONG";
+    case "bearish":
+      return row.signal === "BEARISH" || row.signal === "SHORT";
+    case "oversold":
+      return row.rsi <= 30;
+    case "overbought":
+      return row.rsi >= 70;
+    case "waiting":
+      return row.signal === "WAIT";
+    default:
+      return true;
+  }
+}
+
+/* TABLE */
+function renderTable() {
+  const query = $("search").value.trim().toUpperCase();
+  let list = state.rows.filter(row =>
+    row.symbol.includes(query) && passesFilter(row)
+  );
+
+  if ($("btcFilter").checked && state.btcTrend !== "neutral") {
+    list = list.filter(row =>
+      row.side === "neutral" || row.side === state.btcTrend
+    );
+  }
+
+  const sort = $("sortBy").value;
+  list.sort((a, b) => {
+    if (sort === "volume") return b.volume - a.volume;
+    if (sort === "change") return b.change - a.change;
+    if (sort === "rsi") return a.rsi - b.rsi;
+    return b.score - a.score;
   });
- });
-}
 
-/* Chart always shows one selected symbol. */
-function selectChart(symbol,scroll=true){
- state.selectedSymbol=symbol;
- $("chartSymbol").textContent=symbol;
- loadChart();
- renderTable();
- if(scroll)$("chartPanel").scrollIntoView({behavior:"smooth",block:"start"});
-}
-function loadChart(){
- const symbol=state.selectedSymbol||$("chartSymbol").textContent.trim()||"BTCUSDT";
- const interval=$("chartInterval").value;
- const url="https://s.tradingview.com/widgetembed/?symbol="+
-  encodeURIComponent("BINANCE:"+symbol)+
-  "&interval="+encodeURIComponent(interval)+
-  "&hidesidetoolbar=0&symboledit=0&saveimage=0"+
-  "&toolbarbg=10192a&theme=dark&style=1"+
-  "&timezone=Asia%2FKarachi&withdateranges=1&hideideas=1";
- $("chartFrame").src=url;
-}
-
-/* Checklist */
-function updateChecklist(){
- const boxes=[...document.querySelectorAll(".check")];
- const count=boxes.filter(b=>b.checked).length;
- $("checkCount").textContent=count+" / "+boxes.length;
- $("checkAdvice").textContent=count===6?
-  "All checks complete. Verify the trade and risk.":count>=4?
-  "Several checks are complete. Review the remaining conditions.":
-  "Review the conditions before considering a trade.";
-}
-document.querySelectorAll(".check").forEach(c=>c.addEventListener("change",updateChecklist));
-
-/* Simple historical RSI backtest */
-function updateBacktestCoins(){
- const select=$("btSymbol"),previous=select.value;
- const symbols=[...new Set(state.rows.map(r=>r.symbol))];
- if(!symbols.length)return;
- select.innerHTML=symbols.map(s=>`<option value="${s}">${s}</option>`).join("");
- if(symbols.includes(previous))select.value=previous;
-}
-function runBacktest(){
- const symbol=$("btSymbol").value,candles=state.candles.get(symbol);
- if(!candles||candles.length<40){
-  $("btResult").textContent="No candle history. Run a successful scan first.";return;
- }
- const closes=candles.map(k=>+k[4]),rsi=calcRSI(closes);
- const mode=$("btSide").value;
- let trades=0,wins=0,net=0,position=null;
- for(let i=20;i<closes.length;i++){
-  const r=rsi[i],p=rsi[i-1];
-  if(!Number.isFinite(r)||!Number.isFinite(p))continue;
-  if(!position){
-   if((mode==="both"||mode==="long")&&p<30&&r>=30)
-    position={side:"long",entry:closes[i]};
-   else if((mode==="both"||mode==="short")&&p>70&&r<=70)
-    position={side:"short",entry:closes[i]};
-  }else{
-   const exit=(position.side==="long"&&r>=55)||(position.side==="short"&&r<=45);
-   if(exit||i===closes.length-1){
-    const ret=position.side==="long"?
-     (closes[i]-position.entry)/position.entry*100:
-     (position.entry-closes[i])/position.entry*100;
-    trades++;if(ret>0)wins++;net+=ret;position=null;
-   }
+  if (!list.length) {
+    $("coinRows").innerHTML =
+      '<tr><td colspan="15" class="muted">No matching results. Try Search Coin or change the filter.</td></tr>';
+    return;
   }
- }
- if(position){
-  const last=closes[closes.length-1];
-  const ret=position.side==="long"?(last-position.entry)/position.entry*100:
-   (position.entry-last)/position.entry*100;
-  trades++;if(ret>0)wins++;net+=ret;
- }
- $("btResult").innerHTML="Coin: <strong>"+symbol+"</strong><br>"+
-  "Closed trades: <strong>"+trades+"</strong><br>"+
-  "Winning trades: <strong>"+wins+"</strong><br>"+
-  "Win rate: <strong>"+(trades?wins/trades*100:0).toFixed(1)+"%</strong><br>"+
-  "Total simple return: <strong class='"+(net>=0?"green":"red")+"'>"+net.toFixed(2)+
-  "%</strong><br><span class='muted small'>Illustrative only; excludes fees, slippage, and funding.</span>";
+
+  $("coinRows").innerHTML = list.map(row => {
+    const signalClass = row.side === "long" ? "green" :
+      row.side === "short" ? "red" : "yellow";
+    const changeClass = row.change >= 0 ? "green" : "red";
+    const selected = row.symbol === state.selectedSymbol ? "selected" : "";
+
+    return `<tr class="${selected}" data-symbol="${row.symbol}">
+      <td><strong>${row.symbol}</strong></td>
+      <td class="${signalClass}"><strong>${row.signal}</strong></td>
+      <td>${row.score}/100</td>
+      <td>${fmtPrice(row.price)}</td>
+      <td>${fmtNum(row.volume)}</td>
+      <td class="${changeClass}">${fmtPct(row.change)}</td>
+      <td>${Number.isFinite(row.rsi) ? row.rsi.toFixed(1) : "—"}</td>
+      <td>${row.pullback.toFixed(2)}</td>
+      <td>${row.rebound.toFixed(2)}</td>
+      <td><strong>${fmtPrice(row.entry)}</strong></td>
+      <td class="red">${fmtPrice(row.sl)}</td>
+      <td class="green">${fmtPrice(row.tp1)}</td>
+      <td class="green">${fmtPrice(row.tp2)}</td>
+      <td class="green">${fmtPrice(row.tp3)}</td>
+      <td><button type="button" data-chart="${row.symbol}">Chart</button></td>
+    </tr>`;
+  }).join("");
+
+  // Clicking anywhere on a row selects that coin.
+  $("coinRows").querySelectorAll("tr[data-symbol]").forEach(tr => {
+    tr.addEventListener("click", () => selectChart(tr.dataset.symbol, true));
+  });
+
+  $("coinRows").querySelectorAll("button[data-chart]").forEach(btn => {
+    btn.addEventListener("click", event => {
+      event.stopPropagation();
+      selectChart(btn.dataset.chart, true);
+    });
+  });
 }
 
-/* API test */
-async function testConnection(){
- $("diagnostics").textContent="Testing Binance connection...";
- try{
-  const data=await api(pathFor("time"),{},10000);
-  $("diagnostics").textContent="Connection successful. Binance server timestamp: "+
-   (data.serverTime?new Date(data.serverTime).toLocaleString():"response received");
- }catch(e){
-  $("diagnostics").textContent="Connection failed: "+e.message+
-   ". Check internet access or try another network.";
- }
-}
-$("btcFilter").addEventListener("change",renderTable);
+/* COIN SEARCH
+   Existing results are filtered first.
+   If the typed symbol isn't loaded, request it directly from Binance.
+*/
+$("search").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    searchCoin();
+  }
+});
 
-/* Initial chart; scanning starts when the user presses Start Scan. */
+async function searchCoin() {
+  const raw = $("search").value.trim().toUpperCase().replace(/\s+/g, "");
+  if (!raw) {
+    renderTable();
+    return;
+  }
+
+  renderTable();
+
+  const alreadyLoaded = state.rows.some(row => row.symbol.includes(raw));
+  if (alreadyLoaded) {
+    $("searchMessage").textContent = "Showing scanned results matching " + raw + ".";
+    $("listPanel").scrollIntoView({behavior: "smooth", block: "start"});
+    return;
+  }
+
+  // If the user enters BTC, try BTCUSDT as well.
+  let symbol = raw.replace(/[^A-Z0-9]/g, "");
+  if (!symbol.endsWith("USDT")) symbol += "USDT";
+
+  $("searchBtn").disabled = true;
+  $("searchMessage").textContent = "Looking up " + symbol + " on Binance...";
+
+  try {
+    const tickers = await api(apiPath("ticker/24hr"), {symbol}, 12000);
+    if (!tickers || !tickers.symbol) {
+      throw new Error("Symbol not found");
+    }
+
+    const row = await scanOne(tickers);
+    const index = state.rows.findIndex(item => item.symbol === row.symbol);
+    if (index >= 0) state.rows[index] = row;
+    else state.rows.unshift(row);
+
+    $("search").value = row.symbol;
+    state.selectedSymbol = row.symbol;
+    $("searchMessage").textContent =
+      row.symbol + " loaded successfully. Showing its scanned result.";
+    renderTable();
+    updateBacktestCoins();
+    selectChart(row.symbol, false);
+    $("listPanel").scrollIntoView({behavior: "smooth", block: "start"});
+  } catch (error) {
+    $("searchMessage").textContent =
+      "Could not load " + symbol + ": " + error.message +
+      ". Check the symbol, selected market, and API connection.";
+    renderTable();
+  } finally {
+    $("searchBtn").disabled = false;
+  }
+}
+
+/* SINGLE SELECTED CHART */
+function selectChart(symbol, scroll = true) {
+  state.selectedSymbol = symbol;
+  $("chartSymbol").textContent = symbol;
+  loadChart();
+  renderTable();
+
+  if (scroll) {
+    $("chartPanel").scrollIntoView({behavior: "smooth", block: "start"});
+  }
+}
+
+function loadChart() {
+  const symbol = state.selectedSymbol || "BTCUSDT";
+  const interval = $("chartInterval").value;
+
+  const url = "https://s.tradingview.com/widgetembed/?" +
+    "symbol=" + encodeURIComponent("BINANCE:" + symbol) +
+    "&interval=" + encodeURIComponent(interval) +
+    "&hidesidetoolbar=0&symboledit=0&saveimage=0" +
+    "&toolbarbg=10192a&theme=dark&style=1" +
+    "&timezone=Asia%2FKarachi&withdateranges=1&hideideas=1";
+
+  $("chartFrame").src = url;
+}
+
+/* CHECKLIST */
+function updateChecklist() {
+  const boxes = [...document.querySelectorAll(".check")];
+  const count = boxes.filter(box => box.checked).length;
+  $("checkCount").textContent = count + " / " + boxes.length;
+
+  $("checkAdvice").textContent = count === 6
+    ? "All checks complete. Still verify the trade and risk."
+    : count >= 4
+      ? "Several checks complete. Review the remaining conditions."
+      : "Review the conditions before considering a trade.";
+}
+
+document.querySelectorAll(".check").forEach(box =>
+  box.addEventListener("change", updateChecklist)
+);
+
+/* BACKTEST */
+function updateBacktestCoins() {
+  const select = $("btSymbol");
+  const previous = select.value;
+  const symbols = [...new Set(state.rows.map(row => row.symbol))];
+  if (!symbols.length) return;
+
+  select.innerHTML = symbols.map(symbol =>
+    `<option value="${symbol}">${symbol}</option>`
+  ).join("");
+
+  if (symbols.includes(previous)) select.value = previous;
+}
+
+function runBacktest() {
+  const symbol = $("btSymbol").value;
+  const candles = state.candles.get(symbol);
+
+  if (!candles || candles.length < 40) {
+    $("btResult").textContent = "No candle history available. Scan this coin first.";
+    return;
+  }
+
+  const closes = candles.map(k => +k[4]);
+  const rsi = calcRSI(closes);
+  const mode = $("btSide").value;
+
+  let trades = 0, wins = 0, totalReturn = 0, position = null;
+
+  for (let i = 20; i < closes.length; i++) {
+    const current = rsi[i], previous = rsi[i - 1];
+    if (!Number.isFinite(current) || !Number.isFinite(previous)) continue;
+
+    if (!position) {
+      if ((mode === "both" || mode === "long") &&
+          previous < 30 && current >= 30) {
+        position = {side: "long", entry: closes[i]};
+      } else if ((mode === "both" || mode === "short") &&
+                 previous > 70 && current <= 70) {
+        position = {side: "short", entry: closes[i]};
+      }
+    } else {
+      const shouldExit =
+        (position.side === "long" && current >= 55) ||
+        (position.side === "short" && current <= 45);
+
+      if (shouldExit || i === closes.length - 1) {
+        const ret = position.side === "long"
+          ? (closes[i] - position.entry) / position.entry * 100
+          : (position.entry - closes[i]) / position.entry * 100;
+
+        trades++;
+        if (ret > 0) wins++;
+        totalReturn += ret;
+        position = null;
+      }
+    }
+  }
+
+  if (position) {
+    const last = closes[closes.length - 1];
+    const ret = position.side === "long"
+      ? (last - position.entry) / position.entry * 100
+      : (position.entry - last) / position.entry * 100;
+
+    trades++;
+    if (ret > 0) wins++;
+    totalReturn += ret;
+  }
+
+  $("btResult").innerHTML =
+    "Coin: <strong>" + symbol + "</strong><br>" +
+    "Closed trades: <strong>" + trades + "</strong><br>" +
+    "Winning trades: <strong>" + wins + "</strong><br>" +
+    "Win rate: <strong>" + (trades ? wins / trades * 100 : 0).toFixed(1) +
+    "%</strong><br>Total simple return: <strong class='" +
+    (totalReturn >= 0 ? "green" : "red") + "'>" +
+    totalReturn.toFixed(2) + "%</strong><br>" +
+    '<span class="muted small">Illustrative RSI simulation. Excludes fees, slippage, funding, and realistic execution.</span>';
+}
+
+/* CONNECTION TEST */
+async function testConnection() {
+  $("diagnostics").textContent = "Testing Binance...";
+  try {
+    const data = await api(apiPath("time"), {}, 10000);
+    $("diagnostics").textContent =
+      "Connection successful. Binance server time: " +
+      (data.serverTime ? new Date(data.serverTime).toLocaleString() : "received");
+  } catch (error) {
+    $("diagnostics").textContent = "Connection failed: " + error.message +
+      ". Check internet access or try another network.";
+  }
+}
+
+$("btcFilter").addEventListener("change", renderTable);
+
+/* INITIAL CHART */
 loadChart();
 </script>
 </body>
