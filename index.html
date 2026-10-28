@@ -3,760 +3,368 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b0e11">
-<title>Crypto Scanner Pro | PKT Quant Terminal</title>
-
-<!-- CDN dependencies; no build process required -->
+<title>Crypto Scanner Pro — Quant Terminal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-
 <style>
-:root {
-  color-scheme: dark;
-  --bg:#0b0e11;
-  --panel:#15191e;
-  --panel2:#1e2329;
-  --border:#2b3139;
-  --muted:#848e9c;
-  --yellow:#f0b90b;
-  --green:#0ecb81;
-  --red:#f6465d;
-  --blue:#3b82f6;
-  --purple:#a855f7;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0; background:var(--bg); color:#eaecef;
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  font-size:13px;
-}
-button,input,select { font:inherit; }
-button { cursor:pointer; }
-button:focus-visible,input:focus-visible,select:focus-visible {
-  outline:2px solid var(--yellow); outline-offset:2px;
-}
-.panel { background:var(--panel); border:1px solid var(--border); border-radius:9px; }
-.panel-heading {
-  padding:14px 16px; border-bottom:1px solid var(--border);
-  display:flex; justify-content:space-between; align-items:center; gap:10px;
-}
-.muted { color:var(--muted); }
-.yellow { color:var(--yellow); }
-.mono { font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; font-variant-numeric:tabular-nums; }
-.pill {
-  display:inline-flex; align-items:center; padding:4px 7px; border-radius:4px;
-  font-size:10px; font-weight:800; letter-spacing:.035em; white-space:nowrap;
-}
-.regime-long { background:#0ecb8118;color:var(--green);border:1px solid #0ecb8140; }
-.regime-short { background:#f6465d18;color:var(--red);border:1px solid #f6465d40; }
-.regime-bullish { background:#3b82f618;color:#60a5fa;border:1px solid #3b82f640; }
-.regime-bearish { background:#a855f718;color:#c084fc;border:1px solid #a855f740; }
-.metric-button {
-  width:100%; padding:13px 14px; border:1px solid var(--border); border-radius:8px;
-  text-align:left; background:var(--panel); transition:background .15s,border-color .15s;
-}
-.metric-button:hover { background:#1e2329; }
-.metric-button.active { border-color:var(--yellow); box-shadow:inset 0 0 0 1px #f0b90b30; }
-.metric-button .metric-number { display:block;font-size:23px;font-weight:750;margin-top:7px; }
-.session-segment { height:7px; flex-shrink:0; position:relative; }
-.session-segment:first-child { border-radius:5px 0 0 5px; }
-.session-segment:last-child { border-radius:0 5px 5px 0; }
-.session-segment .fill {
-  position:absolute; inset:0 auto 0 0; width:0; transition:width .4s linear;
-  background:var(--yellow); border-radius:inherit;
-}
-.table-scroll { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; white-space:nowrap; }
-thead { background:#1a1f25; }
-th {
-  color:#848e9c; font-size:10px; text-transform:uppercase; letter-spacing:.06em;
-  font-weight:700; text-align:right; padding:12px 12px; border-bottom:1px solid var(--border);
-}
-td {
-  text-align:right; padding:13px 12px; border-bottom:1px solid #252a31;
-  font-size:12px;
-}
-th:first-child,td:first-child { text-align:left; }
-tbody tr { cursor:pointer; transition:background .12s; }
-tbody tr:hover { background:#1c2229; }
-tbody tr.selected { background:#f0b90b0c; box-shadow:inset 2px 0 var(--yellow); }
-tbody tr:last-child td { border-bottom:0; }
-.action-btn {
-  border:1px solid #4b4326; background:#f0b90b13; color:var(--yellow);
-  border-radius:5px; padding:6px 9px; font-size:11px; font-weight:700;
-}
-.action-btn:hover { background:#f0b90b26; }
-.control {
-  border:1px solid var(--border); border-radius:6px; background:#0b0e11;
-  padding:9px 10px; color:#eaecef; min-height:36px;
-}
-.control:focus { border-color:var(--yellow); outline:none; }
-.news-item { padding:14px 15px; border-bottom:1px solid var(--border); }
-.news-item:last-child { border-bottom:0; }
-.dot { display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px; }
-.live-dot { background:var(--green); box-shadow:0 0 8px #0ecb8155; }
-.chart-frame { height:490px; min-height:350px; background:#0b0e11; }
-#chartHost { height:100%; width:100%; }
-#chartHost iframe { border:0; }
-#toast {
-  position:fixed; right:18px; bottom:18px; z-index:100; background:#242a31;
-  border:1px solid #3b424c; padding:12px 16px; border-radius:7px;
-  box-shadow:0 8px 30px #0008; display:none; max-width:min(420px,90vw);
-}
-@media(max-width:700px) {
-  .chart-frame { height:390px; }
-  .panel-heading { padding:12px; }
-  .mobile-stack { flex-direction:column; align-items:stretch; }
-  .metric-button { padding:10px; }
-  .metric-button .metric-number { font-size:20px; }
-}
+:root{color-scheme:dark;--bg:#0b0e11;--panel:#15191e;--panel2:#1e2329;--border:#2b3139;--muted:#848e9c;--yellow:#f0b90b;--green:#0ecb81;--red:#f6465d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#eaecef;font:13px system-ui,-apple-system,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:9px}
+.muted{color:var(--muted)}.yellow{color:var(--yellow)}.mono{font-family:Consolas,monospace;font-variant-numeric:tabular-nums}
+.heading{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pill{display:inline-block;padding:4px 7px;border-radius:4px;font-size:10px;font-weight:800;white-space:nowrap}
+.regime-LONG{color:#0ecb81;background:#0ecb8118;border:1px solid #0ecb8140}
+.regime-SHORT{color:#f6465d;background:#f6465d18;border:1px solid #f6465d40}
+.regime-BULLISH{color:#60a5fa;background:#3b82f618;border:1px solid #3b82f640}
+.regime-BEARISH{color:#c084fc;background:#a855f718;border:1px solid #a855f740}
+.metric{width:100%;padding:13px;background:var(--panel);border:1px solid var(--border);border-radius:8px;text-align:left}
+.metric:hover{background:var(--panel2)}.metric.active{border-color:var(--yellow);box-shadow:inset 0 0 0 1px #f0b90b35}
+.metric strong{display:block;font-size:24px;margin:7px 0 2px}
+.control{background:#0b0e11;border:1px solid var(--border);border-radius:6px;padding:9px 10px;min-height:37px;color:#eaecef}
+.control:focus{outline:1px solid var(--yellow);border-color:var(--yellow)}
+.table-scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;white-space:nowrap}
+th{background:#1a1f25;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+th,td{text-align:right;padding:12px;border-bottom:1px solid #252a31}
+th:first-child,td:first-child{text-align:left}
+tbody tr{cursor:pointer}tbody tr:hover{background:#1c2229}
+tbody tr.selected{background:#f0b90b0d;box-shadow:inset 2px 0 var(--yellow)}
+.action{border:1px solid #4b4326;background:#f0b90b13;color:var(--yellow);border-radius:5px;padding:7px 9px;font-size:11px;font-weight:700}
+.action:hover{background:#f0b90b28}
+.segment{height:8px;position:relative;overflow:hidden}
+.segment .fill{height:100%;background:var(--yellow);transition:width .4s linear}
+.news{padding:14px;border-bottom:1px solid var(--border)}
+.chart{height:480px}.chart iframe{border:0}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px}
+@media(max-width:700px){.chart{height:380px}.heading{padding:12px}.metric{padding:10px}.metric strong{font-size:20px}}
 </style>
 </head>
-
 <body>
 <header class="border-b border-[#2b3139] bg-[#101419]">
-  <div class="max-w-[1800px] mx-auto px-4 lg:px-6 py-3 flex items-center justify-between gap-4">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-[#f0b90b] text-black font-black flex items-center justify-center text-lg">₿</div>
-      <div>
-        <div class="font-extrabold tracking-wide text-white text-base">CRYPTO SCANNER <span class="yellow">PRO</span></div>
-        <div class="muted text-[10px] tracking-[.16em] uppercase">Quantitative Market Intelligence</div>
-      </div>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="hidden sm:block text-right">
-        <div class="text-[10px] muted uppercase tracking-wider">Market data</div>
-        <div id="connectionStatus" class="text-xs"><span class="dot" style="background:#f0b90b"></span>Connecting...</div>
-      </div>
-      <button id="refreshBtn" class="action-btn flex items-center gap-2" title="Refresh market data">
-        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
-      </button>
-    </div>
-  </div>
+<div class="max-w-[1800px] mx-auto px-4 lg:px-6 py-3 flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-[#f0b90b] text-black font-black flex items-center justify-center text-lg">₿</div>
+<div><div class="font-extrabold text-base">CRYPTO SCANNER <span class="yellow">PRO</span></div><div class="muted text-[10px] uppercase tracking-widest">Quantitative Market Intelligence</div></div>
+</div>
+<div class="flex items-center gap-3"><span id="connection" class="muted text-xs">Connecting...</span><button id="refresh" class="action">↻ Scan now</button></div>
+</div>
 </header>
 
-<main class="max-w-[1800px] mx-auto p-3 md:p-5 lg:p-6 space-y-4">
+<main class="max-w-[1800px] mx-auto p-3 md:p-5 space-y-4">
+<section class="panel p-4 md:p-5">
+<div class="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
+<div><div class="muted text-[10px] uppercase tracking-widest">Pakistan Standard Time</div>
+<div id="clock" class="mono text-4xl font-bold mt-2">--:--:--</div><div id="date" class="muted mt-2"></div>
+<span class="pill mt-3 inline-block" style="color:#f0b90b;background:#f0b90b18">PKT · UTC+05:00</span></div>
+<div>
+<div class="flex justify-between gap-3 mb-3"><div><b>Market Session Progress</b><div id="session" class="yellow mt-1 font-bold">Loading...</div><div id="sessionDesc" class="muted text-xs mt-1"></div></div>
+<div class="text-right"><div class="muted text-[10px]">ELAPSED</div><div id="progressText" class="mono text-xl font-bold">0%</div><div id="remaining" class="muted text-[10px]"></div></div></div>
+<div id="sessionBar" class="flex gap-[2px] rounded overflow-hidden">
+<div class="segment" style="width:33.333%;background:#1d7658"></div><div class="segment" style="width:16.667%;background:#72551b"></div><div class="segment" style="width:16.667%;background:#8b303a"></div><div class="segment" style="width:33.333%;background:#39416f"></div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 text-xs">
+<div><span style="color:#0ecb81">● Asian Session</span><div class="muted mt-1">05:00–13:00</div></div>
+<div><span style="color:#f0b90b">● London Pre-Open</span><div class="muted mt-1">13:00–17:00</div></div>
+<div><span style="color:#f6465d">● US Overlap</span><div class="muted mt-1">17:00–21:00</div></div>
+<div><span style="color:#818cf8">● Pacific Settlement</span><div class="muted mt-1">21:00–05:00</div></div>
+</div>
+<div class="muted text-[10px] mt-3">Configured PKT session windows; cryptocurrency markets operate 24/7.</div>
+</div>
+</div>
+</section>
 
-  <!-- PKT clock and session engine -->
-  <section class="panel p-4 md:p-5">
-    <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-5 lg:gap-8">
-      <div>
-        <div class="muted text-[10px] uppercase tracking-[.16em] mb-2">Pakistan Standard Time</div>
-        <div id="pktClock" class="mono text-3xl md:text-4xl font-bold tracking-tight">--:--:--</div>
-        <div id="pktDate" class="muted text-xs mt-2">Loading local date...</div>
-        <div class="mt-3 flex items-center gap-2">
-          <span class="pill" style="background:#f0b90b16;color:var(--yellow)">PKT · UTC+05:00</span>
-          <span class="muted text-[10px]">Asia/Karachi</span>
-        </div>
-      </div>
-      <div>
-        <div class="flex justify-between items-start gap-3 mb-3">
-          <div>
-            <div class="font-bold text-sm">Market Session Progress</div>
-            <div id="sessionName" class="yellow font-semibold mt-1">Calculating session...</div>
-            <div id="sessionDescription" class="muted text-xs mt-1">Session status is based on Pakistan local time.</div>
-          </div>
-          <div class="text-right shrink-0">
-            <div class="muted text-[10px] uppercase">Session elapsed</div>
-            <div id="sessionPercent" class="mono font-bold text-lg">0%</div>
-            <div id="sessionRemaining" class="muted text-[10px]">-- remaining</div>
-          </div>
-        </div>
-        <div id="sessionBar" class="flex overflow-hidden rounded-md gap-[2px]" aria-label="Trading session progress">
-          <div class="session-segment" style="width:33.333%;background:#1d7658"></div>
-          <div class="session-segment" style="width:16.667%;background:#72551b"></div>
-          <div class="session-segment" style="width:16.667%;background:#8b303a"></div>
-          <div class="session-segment" style="width:33.333%;background:#39416f"></div>
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
-          <div><div class="flex items-center gap-1.5"><span class="dot" style="background:#0ecb81"></span><span class="text-xs">Asian Session</span></div><div class="muted text-[10px] mt-1">05:00–13:00 PKT</div></div>
-          <div><div class="flex items-center gap-1.5"><span class="dot" style="background:#f0b90b"></span><span class="text-xs">London Pre-Open</span></div><div class="muted text-[10px] mt-1">13:00–17:00 PKT</div></div>
-          <div><div class="flex items-center gap-1.5"><span class="dot" style="background:#f6465d"></span><span class="text-xs">US Overlap</span></div><div class="muted text-[10px] mt-1">17:00–21:00 PKT</div></div>
-          <div><div class="flex items-center gap-1.5"><span class="dot" style="background:#818cf8"></span><span class="text-xs">Pacific Settlement</span></div><div class="muted text-[10px] mt-1">21:00–05:00 PKT</div></div>
-        </div>
-        <p class="muted text-[10px] mt-3">These are the dashboard's configured session windows, not official exchange opening hours. Crypto trades 24/7.</p>
-      </div>
-    </div>
-  </section>
+<section class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+<button class="metric" data-filter="LONG"><span style="color:#0ecb81;font-weight:bold">LONG ↗</span><strong id="countLONG" class="mono">—</strong><span class="muted text-xs">Long setups</span></button>
+<button class="metric" data-filter="SHORT"><span style="color:#f6465d;font-weight:bold">SHORT ↘</span><strong id="countSHORT" class="mono">—</strong><span class="muted text-xs">Short setups</span></button>
+<button class="metric" data-filter="BULLISH"><span style="color:#60a5fa;font-weight:bold">BULLISH ↗</span><strong id="countBULLISH" class="mono">—</strong><span class="muted text-xs">Bullish regimes</span></button>
+<button class="metric" data-filter="BEARISH"><span style="color:#c084fc;font-weight:bold">BEARISH ↘</span><strong id="countBEARISH" class="mono">—</strong><span class="muted text-xs">Bearish regimes</span></button>
+</section>
 
-  <!-- Signal metric filters -->
-  <section class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-    <button class="metric-button" data-filter="LONG">
-      <div class="flex items-center justify-between"><span class="text-xs font-bold" style="color:var(--green)">LONG</span><i data-lucide="trending-up" class="w-4 h-4" style="color:var(--green)"></i></div>
-      <span id="countLONG" class="metric-number mono">0</span><span class="muted text-[10px]">Long setups</span>
-    </button>
-    <button class="metric-button" data-filter="SHORT">
-      <div class="flex items-center justify-between"><span class="text-xs font-bold" style="color:var(--red)">SHORT</span><i data-lucide="trending-down" class="w-4 h-4" style="color:var(--red)"></i></div>
-      <span id="countSHORT" class="metric-number mono">0</span><span class="muted text-[10px]">Short setups</span>
-    </button>
-    <button class="metric-button" data-filter="BULLISH">
-      <div class="flex items-center justify-between"><span class="text-xs font-bold" style="color:#60a5fa">BULLISH</span><i data-lucide="chart-no-axes-combined" class="w-4 h-4" style="color:#60a5fa"></i></div>
-      <span id="countBULLISH" class="metric-number mono">0</span><span class="muted text-[10px]">Bullish regimes</span>
-    </button>
-    <button class="metric-button" data-filter="BEARISH">
-      <div class="flex items-center justify-between"><span class="text-xs font-bold" style="color:#c084fc">BEARISH</span><i data-lucide="activity" class="w-4 h-4" style="color:#c084fc"></i></div>
-      <span id="countBEARISH" class="metric-number mono">0</span><span class="muted text-[10px]">Bearish regimes</span>
-    </button>
-  </section>
+<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-4 items-start">
+<div class="space-y-4 min-w-0">
+<section class="panel overflow-hidden" id="chartPanel">
+<div class="heading"><div><b>Advanced Chart Terminal</b><div class="muted text-[10px] mt-1">TradingView · Binance Spot</div></div><span class="muted text-xs"><span class="dot"></span>Chart</span></div>
+<div class="p-3 flex flex-col sm:flex-row gap-2 border-b border-[#2b3139]">
+<input id="search" class="control flex-1 min-w-0" placeholder="Search ticker: BTC, ETH, SOL..." aria-label="Search ticker" autocomplete="off">
+<label class="flex items-center gap-2"><span class="muted text-xs">Timeframe</span><select id="tf" class="control"><option>15m</option><option>1h</option><option selected>4h</option><option>1D</option><option>1W</option><option>1M</option></select></label>
+</div>
+<div class="px-3 py-2 flex justify-between items-center border-b border-[#2b3139]"><div><b id="symbol" class="yellow text-base">BTCUSDT</b><span class="muted ml-2">Selected symbol</span></div><button id="clear" class="underline muted text-xs">Clear filters</button></div>
+<div class="chart" id="chart"></div>
+<div class="p-3 muted text-[10px] border-t border-[#2b3139]">TradingView chart. Bollinger Bands requested as a native indicator; widget indicator support can vary.</div>
+</section>
 
-  <!-- Main grid -->
-  <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_330px] gap-4 items-start">
-    <div class="space-y-4 min-w-0">
+<section class="panel overflow-hidden" id="ledger">
+<div class="heading"><div><b>System Scanning Ledger Matrix</b><div class="muted text-[10px] mt-1">Completed OHLCV candles · EMA / RSI / Bollinger / ATR</div></div><div class="text-right"><b id="rowsCount">0 assets</b><div id="updated" class="muted text-[10px]">Waiting for scan</div></div></div>
+<div class="table-scroll"><table>
+<thead><tr><th>Asset</th><th>24h Vol</th><th>Regime</th><th>Trigger</th><th>EP</th><th>SL</th><th>TP1</th><th>TP2</th><th>TP3</th><th>Action</th></tr></thead>
+<tbody id="rows"><tr><td colspan="10" class="muted text-center py-8">Fetching historical candles...</td></tr></tbody>
+</table></div>
+<div id="empty" class="hidden p-5 text-center muted">No coins match the current search or filter.</div>
+<div class="p-3 muted text-[10px] border-t border-[#2b3139]">EP = latest completed candle close. SL = 1.5 × ATR(14). TP1/TP2/TP3 = 2R/3R/4R. Technical outputs are research signals, not guaranteed outcomes.</div>
+</section>
+</div>
 
-      <!-- Search and chart terminal -->
-      <section class="panel overflow-hidden">
-        <div class="panel-heading">
-          <div>
-            <div class="font-bold text-sm">Advanced Chart Terminal</div>
-            <div class="muted text-[10px] mt-1">TradingView · Binance market symbols</div>
-          </div>
-          <div class="flex items-center gap-2 text-xs"><span class="dot live-dot"></span><span class="muted">Chart terminal</span></div>
-        </div>
-        <div class="p-3 border-b border-[#2b3139] flex flex-col sm:flex-row gap-2">
-          <label class="relative flex-1 min-w-0">
-            <i data-lucide="search" class="w-4 h-4 muted absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input id="searchInput" class="control w-full pl-9" type="search" placeholder="Search ticker (BTC, ETH, SOL...)..." autocomplete="off" aria-label="Search asset ticker">
-          </label>
-          <label class="flex items-center gap-2 shrink-0">
-            <span class="muted text-xs">Timeframe</span>
-            <select id="timeframeSelect" class="control" aria-label="Chart timeframe">
-              <option value="15m">15m</option>
-              <option value="1h">1h</option>
-              <option value="4h" selected>4h</option>
-              <option value="1D">1D</option>
-              <option value="1W">1W</option>
-              <option value="1M">1M</option>
-            </select>
-          </label>
-        </div>
-        <div class="px-3 py-2 flex flex-wrap items-center justify-between gap-2 border-b border-[#2b3139]">
-          <div><span id="activeSymbol" class="font-extrabold text-base yellow">BTCUSDT</span><span class="muted ml-2">Binance Spot</span></div>
-          <button id="clearFilters" class="text-xs underline muted hover:text-white">Clear all filters</button>
-        </div>
-        <div class="chart-frame"><div id="chartHost"></div></div>
-        <div class="px-3 py-2 muted text-[10px] border-t border-[#2b3139]">
-          Chart provided by TradingView. Bollinger Bands are requested as a native indicator; indicator availability may vary by widget version.
-        </div>
-      </section>
-
-      <!-- Ledger -->
-      <section class="panel overflow-hidden">
-        <div class="panel-heading">
-          <div>
-            <div class="font-bold text-sm">System Scanning Ledger Matrix</div>
-            <div class="muted text-[10px] mt-1">Technical levels · Illustrative strategy engine · Binance USDT pairs</div>
-          </div>
-          <div class="text-right"><div id="rowCount" class="font-bold mono">0 assets</div><div id="lastUpdated" class="muted text-[10px]">Awaiting scan</div></div>
-        </div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr>
-              <th>Asset</th><th>24h Vol</th><th>Regime</th><th>Trigger</th>
-              <th>EP</th><th>SL</th><th>TP1</th><th>TP2</th><th>TP3</th><th>Action</th>
-            </tr></thead>
-            <tbody id="assetTable">
-              <tr><td colspan="10" class="muted text-center py-8">Loading market data...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div id="emptyState" class="hidden p-8 text-center muted">No assets match your search and filters.</div>
-        <div class="p-3 border-t border-[#2b3139] muted text-[10px]">
-          EP = illustrative entry point. TP levels target reward-to-risk multiples of 2R, 3R and 4R. Actual fills and slippage may differ.
-        </div>
-      </section>
-    </div>
-
-    <!-- Macro event feed -->
-    <aside class="panel overflow-hidden">
-      <div class="panel-heading">
-        <div>
-          <div class="font-bold text-sm">Macro Event Alpha Stream</div>
-          <div class="muted text-[10px] mt-1">Risk watchlist · Sample scenarios</div>
-        </div>
-        <span class="pill" style="background:#f6465d18;color:#f87171">RISK FEED</span>
-      </div>
-      <div class="p-3 border-b border-[#2b3139]">
-        <div class="text-xs font-semibold">Risk management monitor</div>
-        <div class="muted text-[11px] mt-1">Illustrative alerts only. No live news provider is connected.</div>
-      </div>
-      <div id="newsFeed">
-        <article class="news-item">
-          <div class="flex justify-between items-start gap-2"><span class="pill" style="background:#f6465d18;color:#f87171">HIGH VOLATILITY THREAT</span><span class="muted text-[10px]">Scenario</span></div>
-          <div class="font-bold mt-3 text-sm">Federal Reserve collateral requirements</div>
-          <p class="muted mt-2 leading-relaxed text-xs">A hypothetical tightening of funding conditions could increase cross-asset volatility. Reassess leverage, reduce position size if necessary, and avoid placing stops directly at obvious liquidity levels.</p>
-        </article>
-        <article class="news-item">
-          <div class="flex justify-between items-start gap-2"><span class="pill" style="background:#3b82f618;color:#60a5fa">INSTITUTIONAL FLOWS</span><span class="muted text-[10px]">Scenario</span></div>
-          <div class="font-bold mt-3 text-sm">Spot crypto ETF flow acceleration</div>
-          <p class="muted mt-2 leading-relaxed text-xs">A hypothetical large inflow may support momentum but does not guarantee continuation. Trail stops only after price confirms structure; do not widen a stop to accommodate a losing position.</p>
-        </article>
-        <article class="news-item">
-          <div class="flex justify-between items-start gap-2"><span class="pill" style="background:#a855f718;color:#c084fc">NETWORK EVENT</span><span class="muted text-[10px]">Scenario</span></div>
-          <div class="font-bold mt-3 text-sm">Layer-1 network hard fork</div>
-          <p class="muted mt-2 leading-relaxed text-xs">A hypothetical protocol upgrade can cause exchange interruptions or uneven liquidity. Check official project and exchange notices, consider reducing exposure, and account for gaps in stop execution.</p>
-        </article>
-        <article class="news-item">
-          <div class="flex justify-between items-start gap-2"><span class="pill" style="background:#f0b90b18;color:#f0b90b">LIQUIDITY WATCH</span><span class="muted text-[10px]">Scenario</span></div>
-          <div class="font-bold mt-3 text-sm">Thin-book volatility around US open</div>
-          <p class="muted mt-2 leading-relaxed text-xs">Rapid changes in order-book depth can create slippage. Use position sizing based on stop distance and account risk, and avoid assuming a stop-market order will fill at its trigger price.</p>
-        </article>
-      </div>
-      <div class="p-3 border-t border-[#2b3139]">
-        <div class="muted text-[10px] uppercase tracking-wider mb-2">Risk checklist</div>
-        <ul class="space-y-2 text-xs">
-          <li class="flex gap-2"><span class="yellow">01</span><span>Verify scheduled events at primary sources.</span></li>
-          <li class="flex gap-2"><span class="yellow">02</span><span>Size positions against predefined account risk.</span></li>
-          <li class="flex gap-2"><span class="yellow">03</span><span>Check liquidity and spread before execution.</span></li>
-        </ul>
-      </div>
-    </aside>
-  </div>
-
-  <footer class="muted text-[10px] flex flex-col sm:flex-row justify-between gap-2 py-1">
-    <span>CRYPTO SCANNER PRO · Browser-based research terminal</span>
-    <span>Not financial advice · Signals are illustrative, not execution instructions</span>
-  </footer>
+<aside class="panel overflow-hidden">
+<div class="heading"><div><b>Macro Event Alpha Stream</b><div class="muted text-[10px] mt-1">Risk scenarios · Not live news</div></div><span class="pill" style="color:#f87171;background:#f6465d18">RISK WATCH</span></div>
+<div class="news"><span class="pill" style="color:#f87171;background:#f6465d18">HIGH VOLATILITY THREAT</span><h3 class="font-bold mt-3">Federal Reserve / funding conditions</h3><p class="muted text-xs leading-relaxed mt-2">Hypothetical tightening may increase cross-asset volatility. Reassess position size and avoid widening stops after entry.</p></div>
+<div class="news"><span class="pill" style="color:#60a5fa;background:#3b82f618">INSTITUTIONAL FLOWS</span><h3 class="font-bold mt-3">Spot ETF flow acceleration</h3><p class="muted text-xs leading-relaxed mt-2">Potential flows do not guarantee continuation. Trail stops only after structure confirms; do not chase an extended candle.</p></div>
+<div class="news"><span class="pill" style="color:#c084fc;background:#a855f718">NETWORK EVENT</span><h3 class="font-bold mt-3">Layer-1 hard fork</h3><p class="muted text-xs leading-relaxed mt-2">Check official network and exchange notices. Consider reduced exposure around maintenance or uncertain liquidity.</p></div>
+<div class="news"><span class="pill" style="color:#f0b90b;background:#f0b90b18">LIQUIDITY WATCH</span><h3 class="font-bold mt-3">US session volatility</h3><p class="muted text-xs leading-relaxed mt-2">Spread widening and slippage can impair fills. Stop-market orders do not guarantee execution at the trigger price.</p></div>
+<div class="p-3 muted text-xs">These are illustrative scenarios, not current event reports.</div>
+</aside>
+</div>
+<footer class="muted text-[10px] py-2">CRYPTO SCANNER PRO · No order execution · Not financial advice</footer>
 </main>
-
-<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
 
-/* =========================================================
-   CONFIGURATION
-   ========================================================= */
-const CONFIG = {
-  tickerURL: "https://api.binance.com/api/v3/ticker/24hr",
-  refreshMs: 30000,
-  requestTimeoutMs: 10000,
-  chartSymbolPrefix: "BINANCE:",
-  defaultSymbol: "BTCUSDT",
-  defaultTimeframe: "4h",
-  riskFractionForLevels: 0.008
-};
+/*
+ * QUANT SCANNER
+ * Uses Binance public OHLCV candles. No fabricated signal fallback.
+ * Rules are explicit and reproducible, but not proven profitable.
+ */
+const API="https://data-api.binance.vision/api/v3";
+const SYMBOLS=["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","ADAUSDT","LINKUSDT","AVAXUSDT","DOGEUSDT"];
+const TF={"15m":"15m","1h":"1h","4h":"4h","1D":"1d","1W":"1w","1M":"1M"};
+const REFRESH_MS=60000;
+const state={assets:[],filter:null,query:"",selected:"BTCUSDT",tf:"4h",busy:false,requestId:0,chartId:0,cache:new Map()};
+const $=id=>document.getElementById(id);
+const fmtPrice=x=>!Number.isFinite(x)?"—":x>=1000?x.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}):x>=1?x.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:5}):x.toLocaleString("en-US",{minimumFractionDigits:5,maximumFractionDigits:8});
+const fmtVol=x=>!Number.isFinite(x)?"—":x>=1e9?"$"+(x/1e9).toFixed(2)+"B":x>=1e6?"$"+(x/1e6).toFixed(1)+"M":"$"+(x/1e3).toFixed(1)+"K";
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-const ASSETS = [
-  { symbol:"BTCUSDT", base:"BTC", seed:67250, volume:18500000000, regime:"BULLISH", trigger:"MB Breakout", bias:1 },
-  { symbol:"ETHUSDT", base:"ETH", seed:3480, volume:9600000000, regime:"LONG", trigger:"Pullback", bias:1 },
-  { symbol:"SOLUSDT", base:"SOL", seed:178.4, volume:3200000000, regime:"BULLISH", trigger:"MB Breakout", bias:1 },
-  { symbol:"BNBUSDT", base:"BNB", seed:592, volume:850000000, regime:"LONG", trigger:"Rebound", bias:1 },
-  { symbol:"XRPUSDT", base:"XRP", seed:0.624, volume:1250000000, regime:"SHORT", trigger:"UB Rejection", bias:-1 },
-  { symbol:"ADAUSDT", base:"ADA", seed:0.451, volume:410000000, regime:"BEARISH", trigger:"UB Rejection", bias:-1 },
-  { symbol:"LINKUSDT", base:"LINK", seed:18.25, volume:380000000, regime:"LONG", trigger:"Pullback", bias:1 },
-  { symbol:"AVAXUSDT", base:"AVAX", seed:37.8, volume:520000000, regime:"SHORT", trigger:"UB Rejection", bias:-1 },
-  { symbol:"DOGEUSDT", base:"DOGE", seed:0.164, volume:720000000, regime:"BEARISH", trigger:"Rebound", bias:-1 }
-];
-
-const state = {
-  assets: [],
-  filter: null,
-  query: "",
-  selected: CONFIG.defaultSymbol,
-  timeframe: CONFIG.defaultTimeframe,
-  dataSource: "demo",
-  refreshTimer: null,
-  chartGeneration: 0,
-  lastSuccessfulFetch: null
-};
-
-const $ = id => document.getElementById(id);
-const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits:2 });
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+async function getJSON(url,timeout=12000){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+ try{const r=await fetch(url,{signal:controller.signal,cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);return await r.json();}
+ finally{clearTimeout(timer);}
 }
 
-function toast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.style.display = "block";
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.style.display = "none", 3200);
+/* UTC-independent PKT clock and session progress */
+function clockTick(){
+ const p=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Karachi",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+ $("clock").textContent=`${p.hour}:${p.minute}:${p.second}`;
+ $("date").textContent=`${p.weekday}, ${p.day}/${p.month}/${p.year} · Asia/Karachi`;
+ const h=+p.hour,m=+p.minute,s=+p.second,now=h*3600+m*60+s;
+ const sessions=[
+  {name:"Asian Session",desc:"Tokyo / Sydney window",start:5,end:13},
+  {name:"London Pre-Open Gap",desc:"London pre-open window",start:13,end:17},
+  {name:"US Wall Street Overlap",desc:"Configured liquidity-expansion window",start:17,end:21},
+  {name:"Pacific Settlement Range",desc:"Configured overnight range",start:21,end:29}
+ ];
+ const a=h>=5&&h<13?sessions[0]:h>=13&&h<17?sessions[1]:h>=17&&h<21?sessions[2]:sessions[3];
+ const current=now+(h<5?86400:0),start=a.start*3600,end=a.end*3600;
+ const elapsed=Math.max(0,current-start),duration=end-start,pct=Math.min(100,elapsed/duration*100),left=Math.max(0,duration-elapsed);
+ $("session").textContent=a.name;$("sessionDesc").textContent=a.desc;
+ $("progressText").textContent=pct.toFixed(1)+"%";
+ $("remaining").textContent=String(Math.floor(left/3600)).padStart(2,"0")+":"+String(Math.floor(left%3600/60)).padStart(2,"0")+" remaining";
+ [...$("sessionBar").children].forEach((el,i)=>{el.innerHTML="";if(sessions[i]===a){const fill=document.createElement("div");fill.className="fill";fill.style.width=pct+"%";el.append(fill);el.style.outline="1px solid #f0b90b";}else el.style.outline="none";});
 }
 
-function formatPrice(value) {
-  if (!Number.isFinite(value)) return "—";
-  if (value >= 1000) return value.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-  if (value >= 1) return value.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:4});
-  return value.toLocaleString("en-US",{minimumFractionDigits:4,maximumFractionDigits:8});
+/* Technical indicators */
+function sma(a,n,end=a.length-1){
+ if(end-n+1<0)return NaN;let s=0;for(let i=end-n+1;i<=end;i++)s+=a[i];return s/n;
+}
+function emaSeries(values,period){
+ const out=Array(values.length).fill(NaN);if(values.length<period)return out;
+ let e=values.slice(0,period).reduce((a,b)=>a+b,0)/period;out[period-1]=e;
+ const k=2/(period+1);for(let i=period;i<values.length;i++){e=values[i]*k+e*(1-k);out[i]=e;}return out;
+}
+function rsiSeries(closes,period=14){
+ const out=Array(closes.length).fill(NaN);if(closes.length<=period)return out;
+ let gain=0,loss=0;
+ for(let i=1;i<=period;i++){const d=closes[i]-closes[i-1];gain+=Math.max(0,d);loss+=Math.max(0,-d);}
+ let ag=gain/period,al=loss/period;
+ const calc=()=>al===0?100:100-100/(1+ag/al);
+ out[period]=calc();
+ for(let i=period+1;i<closes.length;i++){const d=closes[i]-closes[i-1];ag=(ag*(period-1)+Math.max(0,d))/period;al=(al*(period-1)+Math.max(0,-d))/period;out[i]=calc();}
+ return out;
+}
+function atrSeries(candles,period=14){
+ const tr=candles.map((c,i)=>i===0?c.h-c.l:Math.max(c.h-c.l,Math.abs(c.h-candles[i-1].c),Math.abs(c.l-candles[i-1].c)));
+ const out=Array(tr.length).fill(NaN);if(tr.length<period)return out;
+ let a=tr.slice(0,period).reduce((x,y)=>x+y,0)/period;out[period-1]=a;
+ for(let i=period;i<tr.length;i++){a=(a*(period-1)+tr[i])/period;out[i]=a;}return out;
+}
+function calculate(candles,meta,quoteVolume){
+ // The last returned candle may still be forming. Exclude it.
+ const now=Date.now(),closed=candles.filter(c=>c.closeTime<now);
+ if(closed.length<60)throw Error("Insufficient completed candles");
+ const closes=closed.map(c=>c.c),ema20=emaSeries(closes,20),ema50=emaSeries(closes,50),rsi=rsiSeries(closes),atr=atrSeries(closed);
+ const i=closed.length-1,prev=i-1,c=closed[i],p=closed[prev];
+ const middle=sma(closes,20,i),variance=closes.slice(i-19,i+1).reduce((s,x)=>s+(x-middle)**2,0)/20;
+ const sd=Math.sqrt(variance),upper=middle+2*sd,lower=middle-2*sd;
+ const prevMiddle=sma(closes,20,prev);
+ const e20=ema20[i],e50=ema50[i],e20prev=ema20[prev],r=rsi[i],a=atr[i];
+ if(![middle,upper,lower,e20,e50,e20prev,r,a].every(Number.isFinite)||a<=0)throw Error("Indicator calculation failed");
+
+ const upTrend=c.c>e50&&e20>e50&&e20>e20prev;
+ const downTrend=c.c<e50&&e20<e50&&e20<e20prev;
+ const bullish=upTrend&&r>=50;
+ const bearish=downTrend&&r<=50;
+ const pullback=upTrend&&p.c<=e20prev&&c.c>e20&&r>=50&&r<=68;
+ const rebound=upTrend&&p.l<=lower&&c.c>p.c&&r<60;
+ const breakout=upTrend&&c.c>upper&&r>=55&&r<75;
+ const shortSetup=downTrend&&p.c>=e20prev&&c.c<e20&&r<=50&&r>=32;
+ const rejection=downTrend&&p.h>=upper&&c.c<p.c&&r>40;
+ const bearBreak=downTrend&&c.c<lower&&r>25&&r<=45;
+
+ let regime="NEUTRAL",trigger="No setup";
+ if(pullback){regime="LONG";trigger="Pullback";}
+ else if(rebound){regime="LONG";trigger="Rebound";}
+ else if(breakout){regime="LONG";trigger="MB Breakout";}
+ else if(shortSetup){regime="SHORT";trigger="Pullback";}
+ else if(rejection){regime="SHORT";trigger="UB Rejection";}
+ else if(bearBreak){regime="SHORT";trigger="MB Breakdown";}
+ else if(bullish){regime="BULLISH";trigger=c.c>upper?"Upper-band expansion":"Trend continuation";}
+ else if(bearish){regime="BEARISH";trigger=c.c<lower?"Lower-band expansion":"Trend continuation";}
+
+ // Long levels for long/bullish regimes; short levels for short/bearish regimes.
+ // Neutral rows still show a reference long-side risk model but have no actionable setup.
+ const direction=["SHORT","BEARISH"].includes(regime)?-1:1;
+ const entry=c.c,stop=entry-direction*1.5*a,risk=Math.abs(entry-stop);
+ return {
+  symbol:meta,base:meta.replace("USDT",""),price:c.c,quoteVolume,regime,trigger,
+  entry,stop,tp1:entry+direction*2*risk,tp2:entry+direction*3*risk,tp3:entry+direction*4*risk,
+  rsi:r,atr:a,ema20:e20,ema50:e50,bbMiddle:middle,bbUpper:upper,bbLower:lower,
+  closeTime:c.closeTime,bars:closed.length
+ };
 }
 
-function formatVolume(value) {
-  if (!Number.isFinite(value)) return "—";
-  if (value >= 1e9) return "$" + (value / 1e9).toFixed(2) + "B";
-  if (value >= 1e6) return "$" + (value / 1e6).toFixed(1) + "M";
-  if (value >= 1e3) return "$" + (value / 1e3).toFixed(1) + "K";
-  return "$" + numberFormat.format(value);
+async function fetchAsset(symbol,tf,requestId){
+ const cacheKey=symbol+"|"+tf,now=Date.now(),cached=state.cache.get(cacheKey);
+ if(cached&&now-cached.time<45000)return cached.data;
+ const [klines,ticker]=await Promise.all([
+  getJSON(`${API}/klines?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(TF[tf])}&limit=200`),
+  getJSON(`${API}/ticker/24hr?symbol=${encodeURIComponent(symbol)}`)
+ ]);
+ if(requestId!==state.requestId)throw Error("Superseded scan");
+ const candles=klines.map(k=>({time:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5],closeTime:+k[6]}));
+ const data=calculate(candles,symbol,+ticker.quoteVolume);
+ state.cache.set(cacheKey,{time:now,data});return data;
 }
 
-/* =========================================================
-   PKT CLOCK AND SESSION PROGRESS
-   ========================================================= */
-function getPKTParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone:"Asia/Karachi", hour:"2-digit", minute:"2-digit",
-    second:"2-digit", hourCycle:"h23", year:"numeric",
-    month:"2-digit", day:"2-digit", weekday:"short"
-  }).formatToParts(date);
-  return Object.fromEntries(parts.map(p => [p.type,p.value]));
-}
-
-function updateClock() {
-  const p = getPKTParts();
-  const h = Number(p.hour), m = Number(p.minute), s = Number(p.second);
-  const secondsToday = h*3600 + m*60 + s;
-
-  $("pktClock").textContent = `${p.hour}:${p.minute}:${p.second}`;
-  $("pktDate").textContent = `${p.weekday}, ${p.day}/${p.month}/${p.year} · Pakistan`;
-
-  const sessions = [
-    { name:"Asian Session", start:5, end:13, desc:"Tokyo/Sydney session window" },
-    { name:"London Pre-Open Gap", start:13, end:17, desc:"London pre-open window" },
-    { name:"US Wall Street Overlap", start:17, end:21, desc:"Configured maximum-liquidity window" },
-    { name:"Pacific Settlement Range", start:21, end:29, desc:"Overnight / low-volatility window" }
-  ];
-
-  let active;
-  let startSeconds;
-  let endSeconds;
-
-  if (h >= 5 && h < 13) active = sessions[0];
-  else if (h >= 13 && h < 17) active = sessions[1];
-  else if (h >= 17 && h < 21) active = sessions[2];
-  else active = sessions[3];
-
-  startSeconds = active.start * 3600;
-  endSeconds = active.end * 3600;
-
-  let adjustedSeconds = secondsToday;
-  if (h < 5) adjustedSeconds += 24*3600;
-
-  const elapsed = Math.max(0, adjustedSeconds - startSeconds);
-  const duration = endSeconds - startSeconds;
-  const percent = Math.min(100, Math.max(0, elapsed / duration * 100));
-  const remaining = Math.max(0, duration - elapsed);
-
-  $("sessionName").textContent = active.name;
-  $("sessionDescription").textContent = active.desc;
-  $("sessionPercent").textContent = percent.toFixed(1) + "%";
-  $("sessionRemaining").textContent =
-    `${String(Math.floor(remaining/3600)).padStart(2,"0")}:${String(Math.floor(remaining%3600/60)).padStart(2,"0")} remaining`;
-
-  const segments = $("sessionBar").children;
-  const activeIndex = sessions.indexOf(active);
-  [...segments].forEach((segment, i) => {
-    segment.innerHTML = "";
-    if (i === activeIndex) {
-      const fill = document.createElement("div");
-      fill.className = "fill";
-      fill.style.width = percent + "%";
-      segment.appendChild(fill);
-      segment.style.outline = "1px solid #f0b90b";
-      segment.style.outlineOffset = "2px";
-    } else {
-      segment.style.outline = "none";
-    }
-  });
-}
-
-/* =========================================================
-   DEMO SIGNAL ENGINE
-   Actual prices are used when the public endpoint responds.
-   Signal regimes remain a heuristic/demo, not validated alpha.
-   ========================================================= */
-function buildDemoAssets() {
-  return ASSETS.map((a, i) => {
-    const wiggle = 1 + Math.sin(Date.now()/70000 + i*1.9)*0.004;
-    const price = a.seed * wiggle;
-    return makeAssetRecord(a, price, a.volume * (0.94 + (i%4)*0.07), a.bias*0.8);
-  });
-}
-
-function makeAssetRecord(meta, price, quoteVolume, changePct) {
-  const direction = meta.bias >= 0 ? 1 : -1;
-  const riskDistance = price * CONFIG.riskFractionForLevels;
-  const entry = price;
-  const stop = entry - direction * riskDistance;
-  const oneR = Math.abs(entry - stop);
-  const regime = meta.regime;
-  return {
-    ...meta, price, quoteVolume, changePct, regime,
-    entry, stop,
-    tp1: entry + direction * oneR * 2,
-    tp2: entry + direction * oneR * 3,
-    tp3: entry + direction * oneR * 4
-  };
-}
-
-async function fetchWithTimeout(url) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), CONFIG.requestTimeoutMs);
-  try {
-    const response = await fetch(url, {
-      method:"GET", cache:"no-store", signal:controller.signal
-    });
-    if (!response.ok) throw new Error("Market API returned HTTP " + response.status);
-    return await response.json();
-  } finally {
-    clearTimeout(timer);
+async function scan(){
+ if(state.busy)return;state.busy=true;
+ const id=++state.requestId;$("refresh").disabled=true;
+ $("connection").textContent="Fetching Binance candles...";
+ $("rows").innerHTML='<tr><td colspan="10" class="muted text-center py-8">Calculating indicators from completed candles...</td></tr>';
+ try{
+  // Concurrent but bounded: only three symbol requests at once.
+  const result=[];
+  for(let i=0;i<SYMBOLS.length;i+=3){
+   const batch=SYMBOLS.slice(i,i+3);
+   const values=await Promise.all(batch.map(async s=>{
+    try{return await fetchAsset(s,state.tf,id);}
+    catch(e){console.warn(s,e);return {symbol:s,error:e.message};}
+   }));
+   if(id!==state.requestId)return;
+   result.push(...values);
   }
+  if(id!==state.requestId)return;
+  state.assets=result;
+  const ok=result.filter(a=>!a.error).length;
+  $("connection").textContent=`${ok}/${SYMBOLS.length} symbols · ${ok?"OHLCV scan":"API unavailable"}`;
+  $("updated").textContent=new Date().toLocaleTimeString();
+  renderCounters();renderRows();
+ }catch(e){
+  if(id===state.requestId){$("connection").textContent="Scan error: "+e.message;$("rows").innerHTML='<tr><td colspan="10" class="muted text-center py-8">Market data unavailable. Check internet/API access and press Scan now.</td></tr>';}
+ }finally{
+  if(id===state.requestId){state.busy=false;$("refresh").disabled=false;}
+ }
 }
 
-async function refreshMarketData(showMessage = false) {
-  const button = $("refreshBtn");
-  button.disabled = true;
-  $("connectionStatus").innerHTML = '<span class="dot" style="background:#f0b90b"></span>Updating...';
-
-  try {
-    const raw = await fetchWithTimeout(CONFIG.tickerURL);
-    if (!Array.isArray(raw)) throw new Error("Unexpected market-data response");
-
-    const bySymbol = new Map(raw.map(item => [item.symbol, item]));
-    const liveAssets = ASSETS.map(meta => {
-      const item = bySymbol.get(meta.symbol);
-      if (!item) throw new Error("Missing market symbol: " + meta.symbol);
-      const price = Number(item.lastPrice);
-      const quoteVolume = Number(item.quoteVolume);
-      const changePct = Number(item.priceChangePercent);
-      if (!(price > 0) || !Number.isFinite(quoteVolume) || !Number.isFinite(changePct)) {
-        throw new Error("Invalid ticker fields for " + meta.symbol);
-      }
-      return makeAssetRecord(meta, price, quoteVolume, changePct);
-    });
-
-    state.assets = liveAssets;
-    state.dataSource = "live";
-    state.lastSuccessfulFetch = new Date();
-    $("connectionStatus").innerHTML = '<span class="dot live-dot"></span>Binance live data';
-    if (showMessage) toast("Live Binance ticker data refreshed.");
-  } catch (error) {
-    // No private API key is required. CORS, rate limits or network outages
-    // may cause the public request to fail, in which case use explicit demo data.
-    if (!state.assets.length || state.dataSource !== "live") {
-      state.assets = buildDemoAssets();
-      state.dataSource = "demo";
-    }
-    $("connectionStatus").innerHTML =
-      '<span class="dot" style="background:#f0b90b"></span>Demo / fallback data';
-    if (showMessage) toast("Could not reach Binance. Showing demo/fallback data.");
-    console.warn("Market data refresh failed:", error);
-  } finally {
-    button.disabled = false;
-    $("lastUpdated").textContent = state.lastSuccessfulFetch
-      ? "Live: " + state.lastSuccessfulFetch.toLocaleTimeString("en-GB")
-      : "Demo data · " + new Date().toLocaleTimeString("en-GB");
-    renderTable();
-    renderCounters();
-  }
+/* Filtering: click card/search immediately moves to the ledger */
+function filtered(){
+ const q=state.query.trim().toUpperCase();
+ return state.assets.filter(a=>!a.error&&(!state.filter||a.regime===state.filter)&&(!q||a.symbol.includes(q)||a.base.includes(q)));
 }
-
-/* =========================================================
-   FILTERS AND LEDGER
-   ========================================================= */
-function regimeClass(regime) {
-  return ({
-    LONG:"regime-long", SHORT:"regime-short",
-    BULLISH:"regime-bullish", BEARISH:"regime-bearish"
-  })[regime] || "";
+function renderCounters(){
+ for(const r of ["LONG","SHORT","BULLISH","BEARISH"]){
+  $("count"+r).textContent=state.assets.filter(a=>!a.error&&a.regime===r).length;
+ }
+ document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("active",b.dataset.filter===state.filter));
 }
-
-function renderCounters() {
-  for (const regime of ["LONG","SHORT","BULLISH","BEARISH"]) {
-    $( "count" + regime ).textContent =
-      state.assets.filter(a => a.regime === regime).length;
-  }
-  document.querySelectorAll("[data-filter]").forEach(button => {
-    button.classList.toggle("active", button.dataset.filter === state.filter);
-    button.setAttribute("aria-pressed", button.dataset.filter === state.filter ? "true" : "false");
-  });
+function renderRows(){
+ const list=filtered();$("rowsCount").textContent=`${list.length} assets`;
+ $("empty").classList.toggle("hidden",list.length!==0);
+ if(!list.length){
+  $("rows").innerHTML='<tr><td colspan="10" class="muted text-center py-8">No matching setups. Clear filters or change ticker.</td></tr>';return;
+ }
+ $("rows").innerHTML=list.map(a=>`
+ <tr data-symbol="${escapeHTML(a.symbol)}" class="${a.symbol===state.selected?"selected":""}" tabindex="0">
+ <td><b>${escapeHTML(a.base)}</b><span class="muted">/USDT</span><div class="muted text-[10px] mt-1">RSI ${a.rsi.toFixed(1)} · ATR ${fmtPrice(a.atr)}</div></td>
+ <td class="mono">${fmtVol(a.quoteVolume)}</td>
+ <td><span class="pill regime-${a.regime}">${a.regime}</span></td>
+ <td class="muted">${escapeHTML(a.trigger)}</td>
+ <td class="mono">${fmtPrice(a.entry)}</td>
+ <td class="mono" style="color:#f6465d">${fmtPrice(a.stop)}</td>
+ <td class="mono" style="color:#0ecb81">${fmtPrice(a.tp1)}</td>
+ <td class="mono" style="color:#0ecb81">${fmtPrice(a.tp2)}</td>
+ <td class="mono" style="color:#0ecb81">${fmtPrice(a.tp3)}</td>
+ <td><button class="action load" data-symbol="${escapeHTML(a.symbol)}">Load Terminal</button></td>
+ </tr>`).join("");
+ $("rows").querySelectorAll("tr[data-symbol]").forEach(row=>{
+  row.addEventListener("click",()=>selectCoin(row.dataset.symbol,true));
+  row.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectCoin(row.dataset.symbol,true);}});
+ });
+ $("rows").querySelectorAll(".load").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();selectCoin(b.dataset.symbol,true);}));
 }
+function scrollLedger(){ $("ledger").scrollIntoView({behavior:"smooth",block:"start"}); }
+document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{
+ state.filter=state.filter===b.dataset.filter?null:b.dataset.filter;
+ renderCounters();renderRows();scrollLedger();
+}));
+$("search").addEventListener("input",e=>{
+ state.query=e.target.value;renderRows();
+ if(state.query.trim())scrollLedger();
+});
+$("clear").addEventListener("click",()=>{
+ state.filter=null;state.query="";$("search").value="";
+ renderCounters();renderRows();
+});
+$("refresh").addEventListener("click",()=>{state.cache.clear();scan();});
+$("tf").addEventListener("change",()=>{
+ state.tf=$("tf").value;state.cache.clear();loadChart(state.selected);scan();
+});
 
-function getFilteredAssets() {
-  const q = state.query.trim().toUpperCase();
-  return state.assets.filter(a => {
-    const matchesFilter = !state.filter || a.regime === state.filter;
-    const matchesQuery = !q || a.symbol.includes(q) || a.base.includes(q);
-    return matchesFilter && matchesQuery;
-  });
+/* TradingView chart is separate from the scanner calculation engine. */
+function loadChart(symbol){
+ state.selected=symbol;$("symbol").textContent=symbol;
+ renderRows();
+ const host=$("chart");host.innerHTML="";
+ const wrap=document.createElement("div");wrap.style.height="100%";wrap.style.width="100%";
+ wrap.className="tradingview-widget-container";
+ const child=document.createElement("div");child.className="tradingview-widget-container__widget";
+ child.style.height="100%";child.style.width="100%";wrap.append(child);host.append(wrap);
+ const config={
+  autosize:true,symbol:"BINANCE:"+symbol,interval:({"15m":"15","1h":"60","4h":"240","1D":"D","1W":"W","1M":"M"})[state.tf],
+  timezone:"Asia/Karachi",theme:"dark",style:"1",locale:"en",enable_publishing:false,
+  allow_symbol_change:true,save_image:false,hide_legend:false,hide_side_toolbar:false,
+  withdateranges:true,studies:["BB@tv-basicstudies"],support_host:"https://www.tradingview.com"
+ };
+ const script=document.createElement("script");script.async=true;
+ script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+ script.textContent=JSON.stringify(config);wrap.append(script);
 }
-
-function renderTable() {
-  const assets = getFilteredAssets();
-  $("rowCount").textContent = `${assets.length} asset${assets.length === 1 ? "" : "s"}`;
-  $("emptyState").classList.toggle("hidden", assets.length !== 0);
-
-  if (!assets.length) {
-    $("assetTable").innerHTML = '<tr><td colspan="10" class="muted text-center py-8">No matching assets.</td></tr>';
-    return;
-  }
-
-  $("assetTable").innerHTML = assets.map(a => `
-    <tr data-symbol="${escapeHTML(a.symbol)}" class="${a.symbol === state.selected ? "selected" : ""}" tabindex="0" aria-label="Select ${escapeHTML(a.symbol)}">
-      <td>
-        <div class="font-bold text-white">${escapeHTML(a.base)}<span class="muted font-normal">/USDT</span></div>
-        <div class="muted text-[10px] mt-1">${state.dataSource === "live" ? (a.changePct >= 0 ? "+" : "") + a.changePct.toFixed(2) + "% 24h" : "DEMO PRICE"}</div>
-      </td>
-      <td class="mono">${formatVolume(a.quoteVolume)}</td>
-      <td><span class="pill ${regimeClass(a.regime)}">${escapeHTML(a.regime)}</span></td>
-      <td class="muted">${escapeHTML(a.trigger)}</td>
-      <td class="mono">${formatPrice(a.entry)}</td>
-      <td class="mono" style="color:var(--red)">${formatPrice(a.stop)}</td>
-      <td class="mono" style="color:var(--green)">${formatPrice(a.tp1)}</td>
-      <td class="mono" style="color:var(--green)">${formatPrice(a.tp2)}</td>
-      <td class="mono" style="color:var(--green)">${formatPrice(a.tp3)}</td>
-      <td><button type="button" class="action-btn load-terminal" data-load="${escapeHTML(a.symbol)}">Load Terminal</button></td>
-    </tr>
-  `).join("");
-
-  $("assetTable").querySelectorAll("tr[data-symbol]").forEach(row => {
-    row.addEventListener("click", () => selectAsset(row.dataset.symbol));
-    row.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        selectAsset(row.dataset.symbol);
-      }
-    });
-  });
-
-  $("assetTable").querySelectorAll(".load-terminal").forEach(button => {
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      selectAsset(button.dataset.load);
-    });
-  });
+function selectCoin(symbol,scrollChart){
+ if(!SYMBOLS.includes(symbol))return;
+ loadChart(symbol);
+ if(scrollChart)$("chartPanel").scrollIntoView({behavior:"smooth",block:"start"});
 }
-
-function setFilter(filter) {
-  state.filter = state.filter === filter ? null : filter;
-  renderCounters();
-  renderTable();
-}
-
-function clearFilters() {
-  state.filter = null;
-  state.query = "";
-  $("searchInput").value = "";
-  renderCounters();
-  renderTable();
-}
-
-/* =========================================================
-   TRADINGVIEW WIDGET
-   ========================================================= */
-function tvInterval(timeframe) {
-  return ({
-    "15m":"15",
-    "1h":"60",
-    "4h":"240",
-    "1D":"D",
-    "1W":"W",
-    "1M":"M"
-  })[timeframe] || "240";
-}
-
-function loadChart(symbol, timeframe) {
-  state.selected = symbol;
-  state.timeframe = timeframe;
-  $("activeSymbol").textContent = symbol;
-  renderTable();
-
-  const host = $("chartHost");
-  const generation = ++state.chartGeneration;
-  host.innerHTML = "";
-
-  const wrapper = document.createElement("div");
-  wrapper.style.width = "100%";
-  wrapper.style.height = "100%";
-  wrapper.className = "tradingview-widget-container";
-  wrapper.id = "tv-wrapper-" + generation;
-
-  const widget = document.createElement("div");
-  widget.className = "tradingview-widget-container__widget";
-  widget.style.height = "calc(100% - 0px)";
-  widget.style.width = "100%";
-  wrapper.appendChild(widget);
-  host.appendChild(wrapper);
-
-  const config = {
-    autosize: true,
-    symbol: CONFIG.chartSymbolPrefix + symbol,
-    interval: tvInterval(timeframe),
-    timezone: "Asia/Karachi",
-    theme: "dark",
-    style: "1",
-    locale: "en",
-    enable_publishing: false,
-    allow_symbol_change: true,
-    save_image: false,
-    calendar: false,
-    hide_top_toolbar: false,
-    hide_legend: false,
-    hide_side_toolbar: false,
-    withdateranges: true,
-    details: false,
-    hotlist: false,
-    show_popup_button: false,
-    studies: ["BB@tv-basicstudies"],
-    support_host: "https://www.tradingview.com"
-  };
-
-  const script = document.createElement("script");
-  script.type = "text/javascript";
-  script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-  script.async = true;
-  script.textContent = JSON.stringify(config);
-  wrapper.appendChild(script);
-}
-
-function selectAsset(symbol) {
-  if (!ASSETS.some(a => a.symbol === symbol)) return;
-  state.selected = symbol;
-  loadChart(symbol, $("timeframeSelect").value);
-}
-
-/* =========================================================
-   EVENTS AND INITIALIZATION
-   ========================================================= */
-function initialize() {
-  document.querySelectorAll("[data-filter]").forEach(button => {
-    button.addEventListener("click", () => setFilter(button.dataset.filter));
-  });
-
-  $("searchInput").addEventListener("input", event => {
-    state.query = event.target.value;
-    renderTable();
-  });
-
-  $("timeframeSelect").addEventListener("change", event => {
-    state.timeframe = event.target.value;
-    loadChart(state.selected, state.timeframe);
-  });
-
-  $("clearFilters").addEventListener("click", clearFilters);
-  $("refreshBtn").addEventListener("click", () => refreshMarketData(true));
-
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  state.assets = buildDemoAssets();
-  renderCounters();
-  renderTable();
-  loadChart(state.selected, state.timeframe);
-  refreshMarketData(false);
-
-  state.refreshTimer = setInterval(() => refreshMarketData(false), CONFIG.refreshMs);
-
-  // Lucide enhancement is optional; the dashboard remains usable without it.
-  if (window.lucide && typeof window.lucide.createIcons === "function") {
-    window.lucide.createIcons();
-  }
-}
-
-document.addEventListener("DOMContentLoaded", initialize);
+$("search").addEventListener("keydown",e=>{
+ if(e.key==="Enter"){
+  const match=filtered()[0];if(match)selectCoin(match.symbol,true);
+ }
+});
+clockTick();setInterval(clockTick,1000);
+loadChart(state.selected);scan();
+setInterval(()=>{if(!document.hidden&&!state.busy)scan();},REFRESH_MS);
+if(window.lucide)window.lucide.createIcons();
 </script>
 </body>
 </html>
