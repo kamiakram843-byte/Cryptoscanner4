@@ -2,1120 +2,1136 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Binance All-Coin MTF Scanner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binance Multi-Timeframe Coin Scanner</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://s3.tradingview.com/tv.js"></script>
+
 <style>
-:root{color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;background:#080d17;color:#e5e7eb;font-family:Arial,sans-serif}
-.panel{background:#101827;border:1px solid #273449;border-radius:13px}
-.muted{color:#91a1b8}
-.small{font-size:12px}
-.session{font-size:15px;font-weight:600}
-.btn{padding:8px 12px;border:1px solid #344258;border-radius:8px;font-size:12px;font-weight:bold}
-.btn.active{background:#2563eb;border-color:#3b82f6}
-input,select{background:#0a1220;border:1px solid #344258;border-radius:8px;padding:10px;color:#eee;min-width:0}
-.metric{font-size:25px;font-weight:800}
-.good{color:#4ade80}
-.bad{color:#fb7185}
-.gold{color:#fbbf24}
-table{border-collapse:collapse;width:100%;font-size:12px}
-th{background:#121c2c;color:#a6b4c9;text-align:left;position:sticky;top:0;z-index:2;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
-td,th{padding:11px;border-bottom:1px solid #263246;white-space:nowrap}
-tr:hover{background:#18243a}
-.scroll{overflow:auto;max-height:68vh}
-.coin{font-weight:bold;color:#93c5fd;text-decoration:underline;cursor:pointer}
-.badge{padding:4px 7px;border-radius:5px;font-weight:bold;font-size:10px}
-.long{background:#063821;color:#4ade80}
-.short{background:#4b1020;color:#fda4af}
-.none{background:#392b0c;color:#fbbf24}
-.chart{height:440px}
-.news-item{padding:12px 0;border-bottom:1px solid #263246}
-.news-item a{color:#dbeafe;font-size:13px;font-weight:600;text-decoration:none}
-.news-item a:hover{text-decoration:underline}
-.news-meta{font-size:11px;color:#91a1b8;margin-top:6px}
-@media(max-width:700px){.chart{height:360px}.metric{font-size:22px}td,th{padding:9px}}
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #070b14;
+    color: #e8eefb;
+    font-family: Arial, sans-serif;
+  }
+  .panel {
+    background: #101827;
+    border: 1px solid #25334a;
+    border-radius: 14px;
+  }
+  .field {
+    background: #08111f;
+    color: #fff;
+    border: 1px solid #34445f;
+    border-radius: 9px;
+    padding: 10px 12px;
+    width: 100%;
+    outline: none;
+  }
+  .field:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px #38bdf822;
+  }
+  .btn {
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid #34445f;
+  }
+  .btn-blue { background: #075985; color: white; }
+  .btn-green { background: #065f46; color: #d1fae5; }
+  .btn-red { background: #7f1d1d; color: #fee2e2; }
+  .btn-gray { background: #263449; color: #f1f5f9; }
+  .stat {
+    background: #0a1220;
+    border: 1px solid #25334a;
+    padding: 13px;
+    border-radius: 10px;
+    min-width: 0;
+  }
+  .stat-label { color: #91a4c2; font-size: 11px; font-weight: 800; }
+  .stat-value { font-size: 20px; font-weight: 900; margin-top: 5px; }
+  .table-wrap { overflow: auto; max-height: 68vh; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #17243a;
+    color: #c8d8f2;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    white-space: nowrap;
+    padding: 13px 11px;
+    text-align: left;
+    border-bottom: 1px solid #34445f;
+  }
+  td {
+    padding: 12px 11px;
+    border-bottom: 1px solid #1d2a3d;
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  tbody tr { background: #0c1422; cursor: pointer; }
+  tbody tr:nth-child(even) { background: #101b2b; }
+  tbody tr:hover { background: #1b2b42; }
+  .coin { color: #f8fafc; font-size: 13px; font-weight: 900; }
+  .muted { color: #9badc7; }
+  .green { color: #34d399; }
+  .red { color: #fb7185; }
+  .yellow { color: #fbbf24; }
+  .blue { color: #60a5fa; }
+  .purple { color: #c4b5fd; }
+  .signal {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .02em;
+  }
+  .signal-long { background: #064e3b; color: #6ee7b7; }
+  .signal-short { background: #7f1d1d; color: #fecaca; }
+  .signal-wait { background: #493710; color: #fde68a; }
+  .signal-neutral { background: #243247; color: #cbd5e1; }
+  .tag {
+    display: inline-block;
+    padding: 4px 6px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 900;
+  }
+  .tag-up { background: #123b32; color: #6ee7b7; }
+  .tag-down { background: #47212b; color: #fda4af; }
+  .tag-neutral { background: #263449; color: #cbd5e1; }
+  .news-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #263449;
+  }
+  .news-item a { color: #93c5fd; font-weight: 800; text-decoration: none; }
+  .news-item a:hover { text-decoration: underline; }
+  .small { font-size: 11px; color: #91a4c2; }
+  #chart { min-height: 430px; }
+  @media(max-width: 640px) {
+    .stat-value { font-size: 16px; }
+    th, td { padding: 10px 8px; }
+    #chart { min-height: 350px; }
+  }
 </style>
 </head>
+
 <body>
-<main class="max-w-[1900px] mx-auto p-3 md:p-5">
+<div class="max-w-screen-2xl mx-auto p-3 md:p-5">
 
-<header class="flex flex-wrap justify-between items-center gap-4 mb-5">
- <div>
-  <div class="text-xs text-blue-300 tracking-widest">BINANCE PUBLIC MARKET DATA</div>
-  <h1 class="text-2xl md:text-3xl font-black mt-2">ALL-COIN <span class="text-blue-400">MTF SCANNER</span></h1>
-  <p class="muted text-sm mt-2">Bollinger Bands 20/2 · RSI 14 · Spot and USDⓈ-M Perpetual Futures</p>
- </div>
- <div class="panel p-4 min-w-[235px]">
-  <div class="muted text-xs">PAKISTAN STANDARD TIME</div>
-  <div id="clock" class="text-3xl font-black mt-1">--:--:--</div>
-  <div id="session" class="session text-blue-300 mt-2">Loading session...</div>
- </div>
-</header>
+  <header class="mb-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-black text-cyan-300">
+          BINANCE COIN SCANNER
+        </h1>
+        <p class="text-sm text-slate-400 mt-1">
+          Live prices · Bollinger Bands · RSI · Multi-timeframe signals
+        </p>
+      </div>
+      <div class="panel px-4 py-3">
+        <div class="small">LOCAL SESSION CLOCK</div>
+        <div id="clock" class="text-lg font-black text-white">--:--:--</div>
+        <div id="session" class="text-xs font-bold text-cyan-300">
+          Calculating session...
+        </div>
+      </div>
+    </div>
+  </header>
 
-<section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
- <button id="allCard" class="panel p-4 text-left">
-  <div class="muted text-xs">AVAILABLE PAIRS</div>
-  <div id="total" class="metric mt-2">0</div>
-  <div class="muted text-xs mt-1">Show all pairs</div>
- </button>
- <button id="longCard" class="panel p-4 text-left">
-  <div class="text-green-400 text-xs">LONG / BULLISH</div>
-  <div id="longCount" class="metric good mt-2">0</div>
-  <div class="muted text-xs mt-1">Filter bullish setups</div>
- </button>
- <button id="shortCard" class="panel p-4 text-left">
-  <div class="text-rose-400 text-xs">SHORT / BEARISH</div>
-  <div id="shortCount" class="metric bad mt-2">0</div>
-  <div class="muted text-xs mt-1">Filter bearish setups</div>
- </button>
- <div class="panel p-4">
-  <div class="muted text-xs">SCANNER STATUS</div>
-  <div id="status" class="font-bold text-lg mt-2">Connecting...</div>
-  <div id="progress" class="muted text-xs mt-2">Preparing market list</div>
- </div>
-</section>
+  <section class="panel p-4 mb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div>
+        <label class="small block mb-2">MARKET</label>
+        <select id="market" class="field">
+          <option value="spot">Binance Spot</option>
+          <option value="futures">USDⓈ-M Futures</option>
+        </select>
+      </div>
 
-<section class="panel p-4 mb-4">
- <div class="flex flex-wrap items-center gap-2 mb-3">
-  <button id="spotBtn" class="btn active">BINANCE SPOT</button>
-  <button id="futuresBtn" class="btn">USDⓈ-M FUTURES</button>
-  <input id="search" type="search" placeholder="Search coin: BTC, ETH, SOL..." class="flex-1">
-  <button id="scanBtn" class="btn active">SCAN / RESUME</button>
-  <button id="stopBtn" class="btn">PAUSE SCAN</button>
- </div>
- <div class="flex flex-wrap gap-2 items-center">
-  <span class="muted text-xs mr-1">FILTER:</span>
-  <button class="btn active" data-filter="ALL">ALL</button>
-  <button class="btn" data-filter="LONG">LONG</button>
-  <button class="btn" data-filter="SHORT">SHORT</button>
-  <button class="btn" data-filter="NONE">NO SIGNAL</button>
-  <label class="muted text-xs flex items-center gap-2 ml-auto">
-   <input type="checkbox" id="auto" checked style="width:15px;height:15px;padding:0"> Repeat scan after completion
-  </label>
- </div>
- <p class="muted text-xs mt-3">
-  Scans every eligible USDT-quoted pair returned by Binance, not just the top 40. Indicators are processed progressively to limit API traffic.
- </p>
-</section>
+      <div>
+        <label class="small block mb-2">SIGNAL FILTER</label>
+        <select id="signalFilter" class="field">
+          <option value="ALL">All coins</option>
+          <option value="LONG">Bullish / Long</option>
+          <option value="SHORT">Bearish / Short</option>
+          <option value="PULLBACK">Pullback setups</option>
+          <option value="REBOUND">Rebound setups</option>
+          <option value="WAIT">Waiting / Neutral</option>
+        </select>
+      </div>
 
-<section class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
- <div class="panel p-4 xl:col-span-2">
-  <div class="flex justify-between gap-3 flex-wrap">
-   <div>
-    <div class="muted text-xs">SELECTED COIN</div>
-    <div id="selected" class="text-xl font-black text-blue-300 mt-1">BTCUSDT</div>
-   </div>
-   <div class="text-right">
-    <div class="muted text-xs">LIVE PRICE · RAW</div>
-    <div id="selectedPrice" class="text-xl font-bold mt-1">—</div>
-   </div>
-  </div>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
-   <div class="bg-slate-900 rounded-lg p-3">
-    <div class="muted text-xs">15m RSI</div><div id="rsi" class="font-bold mt-2">—</div>
-   </div>
-   <div class="bg-slate-900 rounded-lg p-3">
-    <div class="muted text-xs">15m LOWER BAND</div><div id="lb" class="font-bold mt-2">—</div>
-   </div>
-   <div class="bg-slate-900 rounded-lg p-3">
-    <div class="muted text-xs">15m MIDDLE BAND</div><div id="mb" class="font-bold mt-2">—</div>
-   </div>
-   <div class="bg-slate-900 rounded-lg p-3">
-    <div class="muted text-xs">15m UPPER BAND</div><div id="ub" class="font-bold mt-2">—</div>
-   </div>
-  </div>
-  <div class="mt-3 text-sm">Setup: <strong id="setup" class="text-blue-300">Waiting for data</strong></div>
- </div>
- <div class="panel p-4">
-  <h2 class="font-bold text-lg">Signal guide</h2>
-  <div class="mt-3 text-sm good">LONG — bullish conditions</div>
-  <p class="muted text-xs mt-1">Lower-band pullback or confirmed middle-band rebound.</p>
-  <div class="mt-3 text-sm bad">SHORT — bearish conditions</div>
-  <p class="muted text-xs mt-1">Upper-band pullback or confirmed middle-band rejection.</p>
-  <p class="muted text-xs mt-3">Targets are raw quote prices. Pullback/rebound levels are not percentage differences.</p>
- </div>
-</section>
+      <div>
+        <label class="small block mb-2">MINIMUM 24H VOLUME (USDT)</label>
+        <select id="minVolume" class="field">
+          <option value="0">All volumes</option>
+          <option value="100000">100K+</option>
+          <option value="1000000">1M+</option>
+          <option value="5000000">5M+</option>
+          <option value="10000000">10M+</option>
+          <option value="50000000">50M+</option>
+        </select>
+      </div>
 
-<section class="panel overflow-hidden mb-4">
- <div class="p-4 flex justify-between gap-3 flex-wrap">
-  <div>
-   <h2 class="font-bold text-lg">All Binance USDT Pairs</h2>
-   <p class="muted text-xs mt-1">Click any symbol to load its chart. Volume and all price targets are absolute values.</p>
-  </div>
-  <div id="tableInfo" class="muted text-xs">Waiting for symbols...</div>
- </div>
- <div class="scroll">
-  <table>
-   <thead><tr>
-    <th>Coin</th>
-    <th>24h Quote Volume</th>
-    <th>Signal</th>
-    <th>Setup Type</th>
-    <th>Current Price</th>
-    <th>Entry Price</th>
-    <th>Trigger Band</th>
-    <th>TP1</th>
-    <th>TP2</th>
-    <th>TP3</th>
-    <th>Final Target</th>
-    <th>15m Lower</th>
-    <th>15m Middle</th>
-    <th>15m Upper</th>
-   </tr></thead>
-   <tbody id="tbody"><tr><td colspan="14">Loading Binance markets...</td></tr></tbody>
-  </table>
- </div>
- <div class="p-3 muted text-xs border-t border-slate-700">
-  Blank targets mean no valid trigger or indicator data. No signal is a valid scanner result, not a failed trade.
- </div>
-</section>
+      <div>
+        <label class="small block mb-2">COIN SEARCH</label>
+        <input
+          id="coinSearch"
+          class="field"
+          type="search"
+          placeholder="Type BTC, ETH, SOL..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+    </div>
 
-<section class="grid grid-cols-1 xl:grid-cols-2 gap-4">
- <div class="panel p-4">
-  <div class="flex flex-wrap justify-between items-center gap-2">
-   <div>
-    <h2 class="font-bold text-lg">TradingView Chart</h2>
-    <div id="chartLabel" class="text-blue-300 text-sm mt-1">BINANCE:BTCUSDT</div>
-   </div>
-  </div>
-  <div class="flex flex-wrap gap-2 mt-4" id="timeframes">
-   <button class="btn" data-tf="15">15m</button>
-   <button class="btn active" data-tf="60">1h</button>
-   <button class="btn" data-tf="240">4h</button>
-   <button class="btn" data-tf="480">8h</button>
-   <button class="btn" data-tf="720">12h</button>
-   <button class="btn" data-tf="D">1d</button>
-   <button class="btn" data-tf="W">1w</button>
-   <button class="btn" data-tf="M">1M</button>
-  </div>
-  <div id="chart" class="chart mt-3"></div>
-  <p class="muted text-xs mt-2">TradingView chart availability and supported intervals depend on TradingView's embed service.</p>
- </div>
+    <div class="flex flex-wrap gap-2 mt-4">
+      <button id="startBtn" class="btn btn-green">▶ Start Scanner</button>
+      <button id="pauseBtn" class="btn btn-gray">Ⅱ Pause</button>
+      <button id="refreshBtn" class="btn btn-blue">↻ Refresh Markets</button>
+      <button id="clearBtn" class="btn btn-gray">Clear Search</button>
+    </div>
 
- <div class="panel p-4">
-  <div class="flex flex-wrap justify-between items-center gap-2">
-   <div>
-    <h2 class="font-bold text-lg">Latest Crypto News</h2>
-    <p class="muted text-xs mt-1">Recent crypto headlines from public RSS feeds.</p>
-   </div>
-   <button id="newsBtn" class="btn">REFRESH NEWS</button>
-  </div>
-  <div id="news" class="mt-3">
-   <p class="muted text-sm">Loading recent headlines...</p>
-  </div>
-  <p class="muted text-xs mt-3">Headlines are supplied by external publishers. Check the original article for details and timestamps.</p>
- </div>
-</section>
+    <div class="mt-3 text-xs text-slate-400">
+      Status: <strong id="status" class="text-cyan-300">Loading markets...</strong>
+      <span class="mx-2">|</span>
+      Analyzed: <strong id="progress" class="text-white">0 / 0</strong>
+      <span class="mx-2">|</span>
+      Last update: <strong id="lastUpdate" class="text-white">--</strong>
+    </div>
 
-<footer class="muted text-xs text-center mt-5 mb-3">
- Public APIs only · No private keys · No orders executed · Trading signals can be wrong.
-</footer>
-</main>
+    <p class="small mt-3">
+      Search works immediately on the loaded coin list. Click any coin row to open
+      its chart. Signals are technical estimates, not guaranteed trades.
+    </p>
+  </section>
+
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+    <div class="stat">
+      <div class="stat-label">ELIGIBLE USDT PAIRS</div>
+      <div id="totalCoins" class="stat-value text-white">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">BULLISH / LONG</div>
+      <div id="longCount" class="stat-value green">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">BEARISH / SHORT</div>
+      <div id="shortCount" class="stat-value red">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">PULLBACK / REBOUND</div>
+      <div id="setupCount" class="stat-value yellow">0</div>
+    </div>
+  </section>
+
+  <section class="panel mb-5">
+    <div class="p-4 flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <h2 class="font-black text-lg">COIN SIGNAL LIST</h2>
+        <p class="small mt-1">
+          Bold colored signals · Raw price levels · 15m, 1h and 4h confirmation
+        </p>
+      </div>
+      <div id="visibleCount" class="text-sm font-black text-cyan-300">0 coins shown</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Coin</th>
+            <th>Live Price</th>
+            <th>24H Change</th>
+            <th>15m</th>
+            <th>1h</th>
+            <th>4h</th>
+            <th>Signal</th>
+            <th>Setup</th>
+            <th>Pullback Price</th>
+            <th>Rebound Price</th>
+            <th>Entry Price</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="11" class="text-center muted py-8">Loading Binance markets...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-3 small">
+      Pullback and rebound values are estimated price levels from the latest
+      15-minute Bollinger Bands. They are not guaranteed support or resistance.
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+    <div class="panel p-4 lg:col-span-2">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div>
+          <h2 class="text-lg font-black">LIVE CHART</h2>
+          <p class="small">Selected pair: <strong id="chartSymbol" class="text-cyan-300">BTCUSDT</strong></p>
+        </div>
+        <select id="chartTimeframe" class="field" style="width:auto">
+          <option value="15">15 minutes</option>
+          <option value="60" selected>1 hour</option>
+          <option value="240">4 hours</option>
+          <option value="480">8 hours</option>
+          <option value="720">12 hours</option>
+          <option value="D">1 day</option>
+          <option value="W">1 week</option>
+          <option value="M">1 month</option>
+        </select>
+      </div>
+      <div id="chart"></div>
+    </div>
+
+    <div class="panel p-4">
+      <h2 class="text-lg font-black">SELECTED COIN DETAILS</h2>
+      <p class="small mt-1 mb-4">Select a row in the list to view its levels.</p>
+
+      <div class="stat mb-3">
+        <div class="stat-label">SYMBOL</div>
+        <div id="detailSymbol" class="stat-value text-cyan-300">BTCUSDT</div>
+      </div>
+      <div class="stat mb-3">
+        <div class="stat-label">CURRENT PRICE</div>
+        <div id="detailPrice" class="stat-value text-white">--</div>
+      </div>
+      <div class="stat mb-3">
+        <div class="stat-label">PULLBACK PRICE</div>
+        <div id="detailPullback" class="stat-value yellow">--</div>
+      </div>
+      <div class="stat mb-3">
+        <div class="stat-label">REBOUND PRICE</div>
+        <div id="detailRebound" class="stat-value green">--</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">TECHNICAL NOTE</div>
+        <p id="detailNote" class="text-sm mt-2 text-slate-300">
+          Waiting for market data.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel p-4 mb-5">
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <div>
+        <h2 class="text-lg font-black">LATEST CRYPTO NEWS</h2>
+        <p class="small">Headlines from public RSS feeds. Open a headline to read the source.</p>
+      </div>
+      <button id="newsBtn" class="btn btn-gray">↻ News</button>
+    </div>
+    <div id="newsList" class="text-sm text-slate-300">Loading headlines...</div>
+    <div class="small mt-3">
+      News feed availability depends on the feed provider and your network connection.
+    </div>
+  </section>
+
+  <footer class="text-xs text-slate-500 py-3">
+    Data provided by Binance public market endpoints and TradingView chart embeds.
+    This tool does not place orders, connect to your account, or guarantee profitability.
+  </footer>
+</div>
 
 <script>
-'use strict';
+"use strict";
+
+/* =========================
+   CONFIGURATION
+========================= */
+const CONFIG = {
+  quoteAsset: "USDT",
+  candleLimit: 100,
+  scanDelayMs: 350,
+  maxConcurrent: 2,
+  reconnectMs: 5000,
+  newsRefreshMs: 10 * 60 * 1000
+};
+
+const S = {
+  market: "spot",
+  symbols: [],
+  tickerMap: new Map(),
+  data: new Map(),
+  queue: [],
+  activeJobs: 0,
+  paused: false,
+  running: false,
+  selected: "BTCUSDT",
+  socket: null,
+  socketTimer: null,
+  lastScanIndex: 0,
+  lastScanAt: 0
+};
 
 const $ = id => document.getElementById(id);
 
-const S = {
- market:'spot',
- symbols:[],
- rows:new Map(),
- prices:new Map(),
- volumes:new Map(),
- filters:'ALL',
- query:'',
- selected:'BTCUSDT',
- tf:'60',
- running:false,
- paused:false,
- scanGeneration:0,
- cursor:0,
- lastScan:0,
- socket:null,
- scannedCount:0
-};
-
-const TIMEFRAMES=['15m','1h','4h','8h','12h','1d'];
-const API_SPOT='https://api.binance.com';
-const API_FUT='https://fapi.binance.com';
-const fmt=n=>Number.isFinite(n)
- ? n.toLocaleString('en-US',{maximumFractionDigits:12})
- : '—';
-const volfmt=n=>Number.isFinite(n)
- ? n.toLocaleString('en-US',{maximumFractionDigits:0})
- : '—';
-
-function base(){
- return S.market==='spot'?API_SPOT:API_FUT;
+function baseUrl() {
+  return S.market === "futures"
+    ? "https://fapi.binance.com"
+    : "https://api.binance.com";
 }
 
-function tvSymbol(){
- return 'BINANCE:'+S.selected;
+function klinesUrl(symbol, interval) {
+  const path = S.market === "futures" ? "/fapi/v1/klines" : "/api/v3/klines";
+  return `${baseUrl()}${path}?symbol=${encodeURIComponent(symbol)}&interval=${interval}&limit=${CONFIG.candleLimit}`;
 }
 
-function clock(){
- $('clock').textContent=new Intl.DateTimeFormat('en-GB',{
-  timeZone:'Asia/Karachi',
-  hour:'2-digit',minute:'2-digit',second:'2-digit',
-  hour12:false
- }).format(new Date());
-
- const d=new Date();
- const m=d.getUTCHours()*60+d.getUTCMinutes();
-
- // Approximate global financial-market sessions in UTC.
- const sessions=[];
- if(m>=21*60 || m<6*60) sessions.push('Session 1: Sydney');
- if(m<9*60) sessions.push('Session 2: Tokyo');
- if(m>=7*60 && m<16*60) sessions.push('Session 3: London');
- if(m>=12*60 && m<21*60) sessions.push('Session 4: New York');
-
- $('session').textContent=sessions.length
-  ? sessions.join(' · ')
-  : 'Between major sessions';
-}
-clock();
-setInterval(clock,1000);
-
-
-// Public REST request scheduler.
-// One shared queue limits request concurrency and minimum spacing.
-const Q=[];
-let active=0;
-let lastStart=0;
-let pumpTimer=null;
-const MAX_ACTIVE=2;
-const REQUEST_GAP=300;
-
-function pump(){
- if(pumpTimer){
-  clearTimeout(pumpTimer);
-  pumpTimer=null;
- }
-
- while(active<MAX_ACTIVE && Q.length){
-  const wait=Math.max(0,REQUEST_GAP-(Date.now()-lastStart));
-
-  if(wait>0){
-   pumpTimer=setTimeout(pump,wait);
-   return;
-  }
-
-  const job=Q.shift();
-  active++;
-  lastStart=Date.now();
-
-  (async()=>{
-   try{
-    const result=await job.fn();
-    job.resolve(result);
-   }catch(e){
-    job.reject(e);
-   }finally{
-    active--;
-    pump();
-   }
-  })();
- }
+function exchangeInfoUrl() {
+  return S.market === "futures"
+    ? `${baseUrl()}/fapi/v1/exchangeInfo`
+    : `${baseUrl()}/api/v3/exchangeInfo`;
 }
 
-function queued(fn){
- return new Promise((resolve,reject)=>{
-  Q.push({fn,resolve,reject});
-  pump();
- });
+function tickerUrl() {
+  return S.market === "futures"
+    ? `${baseUrl()}/fapi/v1/ticker/24hr`
+    : `${baseUrl()}/api/v3/ticker/24hr`;
 }
 
-async function getJSON(url){
- return queued(async()=>{
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),15000);
-
-  try{
-   const res=await fetch(url,{
-    signal:controller.signal,
-    cache:'no-store'
-   });
-
-   if(res.status===418 || res.status===429){
-    throw new Error('Binance rate limit. Pause scanning and wait before retrying.');
-   }
-
-   if(!res.ok) throw new Error('HTTP '+res.status);
-
-   return await res.json();
-  }finally{
-   clearTimeout(timer);
-  }
- });
+function priceUrl() {
+  return S.market === "futures"
+    ? `${baseUrl()}/fapi/v1/ticker/price`
+    : `${baseUrl()}/api/v3/ticker/price`;
 }
 
-
-// Native RSI (Wilder smoothing).
-function rsiCalc(closes,period=14){
- const out=Array(closes.length).fill(null);
- if(closes.length<=period) return out;
-
- let gain=0,loss=0;
-
- for(let i=1;i<=period;i++){
-  const d=closes[i]-closes[i-1];
-  gain+=Math.max(0,d);
-  loss+=Math.max(0,-d);
- }
-
- let ag=gain/period;
- let al=loss/period;
-
- out[period]=al===0?(ag===0?50:100):100-100/(1+ag/al);
-
- for(let i=period+1;i<closes.length;i++){
-  const d=closes[i]-closes[i-1];
-  ag=(ag*(period-1)+Math.max(0,d))/period;
-  al=(al*(period-1)+Math.max(0,-d))/period;
-  out[i]=al===0?(ag===0?50:100):100-100/(1+ag/al);
- }
-
- return out;
-}
-
-
-// Native Bollinger Bands, period 20 and two standard deviations.
-function bbCalc(closes,period=20,mult=2){
- const out=Array(closes.length).fill(null);
-
- for(let i=period-1;i<closes.length;i++){
-  const a=closes.slice(i-period+1,i+1);
-  const mean=a.reduce((x,y)=>x+y,0)/period;
-  const variance=a.reduce((x,y)=>x+(y-mean)**2,0)/period;
-  const sd=Math.sqrt(variance);
-
-  out[i]={
-   lb:mean-mult*sd,
-   mb:mean,
-   ub:mean+mult*sd
-  };
- }
-
- return out;
-}
-
-function indicators(raw){
- const c=raw.map(k=>({
-  time:+k[0],
-  open:+k[1],
-  high:+k[2],
-  low:+k[3],
-  close:+k[4],
-  volume:+k[5]
- }));
-
- const closes=c.map(x=>x.close);
- const rs=rsiCalc(closes,14);
- const bb=bbCalc(closes,20,2);
-
- // Use the last completed candle and the candle before it.
- const i=c.length-2;
- const p=i-1;
-
- if(i<20 || !bb[i] || !bb[p] || rs[i]==null || rs[p]==null)
-  return null;
-
- return {
-  prev:c[p],c:c[i],
-  bb:bb[i],pb:bb[p],
-  r:rs[i],pr:rs[p],
-  up:rs[i]>rs[p],
-  down:rs[i]<rs[p]
- };
-}
-
-async function getKlines(symbol,tf){
- const path=S.market==='spot'?'/api/v3/klines':'/fapi/v1/klines';
- const url=base()+path+
-  '?symbol='+encodeURIComponent(symbol)+
-  '&interval='+tf+'&limit=100';
-
- return indicators(await getJSON(url));
-}
-
-
-// Load all eligible USDT quote pairs from the selected market.
-async function loadMarkets(){
- S.paused=true;
- S.running=false;
- S.scanGeneration++;
- S.rows.clear();
- S.prices.clear();
- S.volumes.clear();
- S.symbols=[];
- S.cursor=0;
- S.scannedCount=0;
-
- renderTable();
- $('status').textContent='Loading symbols...';
- $('progress').textContent='Fetching Binance exchange information';
-
- const infoPath=S.market==='spot'
-  ? '/api/v3/exchangeInfo'
-  : '/fapi/v1/exchangeInfo';
-
- const tickPath=S.market==='spot'
-  ? '/api/v3/ticker/24hr'
-  : '/fapi/v1/ticker/24hr';
-
- try{
-  const [info,tickers]=await Promise.all([
-   getJSON(base()+infoPath),
-   getJSON(base()+tickPath)
-  ]);
-
-  let allowed;
-
-  if(S.market==='spot'){
-   allowed=new Set(info.symbols
-    .filter(x=>
-     x.status==='TRADING' &&
-     x.quoteAsset==='USDT' &&
-     x.isSpotTradingAllowed!==false
-    )
-    .map(x=>x.symbol));
-  }else{
-   allowed=new Set(info.symbols
-    .filter(x=>
-     x.status==='TRADING' &&
-     x.quoteAsset==='USDT' &&
-     x.contractType==='PERPETUAL'
-    )
-    .map(x=>x.symbol));
-  }
-
-  const marketRows=tickers.filter(t=>
-   allowed.has(t.symbol) &&
-   Number(t.lastPrice)>0
-  );
-
-  marketRows.sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume));
-
-  S.symbols=marketRows.map(t=>t.symbol);
-
-  for(const t of marketRows){
-   S.prices.set(t.symbol,Number(t.lastPrice));
-   S.volumes.set(t.symbol,Number(t.quoteVolume));
-  }
-
-  $('total').textContent=S.symbols.length.toLocaleString();
-  $('status').textContent='Markets ready';
-  $('progress').textContent=
-   S.symbols.length.toLocaleString()+' eligible USDT pairs loaded';
-
-  S.selected=S.symbols.includes(S.selected)
-   ? S.selected
-   : (S.symbols[0]||'BTCUSDT');
-
-  updateSelected();
-  renderTable();
-  startSocket();
-  S.paused=false;
-  startScan();
-
- }catch(e){
-  $('status').textContent='Connection error';
-  $('progress').textContent=e.message;
-  console.error(e);
- }
-}
-
-
-// Evaluate one coin's 15m setup first.
-// Higher timeframes are fetched only when a valid setup exists.
-async function analyzeSymbol(symbol,generation){
- const d15=await getKlines(symbol,'15m');
-
- if(generation!==S.scanGeneration || S.paused) return;
-
- if(!d15){
-  saveRow(symbol,null,'Insufficient candle data');
-  return;
- }
-
- const c=d15.c;
- const b=d15.bb;
- const pc=d15.prev;
- const pb=d15.pb;
-
- let side='NONE';
- let type='—';
- let anchor=null;
- let entry=null;
- let triggerBand=null;
-
- // Outer-band pullback triggers.
- if((c.low<=b.lb || pc.low<=pb.lb) && c.close>c.open && d15.up){
-  side='LONG';
-  type='Pullback';
-  anchor='LB';
-  entry=b.lb;
-  triggerBand=b.lb;
- }else if((c.high>=b.ub || pc.high>=pb.ub) && c.close<c.open && d15.down){
-  side='SHORT';
-  type='Pullback';
-  anchor='UB';
-  entry=b.ub;
-  triggerBand=b.ub;
- }
-
- // Middle-band rebound/rejection triggers.
- else if(pc.close<=pb.mb && c.close>b.mb && d15.up && c.close>c.open){
-  side='LONG';
-  type='Rebound';
-  anchor='MB';
-  entry=b.mb;
-  triggerBand=b.mb;
- }else if(pc.close>=pb.mb && c.close<b.mb && d15.down && c.close<c.open){
-  side='SHORT';
-  type='Rebound';
-  anchor='MB';
-  entry=b.mb;
-  triggerBand=b.mb;
- }
-
- const data={
-  side,type,anchor,entry,triggerBand,
-  d15,
-  tp:[null,null,null],
-  final:null,
-  stage:side==='NONE'?'No trigger':'15m '+anchor+' trigger'
- };
-
- if(side!=='NONE'){
-  const higher={};
-
-  for(const tf of ['1h','4h','8h','12h','1d']){
-   if(generation!==S.scanGeneration || S.paused) return;
-
-   try{
-    higher[tf]=await getKlines(symbol,tf);
-   }catch(e){
-    console.warn(symbol,tf,e.message);
-   }
-  }
-
-  const h1=higher['1h']?.bb;
-  const h4=higher['4h']?.bb;
-  const h1d=higher['1d']?.bb;
-  const up=side==='LONG';
-
-  // Exact raw-price target mappings.
-  if(up && anchor==='LB')
-   data.tp=[b.mb,b.ub,h1?.ub??null];
-
-  else if(up && anchor==='MB')
-   data.tp=[b.ub,h1?.ub??null,h4?.ub??null];
-
-  else if(up && anchor==='UB')
-   data.tp=[h1?.ub??null,h4?.ub??null,h1d?.ub??null];
-
-  else if(!up && anchor==='UB')
-   data.tp=[b.mb,b.lb,h1?.lb??null];
-
-  else if(!up && anchor==='MB')
-   data.tp=[b.lb,h1?.lb??null,h4?.lb??null];
-
-  else
-   data.tp=[h1?.lb??null,h4?.lb??null,h1d?.lb??null];
-
-  const validTargets=data.tp.filter(Number.isFinite);
-  data.final=validTargets.length?validTargets[validTargets.length-1]:null;
-
-  // Cascade must pass sequentially through each timeframe.
-  for(const tf of ['1h','4h','8h','12h','1d']){
-   const x=higher[tf];
-
-   if(!x) break;
-
-   const broke=up
-    ? (x.prev.close<=x.pb.mb && x.c.close>x.bb.mb && x.up)
-    : (x.prev.close>=x.pb.mb && x.c.close<x.bb.mb && x.down);
-
-   if(!broke) break;
-
-   data.final=up?x.bb.ub:x.bb.lb;
-   data.stage=tf+' middle-band break';
-  }
- }
-
- saveRow(symbol,data,'');
-}
-
-
-// Save row and redraw counters.
-function saveRow(symbol,data,error){
- S.rows.set(symbol,{
-  symbol,
-  data,
-  error,
-  price:S.prices.get(symbol),
-  volume:S.volumes.get(symbol)
- });
-
- S.scannedCount++;
- renderTable();
- updateSelected();
-}
-
-
-// Progressive scanner; pauses can cancel current work between requests.
-async function startScan(){
- if(S.running) return;
-
- S.paused=false;
- S.running=true;
-
- const generation=S.scanGeneration;
-
- $('status').textContent='Scanning all pairs';
-
- try{
-  while(!S.paused && generation===S.scanGeneration){
-   if(!S.symbols.length) break;
-
-   if(S.cursor>=S.symbols.length){
-    S.cursor=0;
-    S.lastScan=Date.now();
-
-    if(!$('auto').checked){
-     S.paused=true;
-     break;
-    }
-
-    $('status').textContent='Cycle complete';
-    $('progress').textContent='Starting next full scan in 10 seconds';
-    await new Promise(r=>setTimeout(r,10000));
-
-    if(S.paused || generation!==S.scanGeneration) break;
-   }
-
-   const symbol=S.symbols[S.cursor++];
-
-   $('progress').textContent=
-    `${S.cursor.toLocaleString()} / ${S.symbols.length.toLocaleString()} pairs · ${symbol}`;
-
-   try{
-    await analyzeSymbol(symbol,generation);
-   }catch(e){
-    console.warn(symbol,e.message);
-    saveRow(symbol,null,e.message);
-   }
-
-   // Give the browser time to repaint between symbols.
-   await new Promise(r=>setTimeout(r,30));
-  }
- }finally{
-  if(generation===S.scanGeneration){
-   S.running=false;
-   $('status').textContent=S.paused?'Paused':'Ready';
-  }
- }
-}
-
-function pauseScan(){
- S.paused=true;
- S.status='Paused';
- $('status').textContent='Paused';
- $('progress').textContent='Press SCAN / RESUME to continue';
-}
-
-
-// Render all pairs, including not-yet-scanned coins.
-function renderTable(){
- const q=S.query.trim().toUpperCase();
- const out=[];
-
- for(const symbol of S.symbols){
-  if(q && !symbol.includes(q)) continue;
-
-  const row=S.rows.get(symbol);
-  const d=row?.data;
-  const side=d?.side||'NONE';
-
-  if(S.filters!=='ALL' && side!==S.filters) continue;
-
-  out.push({symbol,row,d,side});
- }
-
- $('total').textContent=S.symbols.length.toLocaleString();
-
- $('longCount').textContent=[...S.rows.values()]
-  .filter(r=>r.data?.side==='LONG').length.toLocaleString();
-
- $('shortCount').textContent=[...S.rows.values()]
-  .filter(r=>r.data?.side==='SHORT').length.toLocaleString();
-
- $('tableInfo').textContent=
-  `${out.length.toLocaleString()} shown · ${S.rows.size.toLocaleString()} analyzed · ${S.symbols.length.toLocaleString()} total`;
-
- const body=$('tbody');
-
- if(!out.length){
-  body.innerHTML='<tr><td colspan="14">No matching pairs.</td></tr>';
-  return;
- }
-
- body.innerHTML=out.map(({symbol,row,d,side})=>{
-  const price=S.prices.get(symbol)??row?.price;
-  const vol=S.volumes.get(symbol)??row?.volume;
-  const b=d?.d15?.bb;
-  const cls=side==='LONG'?'long':side==='SHORT'?'short':'none';
-  const signal=side==='NONE'?'WAITING / NONE':side;
-  const anchor=d?.anchor||'—';
-  const t=d?.tp||[null,null,null];
-
-  return `<tr>
-   <td><span class="coin" data-coin="${symbol}">${symbol}</span></td>
-   <td>${volfmt(vol)}</td>
-   <td><span class="badge ${cls}">${signal}</span></td>
-   <td>${d?.type||'—'}</td>
-   <td>${fmt(price)}</td>
-   <td>${fmt(d?.entry)}</td>
-   <td>${anchor==='—'?'—':anchor+' '+fmt(d?.triggerBand)}</td>
-   <td>${fmt(t[0])}</td>
-   <td>${fmt(t[1])}</td>
-   <td>${fmt(t[2])}</td>
-   <td>${fmt(d?.final)}</td>
-   <td>${fmt(b?.lb)}</td>
-   <td>${fmt(b?.mb)}</td>
-   <td>${fmt(b?.ub)}</td>
-  </tr>`;
- }).join('');
-
- body.querySelectorAll('[data-coin]').forEach(el=>{
-  el.addEventListener('click',()=>selectCoin(el.dataset.coin));
- });
-}
-
-function selectCoin(symbol){
- S.selected=symbol;
- $('selected').textContent=symbol;
- $('chartLabel').textContent=tvSymbol();
- updateSelected();
- renderChart();
-}
-
-function updateSelected(){
- const row=S.rows.get(S.selected);
- const d=row?.data?.d15;
-
- $('selected').textContent=S.selected;
- $('selectedPrice').textContent=fmt(S.prices.get(S.selected));
- $('rsi').textContent=d?d.r.toFixed(2):'—';
- $('lb').textContent=fmt(d?.bb.lb);
- $('mb').textContent=fmt(d?.bb.mb);
- $('ub').textContent=fmt(d?.bb.ub);
- $('setup').textContent=row?.data?.stage||row?.error||'Waiting for scan';
-}
-
-
-// Binance mini-ticker WebSocket provides current prices for all pairs.
-// REST scanning remains separate and throttled.
-function startSocket(){
- if(S.socket){
-  try{S.socket.close()}catch(e){}
- }
-
- const url=S.market==='spot'
-  ? 'wss://stream.binance.com:9443/ws/!miniTicker@arr'
-  : 'wss://fstream.binance.com/ws/!miniTicker@arr';
-
- try{
-  const ws=new WebSocket(url);
-  S.socket=ws;
-
-  ws.onmessage=e=>{
-   try{
-    const arr=JSON.parse(e.data);
-
-    for(const t of arr){
-     if(S.prices.has(t.s) || S.symbols.includes(t.s)){
-      S.prices.set(t.s,Number(t.c));
-     }
-    }
-
-    updateSelected();
-
-    // Update current price cells on the next regular table refresh.
-    if(Date.now()-S.lastRender>1500){
-     S.lastRender=Date.now();
-     renderTable();
-    }
-   }catch(err){}
-  };
-
-  ws.onclose=()=>{
-   if(S.socket===ws){
-    setTimeout(()=>{
-     if(!S.paused) startSocket();
-    },5000);
-   }
-  };
-
-  ws.onerror=()=>{try{ws.close()}catch(e){}};
-
- }catch(e){
-  console.warn('WebSocket unavailable',e);
- }
-}
-
-
-// TradingView embed.
-function renderChart(){
- const container=$('chart');
- container.innerHTML='';
-
- const outer=document.createElement('div');
- outer.style.height='100%';
- outer.style.width='100%';
- outer.className='tradingview-widget-container';
-
- const widget=document.createElement('div');
- widget.className='tradingview-widget-container__widget';
- widget.style.height='calc(100% - 25px)';
- widget.style.width='100%';
-
- const script=document.createElement('script');
- script.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
- script.async=true;
-
- script.textContent=JSON.stringify({
-  autosize:true,
-  symbol:tvSymbol(),
-  interval:S.tf,
-  timezone:'Asia/Karachi',
-  theme:'dark',
-  style:'1',
-  locale:'en',
-  allow_symbol_change:true,
-  hide_top_toolbar:false,
-  hide_legend:false,
-  save_image:false,
-  withdateranges:true,
-  support_host:'https://www.tradingview.com'
- });
-
- outer.append(widget,script);
- container.appendChild(outer);
-}
-
-
-// News: public RSS-to-JSON proxy. If the proxy is unavailable,
-// show a useful set of direct crypto-news sources instead.
-async function loadNews(){
- const box=$('news');
- box.innerHTML='<p class="muted text-sm">Loading latest headlines...</p>';
-
- const feeds=[
-  'https://www.coindesk.com/arc/outboundfeeds/rss/',
-  'https://cointelegraph.com/rss'
- ];
-
- let articles=[];
-
- for(const feed of feeds){
-  try{
-   const url='https://api.rss2json.com/v1/api.json?rss_url='+
-    encodeURIComponent(feed);
-
-   const res=await fetch(url);
-   if(!res.ok) continue;
-
-   const json=await res.json();
-
-   if(json.status==='ok' && Array.isArray(json.items)){
-    articles.push(...json.items.map(x=>({
-     title:x.title||'Crypto news',
-     link:x.link||feed,
-     date:x.pubDate||'',
-     source:json.feed?.title||'Crypto news'
-    })));
-   }
-  }catch(e){
-   console.warn('News feed unavailable',feed,e.message);
-  }
- }
-
- // Keep recent items only; sort by publication timestamp.
- const cutoff=Date.now()-7*24*60*60*1000;
-
- articles=articles.filter(a=>{
-  const t=Date.parse(a.date);
-  return a.title && (!Number.isFinite(t)||t>=cutoff);
- });
-
- articles.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));
-
- const unique=[];
- const seen=new Set();
-
- for(const a of articles){
-  if(seen.has(a.title)) continue;
-  seen.add(a.title);
-  unique.push(a);
- }
-
- if(!unique.length){
-  box.innerHTML=`
-   <p class="muted text-sm">
-    Live news feed could not be loaded. Open these news sources directly:
-   </p>
-   <div class="news-item"><a href="https://www.coindesk.com/" target="_blank" rel="noopener">CoinDesk — Crypto News</a></div>
-   <div class="news-item"><a href="https://cointelegraph.com/" target="_blank" rel="noopener">Cointelegraph — Latest News</a></div>
-   <div class="news-item"><a href="https://www.theblock.co/" target="_blank" rel="noopener">The Block — Digital Asset News</a></div>`;
-  return;
- }
-
- box.innerHTML=unique.slice(0,15).map(a=>{
-  const date=Date.parse(a.date);
-  const when=Number.isFinite(date)
-   ? new Date(date).toLocaleString()
-   : 'Publication time unavailable';
-
-  return `<div class="news-item">
-   <a href="${escapeAttr(a.link)}" target="_blank" rel="noopener noreferrer">${escapeHTML(a.title)}</a>
-   <div class="news-meta">${escapeHTML(a.source)} · ${escapeHTML(when)}</div>
-  </div>`;
- }).join('');
-}
-
-function escapeHTML(s){
- return String(s).replace(/[&<>"']/g,c=>({
-  '&':'&amp;','<':'&lt;','>':'&gt;',
-  '"':'&quot;',"'":'&#39;'
- })[c]);
-}
-
-function escapeAttr(s){
- try{
-  const u=new URL(s);
-  if(u.protocol==='https:'||u.protocol==='http:') return escapeHTML(u.href);
- }catch(e){}
- return '#';
-}
-
-
-// Controls.
-$('allCard').onclick=()=>{
- S.filters='ALL';
- updateFilterButtons();
- renderTable();
- $('tbody').scrollIntoView({behavior:'smooth',block:'nearest'});
-};
-
-$('longCard').onclick=()=>{
- S.filters='LONG';
- updateFilterButtons();
- renderTable();
- $('tbody').scrollIntoView({behavior:'smooth',block:'nearest'});
-};
-
-$('shortCard').onclick=()=>{
- S.filters='SHORT';
- updateFilterButtons();
- renderTable();
- $('tbody').scrollIntoView({behavior:'smooth',block:'nearest'});
-};
-
-function updateFilterButtons(){
- document.querySelectorAll('[data-filter]').forEach(b=>{
-  b.classList.toggle('active',b.dataset.filter===S.filters);
- });
-}
-
-document.querySelectorAll('[data-filter]').forEach(b=>{
- b.onclick=()=>{
-  S.filters=b.dataset.filter;
-  updateFilterButtons();
-  renderTable();
- };
-});
-
-$('search').addEventListener('input',e=>{
- S.query=e.target.value;
- renderTable();
-
- const q=S.query.trim().toUpperCase();
- if(!q) return;
-
- const exact=S.symbols.find(s=>s===q||s===q+'USDT');
-
- if(exact){
-  selectCoin(exact);
-  setTimeout(()=>{
-   document.querySelector('[data-coin="'+exact+'"]')
-    ?.scrollIntoView({behavior:'smooth',block:'center'});
-  },50);
- }
-});
-
-$('spotBtn').onclick=async()=>{
- if(S.market==='spot') return;
-
- S.market='spot';
- $('spotBtn').classList.add('active');
- $('futuresBtn').classList.remove('active');
-
- await loadMarkets();
-};
-
-$('futuresBtn').onclick=async()=>{
- if(S.market==='futures') return;
-
- S.market='futures';
- $('futuresBtn').classList.add('active');
- $('spotBtn').classList.remove('active');
-
- await loadMarkets();
-};
-
-$('scanBtn').onclick=()=>{
- if(!S.symbols.length){
-  loadMarkets();
-  return;
- }
-
- if(S.running){
-  S.paused=false;
-  return;
- }
-
- startScan();
-};
-
-$('stopBtn').onclick=()=>{
- S.paused=true;
- $('status').textContent='Pausing...';
-};
-
-document.querySelectorAll('[data-tf]').forEach(b=>{
- b.onclick=()=>{
-  S.tf=b.dataset.tf;
-  document.querySelectorAll('[data-tf]').forEach(x=>{
-   x.classList.toggle('active',x===b);
+function fmt(value, maxDigits = 8) {
+  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "--";
+  const n = Number(value);
+  if (n === 0) return "0";
+  return n.toLocaleString("en-US", {
+    maximumFractionDigits: maxDigits,
+    minimumFractionDigits: 0
   });
-  renderChart();
- };
+}
+
+function fmtVolume(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "--";
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+  return n.toFixed(0);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
+
+async function fetchJson(url, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) {
+      const msg = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status}: ${msg.slice(0, 100)}`);
+    }
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/* =========================
+   INDICATORS: BB + RSI
+========================= */
+function bollinger(values, period = 20, mult = 2) {
+  if (!values || values.length < period) return null;
+  const slice = values.slice(-period);
+  const mean = slice.reduce((a, b) => a + b, 0) / period;
+  const variance = slice.reduce((sum, x) => sum + (x - mean) ** 2, 0) / period;
+  const sd = Math.sqrt(variance);
+  return {
+    upper: mean + mult * sd,
+    middle: mean,
+    lower: mean - mult * sd
+  };
+}
+
+function rsi(values, period = 14) {
+  if (!values || values.length <= period) return null;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const change = values[i] - values[i - 1];
+    if (change > 0) gains += change;
+    else losses -= change;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+
+  for (let i = period + 1; i < values.length; i++) {
+    const change = values[i] - values[i - 1];
+    avgGain = (avgGain * (period - 1) + Math.max(change, 0)) / period;
+    avgLoss = (avgLoss * (period - 1) + Math.max(-change, 0)) / period;
+  }
+
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - (100 / (1 + rs));
+}
+
+function parseCandles(raw) {
+  return raw.map(k => ({
+    time: Number(k[0]),
+    open: Number(k[1]),
+    high: Number(k[2]),
+    low: Number(k[3]),
+    close: Number(k[4]),
+    volume: Number(k[5])
+  }));
+}
+
+function analyzeCandles(raw) {
+  const candles = parseCandles(raw);
+  if (candles.length < 30) throw new Error("Not enough candles");
+
+  const closes = candles.map(c => c.close);
+  const current = candles[candles.length - 1];
+  const previous = candles[candles.length - 2];
+  const bb = bollinger(closes, 20, 2);
+  const priorBb = bollinger(closes.slice(0, -1), 20, 2);
+  const r = rsi(closes, 14);
+
+  if (!bb || !priorBb || r === null) throw new Error("Indicators unavailable");
+
+  const bullish = current.close > bb.middle && r >= 50;
+  const bearish = current.close < bb.middle && r < 50;
+
+  let trend = "NEUTRAL";
+  if (bullish) trend = "BULLISH";
+  else if (bearish) trend = "BEARISH";
+
+  const touchedLower = current.low <= bb.lower || previous.low <= priorBb.lower;
+  const touchedUpper = current.high >= bb.upper || previous.high >= priorBb.upper;
+  const greenCandle = current.close > current.open;
+  const redCandle = current.close < current.open;
+
+  let setup = "WAIT";
+  if (touchedLower && greenCandle && r < 60) setup = "PULLBACK";
+  if (touchedUpper && redCandle && r > 40) setup = "REBOUND";
+  if (touchedLower && greenCandle && r < 35) setup = "PULLBACK";
+  if (touchedUpper && redCandle && r > 65) setup = "REBOUND";
+
+  return {
+    close: current.close,
+    open: current.open,
+    high: current.high,
+    low: current.low,
+    rsi: r,
+    bb,
+    trend,
+    setup,
+    candleTime: current.time
+  };
+}
+
+/* =========================
+   MULTI-TIMEFRAME ANALYSIS
+========================= */
+async function analyzeSymbol(symbol) {
+  const intervals = [
+    ["15m", "15m"],
+    ["1h", "1h"],
+    ["4h", "4h"]
+  ];
+
+  const results = {};
+
+  for (const [key, interval] of intervals) {
+    const raw = await fetchJson(klinesUrl(symbol, interval));
+    results[key] = analyzeCandles(raw);
+  }
+
+  const a15 = results["15m"];
+  const a1h = results["1h"];
+  const a4h = results["4h"];
+
+  let signal = "WAIT";
+  const bullCount = [a15, a1h, a4h].filter(a => a.trend === "BULLISH").length;
+  const bearCount = [a15, a1h, a4h].filter(a => a.trend === "BEARISH").length;
+
+  if (bullCount >= 2 && a15.rsi < 75) signal = "LONG";
+  if (bearCount >= 2 && a15.rsi > 25) signal = "SHORT";
+
+  let setup = "WAIT";
+  if (a15.setup === "PULLBACK") setup = "PULLBACK";
+  else if (a15.setup === "REBOUND") setup = "REBOUND";
+
+  /*
+    Price levels:
+    Pullback = lower Bollinger Band of 15m.
+    Rebound = upper Bollinger Band of 15m.
+    Entry = current price when signal is confirmed.
+    These are estimates, not guaranteed fills.
+  */
+  return {
+    symbol,
+    a15,
+    a1h,
+    a4h,
+    signal,
+    setup,
+    pullback: a15.bb.lower,
+    rebound: a15.bb.upper,
+    entry: signal === "WAIT" ? null : a15.close,
+    updatedAt: Date.now()
+  };
+}
+
+/* =========================
+   MARKET LOADING
+========================= */
+async function loadMarkets() {
+  stopSocket();
+  S.paused = true;
+  S.running = false;
+  S.market = $("market").value;
+  S.symbols = [];
+  S.tickerMap.clear();
+  S.data.clear();
+  S.queue = [];
+  S.lastScanIndex = 0;
+
+  $("status").textContent = "Loading Binance market pairs...";
+  $("tbody").innerHTML =
+    '<tr><td colspan="11" class="text-center muted py-8">Loading market pairs...</td></tr>';
+
+  try {
+    const [exchangeInfo, tickers] = await Promise.all([
+      fetchJson(exchangeInfoUrl()),
+      fetchJson(tickerUrl())
+    ]);
+
+    const eligible = new Set(
+      exchangeInfo.symbols
+        .filter(s =>
+          s.status === "TRADING" &&
+          s.quoteAsset === CONFIG.quoteAsset &&
+          s.symbol.endsWith(CONFIG.quoteAsset) &&
+          !s.symbol.includes("UPUSDT") &&
+          !s.symbol.includes("DOWNUSDT") &&
+          !s.symbol.includes("BULLUSDT") &&
+          !s.symbol.includes("BEARUSDT") &&
+          (S.market === "spot" ? s.isSpotTradingAllowed !== false : true)
+        )
+        .map(s => s.symbol)
+    );
+
+    tickers.forEach(t => {
+      if (!eligible.has(t.symbol)) return;
+      S.tickerMap.set(t.symbol, {
+        price: Number(t.lastPrice || 0),
+        change: Number(t.priceChangePercent || 0),
+        quoteVolume: Number(t.quoteVolume || 0)
+      });
+    });
+
+    S.symbols = Array.from(eligible)
+      .filter(sym => S.tickerMap.has(sym))
+      .sort((a, b) =>
+        (S.tickerMap.get(b)?.quoteVolume || 0) -
+        (S.tickerMap.get(a)?.quoteVolume || 0)
+      );
+
+    $("totalCoins").textContent = S.symbols.length.toLocaleString();
+    $("status").textContent = `Loaded ${S.symbols.length} eligible USDT pairs`;
+    S.paused = false;
+
+    renderTable();
+    updateStats();
+    connectSocket();
+    startScan();
+
+    if (!S.symbols.includes(S.selected)) S.selected = "BTCUSDT";
+    loadChart(S.selected);
+    updateDetails(S.selected);
+  } catch (err) {
+    $("status").textContent = "Market loading error: " + err.message;
+    $("tbody").innerHTML =
+      `<tr><td colspan="11" class="text-center red py-8">Could not load Binance data. Check your connection or try again later.<br><span class="small">${escapeHtml(err.message)}</span></td></tr>`;
+  }
+}
+
+/* =========================
+   LIVE PRICE WEBSOCKET
+========================= */
+function connectSocket() {
+  stopSocket();
+
+  const stream = S.market === "futures"
+    ? "wss://fstream.binance.com/ws/!ticker@arr"
+    : "wss://stream.binance.com:9443/ws/!ticker@arr";
+
+  try {
+    S.socket = new WebSocket(stream);
+
+    S.socket.onopen = () => {
+      $("status").textContent = "Live prices connected; scanning candles...";
+    };
+
+    S.socket.onmessage = event => {
+      let payload;
+      try { payload = JSON.parse(event.data); } catch { return; }
+
+      const tickers = Array.isArray(payload) ? payload : [payload];
+      for (const t of tickers) {
+        if (!t.s || !S.tickerMap.has(t.s)) continue;
+        const old = S.tickerMap.get(t.s) || {};
+        S.tickerMap.set(t.s, {
+          ...old,
+          price: Number(t.c || old.price || 0),
+          change: Number(t.P ?? old.change ?? 0),
+          quoteVolume: Number(t.q ?? old.quoteVolume ?? 0)
+        });
+      }
+
+      renderTable();
+      updateStats();
+
+      if (S.selected) updateDetails(S.selected);
+    };
+
+    S.socket.onerror = () => {
+      $("status").textContent = "WebSocket issue; attempting reconnect...";
+    };
+
+    S.socket.onclose = () => {
+      if (!S.paused) {
+        clearTimeout(S.socketTimer);
+        S.socketTimer = setTimeout(connectSocket, CONFIG.reconnectMs);
+      }
+    };
+  } catch (err) {
+    $("status").textContent = "Live prices unavailable; REST data remains available.";
+  }
+}
+
+function stopSocket() {
+  clearTimeout(S.socketTimer);
+  if (S.socket) {
+    try {
+      S.socket.onclose = null;
+      S.socket.close();
+    } catch {}
+  }
+  S.socket = null;
+}
+
+/* =========================
+   SCAN QUEUE
+========================= */
+async function startScan() {
+  if (S.running) return;
+  S.running = true;
+  S.paused = false;
+  $("status").textContent = "Scanning pairs in the background...";
+
+  try {
+    while (!S.paused) {
+      if (!S.symbols.length) break;
+
+      const symbol = S.symbols[S.lastScanIndex % S.symbols.length];
+      S.lastScanIndex++;
+
+      if (!S.data.has(symbol)) {
+        try {
+          const result = await analyzeSymbol(symbol);
+          S.data.set(symbol, result);
+        } catch (err) {
+          S.data.set(symbol, {
+            symbol,
+            error: err.message,
+            updatedAt: Date.now()
+          });
+        }
+
+        $("progress").textContent =
+          `${S.data.size.toLocaleString()} / ${S.symbols.length.toLocaleString()}`;
+        $("lastUpdate").textContent = new Date().toLocaleTimeString();
+
+        renderTable();
+        updateStats();
+
+        if (symbol === S.selected) updateDetails(symbol);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, CONFIG.scanDelayMs));
+
+      // Once every pair has been analyzed, refresh the list in another pass.
+      if (S.lastScanIndex >= S.symbols.length) {
+        S.lastScanIndex = 0;
+        S.data.clear();
+        $("progress").textContent = `0 / ${S.symbols.length.toLocaleString()}`;
+      }
+    }
+  } finally {
+    S.running = false;
+    if (S.paused) $("status").textContent = "Scanner paused";
+  }
+}
+
+function pauseScan() {
+  S.paused = true;
+  stopSocket();
+  $("status").textContent = "Scanner paused";
+}
+
+/* =========================
+   LIVE SEARCH + TABLE
+========================= */
+function searchCoins() {
+  renderTable();
+}
+
+function passesSignalFilter(item) {
+  const filter = $("signalFilter").value;
+  if (filter === "ALL") return true;
+  if (filter === "LONG") return item.signal === "LONG";
+  if (filter === "SHORT") return item.signal === "SHORT";
+  if (filter === "PULLBACK") return item.setup === "PULLBACK";
+  if (filter === "REBOUND") return item.setup === "REBOUND";
+  if (filter === "WAIT") return !item.signal || item.signal === "WAIT";
+  return true;
+}
+
+function passesSearch(symbol) {
+  const q = $("coinSearch").value.trim().toUpperCase();
+  if (!q) return true;
+  return symbol.toUpperCase().includes(q) ||
+    symbol.replace("USDT", "").toUpperCase().includes(q);
+}
+
+function passesVolume(symbol) {
+  const min = Number($("minVolume").value || 0);
+  const ticker = S.tickerMap.get(symbol);
+  return ticker && ticker.quoteVolume >= min;
+}
+
+function signalClass(signal) {
+  if (signal === "LONG") return "signal signal-long";
+  if (signal === "SHORT") return "signal signal-short";
+  if (signal === "WAIT") return "signal signal-wait";
+  return "signal signal-neutral";
+}
+
+function trendTag(trend) {
+  if (trend === "BULLISH") return '<span class="tag tag-up">BULLISH</span>';
+  if (trend === "BEARISH") return '<span class="tag tag-down">BEARISH</span>';
+  return '<span class="tag tag-neutral">NEUTRAL</span>';
+}
+
+function priceCell(v, color = "") {
+  return `<span class="${color}">${fmt(v)}</span>`;
+}
+
+function renderTable() {
+  const body = $("tbody");
+  const items = S.symbols
+    .filter(sym => passesSearch(sym) && passesVolume(sym))
+    .map(sym => {
+      const ticker = S.tickerMap.get(sym) || {};
+      const data = S.data.get(sym) || {};
+      return { symbol: sym, ticker, ...data };
+    })
+    .filter(item => passesSignalFilter(item));
+
+  $("visibleCount").textContent = `${items.length.toLocaleString()} coins shown`;
+
+  if (!items.length) {
+    body.innerHTML =
+      '<tr><td colspan="11" class="text-center muted py-8">No matching coins. Try another search or filter.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = items.map(item => {
+    const sym = item.symbol;
+    const ticker = item.ticker || {};
+    const dataReady = item.a15 && item.a1h && item.a4h;
+    const price = ticker.price;
+    const change = ticker.change || 0;
+    const changeClass = change >= 0 ? "green" : "red";
+
+    if (!dataReady) {
+      const err = item.error ? "RETRY NEXT CYCLE" : "SCANNING";
+      return `
+        <tr data-symbol="${escapeHtml(sym)}">
+          <td class="coin">${escapeHtml(sym)}</td>
+          <td>${priceCell(price, "text-white")}</td>
+          <td class="${changeClass}">${change >= 0 ? "+" : ""}${change.toFixed(2)}%</td>
+          <td><span class="tag tag-neutral">--</span></td>
+          <td><span class="tag tag-neutral">--</span></td>
+          <td><span class="tag tag-neutral">--</span></td>
+          <td><span class="signal signal-neutral">${err}</span></td>
+          <td><span class="tag tag-neutral">WAIT</span></td>
+          <td class="yellow">--</td>
+          <td class="green">--</td>
+          <td class="blue">--</td>
+        </tr>`;
+    }
+
+    const signal = item.signal || "WAIT";
+    const setup = item.setup || "WAIT";
+    const setupClass = setup === "PULLBACK" ? "yellow" :
+                       setup === "REBOUND" ? "green" : "muted";
+
+    return `
+      <tr data-symbol="${escapeHtml(sym)}">
+        <td class="coin">${escapeHtml(sym)}</td>
+        <td class="text-white">${fmt(price)}</td>
+        <td class="${changeClass}">${change >= 0 ? "+" : ""}${change.toFixed(2)}%</td>
+        <td>${trendTag(item.a15.trend)}</td>
+        <td>${trendTag(item.a1h.trend)}</td>
+        <td>${trendTag(item.a4h.trend)}</td>
+        <td><span class="${signalClass(signal)}">${signal}</span></td>
+        <td class="${setupClass}">${setup}</td>
+        <td class="yellow">${fmt(item.pullback)}</td>
+        <td class="green">${fmt(item.rebound)}</td>
+        <td class="blue">${fmt(item.entry)}</td>
+      </tr>`;
+  }).join("");
+
+  // Reapply the live search after every table render.
+  // The list is already filtered above, so typed text stays active.
+}
+
+function updateStats() {
+  let longs = 0, shorts = 0, setups = 0;
+
+  for (const sym of S.symbols) {
+    const d = S.data.get(sym);
+    if (!d) continue;
+    if (d.signal === "LONG") longs++;
+    if (d.signal === "SHORT") shorts++;
+    if (d.setup === "PULLBACK" || d.setup === "REBOUND") setups++;
+  }
+
+  $("longCount").textContent = longs.toLocaleString();
+  $("shortCount").textContent = shorts.toLocaleString();
+  $("setupCount").textContent = setups.toLocaleString();
+}
+
+/* =========================
+   CHART + SELECTED DETAILS
+========================= */
+function tradingViewInterval() {
+  return $("chartTimeframe").value;
+}
+
+function loadChart(symbol) {
+  S.selected = symbol;
+  $("chartSymbol").textContent = symbol;
+  $("detailSymbol").textContent = symbol;
+
+  const container = $("chart");
+  container.innerHTML = "";
+
+  if (typeof TradingView === "undefined") {
+    container.innerHTML = '<p class="muted p-4">TradingView chart library unavailable.</p>';
+    return;
+  }
+
+  try {
+    new TradingView.widget({
+      autosize: true,
+      symbol: `BINANCE:${symbol}`,
+      interval: tradingViewInterval(),
+      timezone: "Asia/Karachi",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      enable_publishing: false,
+      allow_symbol_change: true,
+      hide_side_toolbar: false,
+      withdateranges: true,
+      details: false,
+      calendar: false,
+      studies: ["BB@tv-basicstudies", "RSI@tv-basicstudies"],
+      container_id: "chart"
+    });
+  } catch (err) {
+    container.innerHTML = '<p class="muted p-4">Unable to load chart.</p>';
+  }
+
+  updateDetails(symbol);
+}
+
+function updateDetails(symbol) {
+  const ticker = S.tickerMap.get(symbol);
+  const data = S.data.get(symbol);
+
+  $("detailSymbol").textContent = symbol;
+  $("detailPrice").textContent = ticker ? fmt(ticker.price) : "--";
+  $("detailPullback").textContent = data && data.pullback ? fmt(data.pullback) : "--";
+  $("detailRebound").textContent = data && data.rebound ? fmt(data.rebound) : "--";
+
+  if (!data || !data.a15) {
+    $("detailNote").textContent = "Waiting for this coin's candle analysis.";
+    return;
+  }
+
+  $("detailNote").textContent =
+    `Signal: ${data.signal}. Setup: ${data.setup}. ` +
+    `15m RSI: ${data.a15.rsi.toFixed(1)}. ` +
+    `1h: ${data.a1h.trend}. 4h: ${data.a4h.trend}. ` +
+    `Pullback/rebound levels are estimates based on Bollinger Bands.`;
+}
+
+/* =========================
+   CRYPTO NEWS
+========================= */
+async function loadNews() {
+  const news = $("newsList");
+  news.innerHTML = '<p class="muted">Fetching latest headlines...</p>';
+
+  const feeds = [
+    "https://www.coindesk.com/arc/outboundfeeds/rss/",
+    "https://cointelegraph.com/rss"
+  ];
+
+  let entries = [];
+
+  // RSS is fetched through a public RSS-to-JSON service.
+  // Provider availability and CORS restrictions may vary.
+  for (const feed of feeds) {
+    try {
+      const url = "https://api.rss2json.com/v1/api.json?rss_url=" +
+        encodeURIComponent(feed);
+      const json = await fetchJson(url, 12000);
+      if (json.status === "ok" && Array.isArray(json.items)) {
+        entries.push(...json.items);
+      }
+    } catch (err) {
+      // Try the next public feed.
+    }
+  }
+
+  const seen = new Set();
+  entries = entries.filter(item => {
+    const key = item.link || item.title;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 12);
+
+  if (!entries.length) {
+    news.innerHTML = `
+      <p class="text-slate-400 mb-3">
+        The automatic news feed could not be loaded. Open these news sources directly:
+      </p>
+      <div class="news-item"><a href="https://www.coindesk.com/" target="_blank" rel="noopener noreferrer">CoinDesk — Crypto news</a></div>
+      <div class="news-item"><a href="https://cointelegraph.com/" target="_blank" rel="noopener noreferrer">Cointelegraph — Market news</a></div>
+      <div class="news-item"><a href="https://www.binance.com/en/square" target="_blank" rel="noopener noreferrer">Binance Square — Crypto community updates</a></div>`;
+    return;
+  }
+
+  news.innerHTML = entries.map(item => {
+    const title = escapeHtml(item.title || "Crypto news");
+    const link = /^https?:\/\//i.test(item.link || "") ? item.link : "https://www.coindesk.com/";
+    const date = item.pubDate ? new Date(item.pubDate).toLocaleString() : "";
+    return `
+      <div class="news-item">
+        <a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${title}</a>
+        <div class="small mt-1">${escapeHtml(date)}</div>
+      </div>`;
+  }).join("");
+}
+
+/* =========================
+   SESSION CLOCK
+========================= */
+function updateClock() {
+  const now = new Date();
+  $("clock").textContent = now.toLocaleTimeString("en-PK", {
+    hour12: false,
+    timeZone: "Asia/Karachi"
+  });
+
+  const hour = Number(new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Karachi"
+  }).format(now));
+
+  let session = "Market monitoring";
+  if (hour >= 0 && hour < 8) session = "Asia session";
+  else if (hour >= 8 && hour < 13) session = "Asia / Europe overlap";
+  else if (hour >= 13 && hour < 17) session = "London / New York overlap";
+  else if (hour >= 17 && hour < 22) session = "New York session";
+  else session = "Late session";
+
+  $("session").textContent = session + " · Pakistan time";
+}
+
+/* =========================
+   EVENTS
+========================= */
+$("coinSearch").addEventListener("input", searchCoins);
+$("signalFilter").addEventListener("change", renderTable);
+$("minVolume").addEventListener("change", renderTable);
+
+$("market").addEventListener("change", () => {
+  loadMarkets();
 });
 
-$('newsBtn').onclick=loadNews;
+$("startBtn").addEventListener("click", () => {
+  if (S.running) {
+    S.paused = false;
+    connectSocket();
+    $("status").textContent = "Resuming scanner...";
+    return;
+  }
+  S.paused = false;
+  connectSocket();
+  startScan();
+});
 
+$("pauseBtn").addEventListener("click", pauseScan);
+$("refreshBtn").addEventListener("click", loadMarkets);
 
-// Initial startup.
+$("clearBtn").addEventListener("click", () => {
+  $("coinSearch").value = "";
+  renderTable();
+});
+
+$("newsBtn").addEventListener("click", loadNews);
+
+$("chartTimeframe").addEventListener("change", () => {
+  loadChart(S.selected || "BTCUSDT");
+});
+
+$("tbody").addEventListener("click", event => {
+  const row = event.target.closest("tr[data-symbol]");
+  if (!row) return;
+  const symbol = row.getAttribute("data-symbol");
+  if (!symbol) return;
+  loadChart(symbol);
+  updateDetails(symbol);
+});
+
+/* =========================
+   INITIAL STARTUP
+========================= */
+updateClock();
+setInterval(updateClock, 1000);
+
 loadNews();
-renderChart();
-loadMarkets();
+setInterval(loadNews, CONFIG.newsRefreshMs);
 
+loadMarkets();
 </script>
 </body>
 </html>
