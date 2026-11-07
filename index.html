@@ -50,12 +50,12 @@ input:focus,select:focus{outline:none;border-color:var(--blue)}
 .progress{height:5px;background:#263247;border-radius:10px;
 overflow:hidden;margin-top:12px}
 .progress div{height:100%;width:0;background:var(--green)}
-.info{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.5}
+.info{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.6}
 .badge{border:1px solid var(--border);padding:7px 9px;border-radius:5px}
 .filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
 .filters button.active{border-color:var(--green);color:var(--green)}
 .table-wrap{overflow:auto;max-height:650px}
-table{width:100%;border-collapse:collapse;min-width:1150px}
+table{width:100%;border-collapse:collapse;min-width:1250px}
 th{position:sticky;top:0;background:#192940;color:#a9bad0;
 z-index:2;font-size:10px;letter-spacing:.7px}
 td,th{padding:12px 10px;text-align:right;border-bottom:1px solid #263247;
@@ -67,7 +67,7 @@ tbody tr:hover{background:#192940}
 #signals tr:has(.long){border-left-color:var(--green)}
 #signals tr:has(.short){border-left-color:var(--red)}
 .coin{font-size:16px;font-weight:1000}
-.signal{font-weight:1000;font-size:12px;padding:7px 11px;border-radius:5px}
+.signal{font-weight:1000;font-size:11px;padding:7px 9px;border-radius:5px}
 .long{background:#063d30;color:var(--green)}
 .short{background:#4a1c2b;color:var(--red)}
 .neutral{background:#263247;color:#aab7ca}
@@ -88,6 +88,8 @@ padding:4px 7px;border-radius:4px;margin-right:7px}
 font-size:11px;color:#a4b7d0;line-height:1.7}
 .alert-on{background:#075d46;color:var(--green);border-color:var(--green)}
 .footer{text-align:center;color:var(--muted);padding:20px;font-size:11px}
+.strategy-tag{display:inline-block;border:1px solid var(--border);
+border-radius:4px;padding:5px 7px;font-size:10px;font-weight:900}
 @media(max-width:900px){
 .metrics{grid-template-columns:repeat(3,1fr)}
 .grid2{grid-template-columns:1fr}
@@ -106,7 +108,7 @@ header{padding:13px}
 <header>
 <div>
 <div class="brand">INSTITUTIONAL <span>CONFLUENCE PRO</span></div>
-<div class="sub">STRICT MULTI-TIMEFRAME CRYPTO INTELLIGENCE</div>
+<div class="sub">MULTI-TIMEFRAME · EARLY REVERSAL · RELATIVE STRENGTH</div>
 </div>
 <div class="status">
 <span><i class="dot" id="statusDot"></i><span id="connection">WAITING</span></span>
@@ -149,10 +151,11 @@ header{padding:13px}
 </select>
 
 <select id="minScore">
+<option value="65">Score 65+</option>
 <option value="70">Score 70+</option>
 <option value="75">Score 75+</option>
-<option value="80">Score 80+</option>
-<option value="85" selected>Score 85+</option>
+<option value="80" selected>Score 80+</option>
+<option value="85">Score 85+</option>
 <option value="90">Score 90+</option>
 </select>
 
@@ -164,6 +167,11 @@ header{padding:13px}
 </div>
 <div class="progress"><div id="progressBar"></div></div>
 <div class="info" id="scanStatus">Waiting to start...</div>
+<div class="info">
+Three independent strategies: trend continuation, early reversal and relative strength.
+A coin can qualify for a LONG even when BTC is bearish, if its own price action and
+relative strength support the setup.
+</div>
 </div>
 
 <div class="panel">
@@ -177,15 +185,15 @@ header{padding:13px}
 </div>
 <div>
 <div class="session"><span>BTC MARKET REGIME</span><b id="btcRegime" class="yellow">WAITING</b></div>
-<div class="session"><span>BTC 15M MOVE</span><b id="btcMove">--</b></div>
+<div class="session"><span>BTC LAST 15M MOVE</span><b id="btcMove">--</b></div>
 <div class="session"><span>ALTCOIN PREFERENCE</span><b id="btcPreference">WAITING</b></div>
-<div class="session"><span>COUNTERTREND POLICY</span><b class="green">BLOCKED</b></div>
+<div class="session"><span>COUNTERTREND POLICY</span><b class="blue">RELATIVE STRENGTH ALLOWED</b></div>
 </div>
 </div>
 <div class="info">
-BTC bullish = LONG only. BTC bearish = SHORT only.
-Mixed BTC direction = wait. High BTC volatility = no new signals.
-All three coin timeframes must confirm the same direction.
+BTC is a market context filter, not a command to buy or sell every altcoin.
+A bullish altcoin can still qualify during a BTC decline. Volatility reduces scores
+instead of automatically deleting every opposite-direction setup.
 </div>
 </div>
 
@@ -201,8 +209,8 @@ All three coin timeframes must confirm the same direction.
 <div>
 <div class="session"><span>MARKET</span><b>BINANCE USDⓈ-M</b></div>
 <div class="session"><span>TIMEFRAMES</span><b>15M / 1H / 4H</b></div>
-<div class="session"><span>MINIMUM SCORE</span><b id="scoreLabel">85 / 100</b></div>
-<div class="session"><span>DAILY TARGET</span><b>3–4 OPPORTUNITIES</b></div>
+<div class="session"><span>MINIMUM SCORE</span><b id="scoreLabel">80 / 100</b></div>
+<div class="session"><span>STRATEGIES</span><b>3 SIGNAL TYPES</b></div>
 </div>
 </div>
 </div>
@@ -213,31 +221,29 @@ All three coin timeframes must confirm the same direction.
 <button class="active" data-filter="ALL">ALL</button>
 <button data-filter="LONG">🟢 LONG</button>
 <button data-filter="SHORT">🔴 SHORT</button>
-<input id="search" placeholder="Search BTC, SOL, ZEC..." style="flex:1">
+<select id="strategyFilter">
+<option value="ALL">All strategies</option>
+<option value="TREND">Trend continuation</option>
+<option value="REVERSAL">Early reversal</option>
+<option value="RELATIVE">Relative strength</option>
+</select>
+<input id="search" placeholder="Search BTC, SOL, JCT..." style="flex:1">
 </div>
+
 <div class="table-wrap">
 <table>
 <thead><tr>
-<th>ASSET</th><th>LIVE PRICE</th><th>SIGNAL</th><th>SCORE</th>
-<th>15M RSI</th><th>1H RSI</th><th>4H RSI</th>
-<th>VOLUME</th><th>ENTRY</th><th>STOP LOSS</th>
-<th>TP1</th><th>TP2</th><th>TP3</th><th>BTC BIAS</th>
+<th>ASSET</th><th>LIVE PRICE</th><th>SIGNAL</th><th>STRATEGY</th>
+<th>SCORE</th><th>15M RSI</th><th>1H RSI</th><th>4H RSI</th>
+<th>VOLUME</th><th>VS BTC</th><th>ENTRY</th><th>STOP LOSS</th>
+<th>TP1</th><th>TP2</th><th>TP3</th>
 </tr></thead>
 <tbody id="signals">
-<tr><td colspan="14" class="empty">Press START SCANNER to find opportunities.</td></tr>
+<tr><td colspan="15" class="empty">Press START SCANNER to find opportunities.</td></tr>
 </tbody>
 </table>
 </div>
-<div class="info">Click any coin to open its chart and detailed trading setup.</div>
-</div>
-
-<div class="panel" id="cryptoNews">
-<div class="controls" style="justify-content:space-between">
-<div class="title">🚨 LIVE CRYPTO MARKET NEWS</div>
-<button id="newsButton">↻ UPDATE NEWS</button>
-</div>
-<div class="info">Bitcoin · Ethereum · ETFs · Binance · Regulation · Whales · Liquidations · Market events</div>
-<div id="newsList"><div class="empty">Loading crypto news...</div></div>
+<div class="info">Click any coin to open its chart and detailed trading setup. Relative strength is measured against BTC over completed candles.</div>
 </div>
 
 <div class="grid2">
@@ -265,8 +271,8 @@ All three coin timeframes must confirm the same direction.
 <div class="title">📋 SIGNAL HISTORY</div>
 <div class="table-wrap" style="max-height:260px">
 <table style="min-width:500px">
-<thead><tr><th>TIME PKT</th><th>ASSET</th><th>SIGNAL</th><th>SCORE</th><th>ENTRY</th></tr></thead>
-<tbody id="history"><tr><td colspan="5" class="empty">No signals yet.</td></tr></tbody>
+<thead><tr><th>TIME PKT</th><th>ASSET</th><th>SIGNAL</th><th>TYPE</th><th>SCORE</th><th>ENTRY</th></tr></thead>
+<tbody id="history"><tr><td colspan="6" class="empty">No signals yet.</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -277,35 +283,46 @@ All three coin timeframes must confirm the same direction.
 </div>
 
 <div class="panel">
-<div class="title">🧠 STRICT STRATEGY RULES</div>
+<div class="title">🧠 STRATEGY RULES</div>
 <div class="grid2">
 <div>
-<b class="green">LONG CONFIRMATION</b><br><br>
-• BTC bullish on 15M, 1H and 4H<br>
-• Coin bullish on 15M, 1H and 4H<br>
-• Higher highs and higher lows<br>
-• RSI above 50 and rising<br>
-• MACD bullish on 15M and 1H<br>
-• EMA20 / VWAP pullback<br>
-• Volume confirmation<br>
-• Bullish candle breakout
+<b class="green">EARLY REVERSAL / RELATIVE STRENGTH LONG</b><br><br>
+• Rejection from a recent support area<br>
+• Higher low or bullish RSI divergence<br>
+• MACD momentum improving<br>
+• Bollinger middle-band recovery<br>
+• Coin outperforming BTC<br>
+• Volume expansion and bullish candle<br>
+• No requirement for RSI to be above 50
 </div>
 <div>
-<b class="red">SHORT CONFIRMATION</b><br><br>
-• BTC bearish on 15M, 1H and 4H<br>
-• Coin bearish on 15M, 1H and 4H<br>
-• Lower highs and lower lows<br>
-• RSI below 50 and falling<br>
-• MACD bearish on 15M and 1H<br>
-• EMA20 / VWAP pullback<br>
-• Volume confirmation<br>
-• Bearish candle breakout
+<b class="red">EARLY REVERSAL / RELATIVE STRENGTH SHORT</b><br><br>
+• Rejection from a recent resistance area<br>
+• Lower high or bearish RSI divergence<br>
+• MACD momentum weakening<br>
+• Bollinger middle-band failure<br>
+• Coin underperforming BTC<br>
+• Volume expansion and bearish candle<br>
+• No requirement for RSI to be below 50
 </div>
 </div>
 <div class="info">
-BTC trend conflict blocks the trade. A technical score is not a win probability.
-No daily signal quota is forced. No signal is better than a weak signal.
+Scores are technical screening scores, not win probabilities. Early reversal signals are
+less established than trend signals. Wait for confirmation and manage risk independently.
 </div>
+</div>
+
+<!-- NEWS IS INTENTIONALLY AT THE END -->
+<div class="panel" id="cryptoNews">
+<div class="controls" style="justify-content:space-between">
+<div class="title">🌍 LIVE CRYPTO MARKET NEWS</div>
+<button id="newsButton">↻ UPDATE NEWS</button>
+</div>
+<div class="info">
+Bitcoin · Ethereum · ETFs · Binance · Regulation · Whales · Liquidations ·
+Market events · Exchange news · Security incidents
+</div>
+<div id="newsList"><div class="empty">Loading crypto news...</div></div>
 </div>
 
 </main>
@@ -317,22 +334,14 @@ INSTITUTIONAL CONFLUENCE PRO · BINANCE PUBLIC MARKET DATA · NOT FINANCIAL ADVI
 <script>
 "use strict";
 
-/* CONFIGURATION */
-
 const API="https://fapi.binance.com";
 const $=id=>document.getElementById(id);
 
-let running=false;
-let scanning=false;
-let timer=null;
-let allSignals=[];
-let history=[];
-let activeFilter="ALL";
+let running=false,scanning=false,timer=null;
+let allSignals=[],history=[],activeFilter="ALL";
 let selectedSymbol="BTCUSDT";
-let btcMarketState="SIDEWAYS";
-let btcInfo=null;
-let alertEnabled=false;
-let alertAudio=null;
+let btcMarketState="SIDEWAYS",btcInfo=null;
+let alertEnabled=false,alertAudio=null;
 let alertedSignals=new Map();
 
 const excluded=[
@@ -340,21 +349,14 @@ const excluded=[
 "EURUSDT","USDEUSDT","USTCUSDT","BUSDUSDT"
 ];
 
-/* CLOCK */
-
 function pktTime(){
-return new Date().toLocaleTimeString("en-GB",{
-timeZone:"Asia/Karachi"
-});
+return new Date().toLocaleTimeString("en-GB",{timeZone:"Asia/Karachi"});
 }
-
 function clock(){
 $("clock").textContent=pktTime()+" PKT";
 }
 setInterval(clock,1000);
 clock();
-
-/* LOG */
 
 function log(message){
 const el=$("log");
@@ -362,17 +364,12 @@ el.innerHTML+=`<br>[${pktTime()}] ${message}`;
 el.scrollTop=el.scrollHeight;
 }
 
-/* FORMATTING */
-
 function fmt(n){
 if(!Number.isFinite(n))return "--";
-if(Math.abs(n)>=1000)
-return n.toLocaleString("en-US",{maximumFractionDigits:2});
+if(Math.abs(n)>=1000)return n.toLocaleString("en-US",{maximumFractionDigits:2});
 if(Math.abs(n)>=1)return n.toFixed(4);
 return n.toPrecision(5);
 }
-
-/* BINANCE PUBLIC API */
 
 async function api(path){
 const response=await fetch(API+path);
@@ -380,155 +377,180 @@ if(!response.ok)throw new Error("Binance HTTP "+response.status);
 return response.json();
 }
 
-/* TECHNICAL INDICATORS */
+/* INDICATORS */
 
 function ema(values,period){
 if(values.length<period)return null;
 const k=2/(period+1);
 let result=values.slice(0,period).reduce((a,b)=>a+b,0)/period;
-for(let i=period;i<values.length;i++){
-result=values[i]*k+result*(1-k);
-}
+for(let i=period;i<values.length;i++)result=values[i]*k+result*(1-k);
 return result;
 }
 
 function rsi(values,period=14){
 if(values.length<=period)return null;
 let gain=0,loss=0;
-
 for(let i=1;i<=period;i++){
 const d=values[i]-values[i-1];
-if(d>0)gain+=d;
-else loss-=d;
+if(d>0)gain+=d;else loss-=d;
 }
-
-let avgG=gain/period;
-let avgL=loss/period;
-
+let avgG=gain/period,avgL=loss/period;
 for(let i=period+1;i<values.length;i++){
 const d=values[i]-values[i-1];
 avgG=(avgG*(period-1)+Math.max(d,0))/period;
 avgL=(avgL*(period-1)+Math.max(-d,0))/period;
 }
-
 return avgL===0?100:100-(100/(1+avgG/avgL));
 }
 
-function macd(values){
-const fast=[],slow=[];
-
-for(let i=0;i<values.length;i++){
-fast.push(ema(values.slice(0,i+1),12));
-slow.push(ema(values.slice(0,i+1),26));
+function rsiSeries(values,period=14){
+const out=Array(values.length).fill(null);
+if(values.length<=period)return out;
+let gain=0,loss=0;
+for(let i=1;i<=period;i++){
+const d=values[i]-values[i-1];
+if(d>0)gain+=d;else loss-=d;
+}
+let ag=gain/period,al=loss/period;
+out[period]=al===0?100:100-100/(1+ag/al);
+for(let i=period+1;i<values.length;i++){
+const d=values[i]-values[i-1];
+ag=(ag*(period-1)+Math.max(d,0))/period;
+al=(al*(period-1)+Math.max(-d,0))/period;
+out[i]=al===0?100:100-100/(1+ag/al);
+}
+return out;
 }
 
-const dif=fast.map((v,i)=>
-v===null||slow[i]===null?null:v-slow[i]
-);
-
-const valid=dif.filter(v=>v!==null);
-const signal=ema(valid,9);
-const current=dif[dif.length-1];
-const previous=dif[dif.length-2];
-
-return {
-hist:current!==null&&signal!==null?current-signal:0,
-previous:previous??0
-};
+function macd(values){
+const k1=2/13,k2=2/27,ks=2/10;
+let fast=null,slow=null,signal=null,previousHist=0,hist=0;
+const fastSeed=values.slice(0,12).reduce((a,b)=>a+b,0)/12;
+const slowSeed=values.slice(0,26).reduce((a,b)=>a+b,0)/26;
+for(let i=0;i<values.length;i++){
+if(i===11)fast=fastSeed;
+else if(i>11)fast=values[i]*k1+fast*(1-k1);
+if(i===25)slow=slowSeed;
+else if(i>25)slow=values[i]*k2+slow*(1-k2);
+if(fast!==null&&slow!==null){
+const line=fast-slow;
+if(signal===null)signal=line;
+else signal=line*ks+signal*(1-ks);
+previousHist=hist;
+hist=line-signal;
+}
+}
+return {hist,previous:previousHist};
 }
 
 function atr(candles,period=14){
 const trs=[];
 for(let i=1;i<candles.length;i++){
 const c=candles[i],p=candles[i-1];
-trs.push(Math.max(
-c.h-c.l,
-Math.abs(c.h-p.c),
-Math.abs(c.l-p.c)
-));
+trs.push(Math.max(c.h-c.l,Math.abs(c.h-p.c),Math.abs(c.l-p.c)));
 }
 return trs.length>=period?
 trs.slice(-period).reduce((a,b)=>a+b,0)/period:null;
+}
+
+function bollinger(closes,period=20){
+const values=closes.slice(-period);
+const mid=values.reduce((a,b)=>a+b,0)/values.length;
+const variance=values.reduce((a,b)=>a+Math.pow(b-mid,2),0)/values.length;
+const sd=Math.sqrt(variance);
+return {mid,upper:mid+2*sd,lower:mid-2*sd};
 }
 
 function vwap(candles){
 let pv=0,v=0;
 for(const c of candles){
 const typical=(c.h+c.l+c.c)/3;
-pv+=typical*c.v;
-v+=c.v;
+pv+=typical*c.v;v+=c.v;
 }
 return v?pv/v:0;
 }
 
-/* INDICATOR DATA */
-
 function getIndicators(raw){
-
 if(raw.length<205)throw new Error("Insufficient candles");
 
 const candles=raw.slice(0,-1).map(x=>({
 o:+x[1],h:+x[2],l:+x[3],c:+x[4],v:+x[5]
 }));
-
 const closes=candles.map(c=>c.c);
-const last=candles[candles.length-1];
-const prev=candles[candles.length-2];
-
-const e20=ema(closes,20);
-const e50=ema(closes,50);
-const e200=ema(closes,200);
-
-const currentRsi=rsi(closes);
-const priorRsi=rsi(closes.slice(0,-1));
+const last=candles.at(-1),prev=candles.at(-2);
+const e20=ema(closes,20),e50=ema(closes,50),e200=ema(closes,200);
+const rsis=rsiSeries(closes,14);
+const currentRsi=rsis.at(-1);
+const priorRsi=rsis.at(-2);
 const mc=macd(closes);
 const av=atr(candles);
+const bb=bollinger(closes);
+const previousBB=bollinger(closes.slice(0,-1));
 const vw=vwap(candles.slice(-20));
-
-const volumeAvg=candles.slice(-21,-1)
-.reduce((a,c)=>a+c.v,0)/20;
-
+const volumeAvg=candles.slice(-21,-1).reduce((a,c)=>a+c.v,0)/20;
 const volumeRatio=volumeAvg?last.v/volumeAvg:0;
 
-/* PRICE STRUCTURE: LAST FIVE VS PREVIOUS FIVE */
+const recent=candles.slice(-8);
+const lowRecent=Math.min(...recent.map(c=>c.l));
+const highRecent=Math.max(...recent.map(c=>c.h));
+const range=last.h-last.l;
+const lowerWick=range>0?(Math.min(last.o,last.c)-last.l)/range:0;
+const upperWick=range>0?(last.h-Math.max(last.o,last.c))/range:0;
 
-const recent=candles.slice(-5);
-const previous=candles.slice(-10,-5);
+const older=candles.slice(-16,-8);
+const olderLow=Math.min(...older.map(c=>c.l));
+const olderHigh=Math.max(...older.map(c=>c.h));
 
-const recentHigh=Math.max(...recent.map(c=>c.h));
-const previousHigh=Math.max(...previous.map(c=>c.h));
-const recentLow=Math.min(...recent.map(c=>c.l));
-const previousLow=Math.min(...previous.map(c=>c.l));
+const priceLowIndex=candles.slice(-14,-7)
+.reduce((best,c,i,arr)=>c.l<arr[best].l?i:best,0);
+const recentLowIndex=candles.slice(-7)
+.reduce((best,c,i,arr)=>c.l<arr[best].l?i:best,0);
+const oldLowRSI=rsis[candles.length-14+priceLowIndex];
+const newLowRSI=rsis[candles.length-7+recentLowIndex];
 
-const structureBull=
-recentHigh>previousHigh &&
-recentLow>previousLow;
+const bullishDivergence=
+Number.isFinite(oldLowRSI)&&Number.isFinite(newLowRSI)&&
+candles.slice(-7).reduce((m,c)=>Math.min(m,c.l),Infinity)<
+candles.slice(-14,-7).reduce((m,c)=>Math.min(m,c.l),Infinity)&&
+newLowRSI>oldLowRSI+2;
 
-const structureBear=
-recentHigh<previousHigh &&
-recentLow<previousLow;
+const bearishDivergence=
+Number.isFinite(oldLowRSI)&&Number.isFinite(newLowRSI)&&
+candles.slice(-7).reduce((m,c)=>Math.max(m,c.h),-Infinity)>
+candles.slice(-14,-7).reduce((m,c)=>Math.max(m,c.h),-Infinity)&&
+newLowRSI<oldLowRSI-2;
 
-/* TREND ALIGNMENT */
+const bullishRejection=lowerWick>=0.35&&last.c>last.o;
+const bearishRejection=upperWick>=0.35&&last.c<last.o;
 
-const bull=
-last.c>e200 &&
-e20>e50 &&
-e50>e200;
+const bullishReclaim=last.c>bb.mid&&prev.c<=previousBB.mid;
+const bearishReject=last.c<bb.mid&&prev.c>=previousBB.mid;
 
-const bear=
-last.c<e200 &&
-e20<e50 &&
-e50<e20;
+const higherLow=lowRecent>olderLow;
+const lowerHigh=highRecent<olderHigh;
 
 return {
-last,prev,close:last.c,e20,e50,e200,
-rsi:currentRsi,priorRsi,macd:mc,
-atr:av,vwap:vw,volumeRatio,
-bull,bear,structureBull,structureBear
+candles,last,prev,close:last.c,e20,e50,e200,
+rsi:currentRsi,priorRsi,macd:mc,atr:av,bb,
+vwap:vw,volumeRatio,
+bull:last.c>e200&&e50>e200&&e20>e50,
+bear:last.c<e200&&e50<e200&&e20<e50,
+bullishDivergence,bearishDivergence,
+bullishRejection,bearishRejection,
+bullishReclaim,bearishReject,higherLow,lowerHigh,
+lowerWick,upperWick,lowRecent,highRecent,
+ret15:returnPct(closes,1),
+ret1h:returnPct(closes,4),
+ret4h:returnPct(closes,16)
 };
 }
 
-/* BINANCE CANDLES */
+function returnPct(values,bars){
+if(values.length<=bars)return 0;
+return (values.at(-1)/values[values.length-1-bars]-1)*100;
+}
+
+/* MARKET DATA */
 
 async function fetchCandles(symbol,interval){
 return api(`/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=220`);
@@ -540,65 +562,23 @@ fetchCandles(symbol,"4h"),
 fetchCandles(symbol,"1h"),
 fetchCandles(symbol,"15m")
 ]);
-
-return {
-a:getIndicators(h4),
-b:getIndicators(h1),
-c:getIndicators(m15)
-};
+return {a:getIndicators(h4),b:getIndicators(h1),c:getIndicators(m15)};
 }
 
-/* BTC MARKET INTELLIGENCE */
+/* BTC MARKET REGIME */
 
 async function updateBTCRegime(){
-
 const data=await getSymbolData("BTCUSDT");
-
 const tick=await api("/fapi/v1/ticker/price?symbol=BTCUSDT");
 const livePrice=Number(tick.price);
+const move=data.c.ret15;
 
-/* Last completed 15-minute candle movement */
-const move=Math.abs(
-(data.c.last.c-data.c.prev.c)/data.c.prev.c*100
-);
-
-const atrPercent=data.c.atr?
-(data.c.atr/data.c.close)*100:0;
-
-/* Volatility protection */
-const volatile=move>=1.2 || atrPercent>=0.9;
-
-/* BTC must agree on all timeframes */
-const bullish=
-data.a.bull &&
-data.b.bull &&
-data.c.bull &&
-data.a.rsi>50 &&
-data.b.rsi>50 &&
-data.c.rsi>50 &&
-data.c.rsi>data.c.priorRsi;
-
-const bearish=
-data.a.bear &&
-data.b.bear &&
-data.c.bear &&
-data.a.rsi<50 &&
-data.b.rsi<50 &&
-data.c.rsi<50 &&
-data.c.rsi<data.c.priorRsi;
-
-if(volatile){
-btcMarketState="VOLATILE";
-}else if(bullish){
-btcMarketState="BULLISH";
-}else if(bearish){
-btcMarketState="BEARISH";
-}else{
-btcMarketState="SIDEWAYS";
-}
+if(Math.abs(move)>=1.5)btcMarketState="VOLATILE";
+else if(data.a.bull&&data.b.bull)btcMarketState="BULLISH";
+else if(data.a.bear&&data.b.bear)btcMarketState="BEARISH";
+else btcMarketState="SIDEWAYS";
 
 btcInfo=data;
-
 $("btcPrice").textContent=fmt(livePrice);
 $("btcRsi15").textContent=fmt(data.c.rsi);
 $("btcRsi1").textContent=fmt(data.b.rsi);
@@ -607,275 +587,254 @@ $("btcMove").textContent=move.toFixed(3)+"%";
 $("btcRegime").textContent=btcMarketState;
 $("btcMetric").textContent=btcMarketState;
 
-const preference={
-BULLISH:"LONG ONLY",
-BEARISH:"SHORT ONLY",
-SIDEWAYS:"WAIT FOR DIRECTION",
-VOLATILE:"NO NEW SIGNALS"
-};
-
-$("btcPreference").textContent=preference[btcMarketState];
+$("btcPreference").textContent={
+BULLISH:"LONG PREFERENCE",
+BEARISH:"SHORT PREFERENCE",
+SIDEWAYS:"SELECTIVE",
+VOLATILE:"REDUCE RISK"
+}[btcMarketState];
 
 const color={
-BULLISH:"green",
-BEARISH:"red",
-SIDEWAYS:"yellow",
-VOLATILE:"red"
+BULLISH:"green",BEARISH:"red",SIDEWAYS:"yellow",VOLATILE:"red"
 };
-
 $("btcRegime").className=color[btcMarketState];
 $("btcMetric").className=color[btcMarketState];
-
-log("BTC regime: "+btcMarketState);
 }
 
-/* STRICT SIGNAL SCORING */
+/* RELATIVE STRENGTH AGAINST BTC */
 
-function evaluate(a,b,c){
+function relativeStrength(coin,btc){
+return {
+m15:coin.c.ret15-btc.c.ret15,
+h1:coin.b.ret1h-btc.b.ret1h,
+h4:coin.a.ret4h-btc.a.ret4h
+};
+}
 
-/* ALL THREE TIMEFRAMES MUST AGREE */
+/* STRATEGY SCORING */
 
-const isBull=a.bull&&b.bull&&c.bull;
-const isBear=a.bear&&b.bear&&c.bear;
+function scoreTrend(a,b,c,rs){
+const long=a.bull&&b.bull;
+const short=a.bear&&b.bear;
+if(!long&&!short)return null;
 
-if(!isBull&&!isBear)return null;
+const dir=long?"LONG":"SHORT";
+let score=45;
+const pullback=dir==="LONG"?
+(c.close>=c.e20-c.atr*.7&&c.close<=c.e20+c.atr*.5):
+(c.close<=c.e20+c.atr*.7&&c.close>=c.e20-c.atr*.5);
+const momentum=dir==="LONG"?
+(c.rsi>48&&c.rsi>c.priorRsi):
+(c.rsi<52&&c.rsi<c.priorRsi);
+const macdOK=dir==="LONG"?
+(c.macd.hist>0&&c.macd.hist>=c.macd.previous):
+(c.macd.hist<0&&c.macd.hist<=c.macd.previous);
+const volume=c.volumeRatio>=1.15;
+const candle=dir==="LONG"?
+(c.last.c>c.last.o):(c.last.c<c.last.o);
+const relative=dir==="LONG"?
+(rs.m15>0&&rs.h1>0):(rs.m15<0&&rs.h1<0);
 
-const dir=isBull?"LONG":"SHORT";
+if(pullback)score+=10;
+if(momentum)score+=10;
+if(macdOK)score+=10;
+if(volume)score+=10;
+if(candle)score+=5;
+if(relative)score+=5;
 
-/* PRICE STRUCTURE CONFIRMATION */
+return buildSignal("TREND",dir,score,a,b,c,rs,{
+pullback,momentum,macdOK,volume,candle,relative
+});
+}
 
-const structure=dir==="LONG"?
-c.structureBull:c.structureBear;
+function scoreReversal(a,b,c,rs){
+const longSigns=[
+c.bullishDivergence,c.bullishRejection,c.bullishReclaim,
+c.higherLow,c.macd.hist>c.macd.previous,
+c.rsi>c.priorRsi,c.close>c.vwap
+];
+const shortSigns=[
+c.bearishDivergence,c.bearishRejection,c.bearishReject,
+c.lowerHigh,c.macd.hist<c.macd.previous,
+c.rsi<c.priorRsi,c.close<c.vwap
+];
+const longCount=longSigns.filter(Boolean).length;
+const shortCount=shortSigns.filter(Boolean).length;
 
-if(!structure)return null;
+if(longCount<3&&shortCount<3)return null;
 
-/* RSI MUST AGREE ON ALL TIMEFRAMES */
+const dir=longCount>shortCount?"LONG":
+shortCount>longCount?"SHORT":null;
+if(!dir)return null;
 
-const rsiConfirm=dir==="LONG"?
-(a.rsi>50&&b.rsi>50&&c.rsi>50&&c.rsi>c.priorRsi):
-(a.rsi<50&&b.rsi<50&&c.rsi<50&&c.rsi<c.priorRsi);
+const signs=dir==="LONG"?longSigns:shortSigns;
+let score=48+signs.filter(Boolean).length*5;
+if(c.volumeRatio>=1.15)score+=5;
+if(dir==="LONG"&&rs.m15>0)score+=5;
+if(dir==="SHORT"&&rs.m15<0)score+=5;
+if(dir==="LONG"&&a.bear&&b.bear)score-=5;
+if(dir==="SHORT"&&a.bull&&b.bull)score-=5;
 
-if(!rsiConfirm)return null;
+return buildSignal("REVERSAL",dir,score,a,b,c,rs,{
+divergence:dir==="LONG"?c.bullishDivergence:c.bearishDivergence,
+rejection:dir==="LONG"?c.bullishRejection:c.bearishRejection,
+band:dir==="LONG"?c.bullishReclaim:c.bearishReject,
+structure:dir==="LONG"?c.higherLow:c.lowerHigh,
+macdImproving:dir==="LONG"?
+c.macd.hist>c.macd.previous:c.macd.hist<c.macd.previous,
+rsiImproving:dir==="LONG"?c.rsi>c.priorRsi:c.rsi<c.priorRsi,
+vwap:dir==="LONG"?c.close>c.vwap:c.close<c.vwap,
+volume:c.volumeRatio>=1.15
+});
+}
 
-/* MACD CONFIRMATION ON 15M AND 1H */
+function scoreRelative(a,b,c,rs){
+const long=rs.m15>=0.25&&rs.h1>=0.35&&
+(c.close>c.last.o||c.bullishRejection)&&
+(c.rsi>c.priorRsi)&&c.macd.hist>c.macd.previous;
+const short=rs.m15<=-0.25&&rs.h1<=-0.35&&
+(c.close<c.last.o||c.bearishRejection)&&
+(c.rsi<c.priorRsi)&&c.macd.hist<c.macd.previous;
 
-const macdConfirm=dir==="LONG"?
-(b.macd.hist>0&&c.macd.hist>0&&c.macd.hist>c.macd.previous):
-(b.macd.hist<0&&c.macd.hist<0&&c.macd.hist<c.macd.previous);
+if(!long&&!short)return null;
+const dir=long?"LONG":"SHORT";
+let score=55;
+const rsStrong=dir==="LONG"?
+(rs.m15>0.5&&rs.h1>0.5&&rs.h4>0):
+(rs.m15<-0.5&&rs.h1<-0.5&&rs.h4<0);
+if(rsStrong)score+=15;
+if(c.volumeRatio>=1.15)score+=10;
+if(dir==="LONG"&&c.close>c.vwap)score+=5;
+if(dir==="SHORT"&&c.close<c.vwap)score+=5;
+if(dir==="LONG"&&c.higherLow)score+=5;
+if(dir==="SHORT"&&c.lowerHigh)score+=5;
+if(dir==="LONG"&&c.rsi<72)score+=5;
+if(dir==="SHORT"&&c.rsi>28)score+=5;
 
-if(!macdConfirm)return null;
+return buildSignal("RELATIVE",dir,score,a,b,c,rs,{
+relativeStrong:rsStrong,
+volume:c.volumeRatio>=1.15,
+vwap:dir==="LONG"?c.close>c.vwap:c.close<c.vwap,
+structure:dir==="LONG"?c.higherLow:c.lowerHigh,
+momentum:true
+});
+}
 
-/* PULLBACK NEAR EMA20 OR VWAP */
-
-const nearEMA=
-Math.abs(c.close-c.e20)<=c.atr*.8;
-
-const nearVWAP=
-Math.abs(c.close-c.vwap)<=c.atr*.8;
-
-const pullback=nearEMA||nearVWAP;
-
-if(!pullback)return null;
-
-/* VOLUME CONFIRMATION */
-
-const volumeConfirm=c.volumeRatio>=1.15;
-
-if(!volumeConfirm)return null;
-
-/* BREAKOUT CONFIRMATION */
-
-const candleConfirm=dir==="LONG"?
-(c.last.c>c.last.o&&c.last.c>c.prev.h):
-(c.last.c<c.last.o&&c.last.c<c.prev.l);
-
-if(!candleConfirm)return null;
-
-/* SCORE IS ONLY CALCULATED AFTER ALL FILTERS PASS */
-
-let score=60;
-score+=10; // Three-timeframe trend
-score+=10; // RSI alignment
-score+=10; // MACD confirmation
-score+=5;  // Volume confirmation
-score+=5;  // Candle breakout
-
-const entry=c.close;
-const risk=1.5*c.atr;
-
+function buildSignal(strategy,dir,score,a,b,c,rs,checks){
+const risk=Math.max(1.5*c.atr,c.close*.003);
 if(!Number.isFinite(risk)||risk<=0)return null;
-
+const entry=c.close;
 const stop=dir==="LONG"?entry-risk:entry+risk;
 const tp1=dir==="LONG"?entry+risk:entry-risk;
 const tp2=dir==="LONG"?entry+2*risk:entry-2*risk;
 const tp3=dir==="LONG"?entry+3*risk:entry-3*risk;
 
 return {
-dir,score,entry,stop,tp1,tp2,tp3,risk,
+strategy,dir,score:Math.min(100,Math.max(0,Math.round(score))),
+entry,stop,tp1,tp2,tp3,risk,
 rsi15:c.rsi,rsi1:b.rsi,rsi4:a.rsi,
-volumeRatio:c.volumeRatio,
-atr:c.atr,pullback,momentum:true,
-macdConfirm,volumeConfirm,candleConfirm,
-reasons:[
-["4H trend",true],
-["1H trend",true],
-["15M trend",true],
-["Price structure",structure],
-["RSI alignment",rsiConfirm],
-["MACD confirmation",macdConfirm],
-["EMA/VWAP pullback",pullback],
-["Volume confirmation",volumeConfirm],
-["Candle breakout",candleConfirm]
-]
+volumeRatio:c.volumeRatio,atr:c.atr,
+rs15:rs.m15,rs1:rs.h1,rs4:rs.h4,
+btcBias:btcMarketState,checks,
+price:entry
 };
 }
 
-/* STRICT BTC DIRECTION FILTER */
+/* BTC FILTER: PREFERENCE, NOT HARD BLOCK */
 
-function applyBTCFilter(signal){
+function applyBTCContext(s){
+if(btcMarketState==="BULLISH"&&s.dir==="LONG")s.score+=3;
+if(btcMarketState==="BEARISH"&&s.dir==="SHORT")s.score+=3;
 
-/* BLOCK MIXED OR VOLATILE BTC CONDITIONS */
-
-if(
-btcMarketState==="VOLATILE"||
-btcMarketState==="SIDEWAYS"
-){
-return null;
+if(btcMarketState==="VOLATILE"){
+s.score-=8;
+s.risk*=1.15;
+}
+s.score=Math.min(100,Math.round(s.score));
+return s;
 }
 
-/* BULLISH BTC: LONG ONLY */
-
-if(
-btcMarketState==="BULLISH"&&
-signal.dir!=="LONG"
-){
-return null;
-}
-
-/* BEARISH BTC: SHORT ONLY */
-
-if(
-btcMarketState==="BEARISH"&&
-signal.dir!=="SHORT"
-){
-return null;
-}
-
-signal.btcBias=btcMarketState;
-return signal;
-}
-
-/* SCANNER WORKERS */
+/* SCANNER */
 
 async function pool(items,limit,worker){
-
 let index=0,completed=0;
-
 const workers=Array.from({length:limit},async()=>{
 while(index<items.length){
-
 const i=index++;
-try{
-await worker(items[i],i);
-}catch(e){
-log(items[i].symbol+": "+e.message);
-}
-
+try{await worker(items[i],i);}
+catch(e){log(items[i].symbol+": "+e.message);}
 completed++;
-
-$("progressBar").style.width=
-(completed/items.length*100)+"%";
-
-$("scanStatus").textContent=
-`Scanning ${completed}/${items.length} markets`;
+$("progressBar").style.width=(completed/items.length*100)+"%";
+$("scanStatus").textContent=`Scanning ${completed}/${items.length} markets`;
 }
 });
-
 await Promise.all(workers);
 }
 
-/* MAIN SCAN */
-
 async function scan(){
-
 if(scanning)return;
-
 scanning=true;
 $("refreshBtn").disabled=true;
 $("statusDot").style.background="var(--yellow)";
 $("connection").textContent="SCANNING";
 
 try{
-
-log("Starting market scan...");
-
-/* UPDATE BTC BEFORE SCANNING ALTCOINS */
-
+log("Starting three-strategy scan...");
 await updateBTCRegime();
 
 const tickers=await api("/fapi/v1/ticker/24hr");
 const info=await api("/fapi/v1/exchangeInfo");
-
-const tradable=new Set(
-info.symbols
-.filter(s=>
-s.status==="TRADING"&&
-s.quoteAsset==="USDT"&&
+const tradable=new Set(info.symbols.filter(s=>
+s.status==="TRADING"&&s.quoteAsset==="USDT"&&
 s.contractType==="PERPETUAL"
-)
-.map(s=>s.symbol)
-);
+).map(s=>s.symbol));
 
 const minimum=Number($("minVolume").value);
 const limit=Number($("universe").value);
-
-const universe=tickers
-.filter(t=>
-tradable.has(t.symbol)&&
-!excluded.includes(t.symbol)&&
-Number(t.quoteVolume)>=minimum&&
-Number(t.lastPrice)>0
-)
-.sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume))
+const universe=tickers.filter(t=>
+tradable.has(t.symbol)&&!excluded.includes(t.symbol)&&
+Number(t.quoteVolume)>=minimum&&Number(t.lastPrice)>0
+).sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume))
 .slice(0,limit);
 
 if(!universe.length)throw new Error("No eligible markets found");
 
-log("Eligible markets: "+universe.length);
-
 const found=[];
+const btc=btcInfo;
 
 await pool(universe,7,async(t)=>{
-
 const symbol=t.symbol;
-const price=Number(t.lastPrice);
-
 const data=await getSymbolData(symbol);
+const rs=relativeStrength(data,btc);
 
-let signal=evaluate(data.a,data.b,data.c);
+const candidates=[
+scoreTrend(data.a,data.b,data.c,rs),
+scoreReversal(data.a,data.b,data.c,rs),
+scoreRelative(data.a,data.b,data.c,rs)
+].filter(Boolean);
 
-if(!signal)return;
+if(!candidates.length)return;
 
-signal=applyBTCFilter(signal);
-
-if(!signal)return;
-
-if(signal.score<Number($("minScore").value))return;
-
-signal.symbol=symbol;
-signal.price=price;
-signal.quoteVolume=Number(t.quoteVolume);
-
-found.push(signal);
+for(const candidate of candidates){
+applyBTCContext(candidate);
+candidate.symbol=symbol;
+candidate.price=Number(t.lastPrice);
+candidate.quoteVolume=Number(t.quoteVolume);
+candidate.key=symbol+"_"+candidate.dir+"_"+candidate.strategy;
+if(candidate.score>=Number($("minScore").value))found.push(candidate);
+}
 });
 
-allSignals=found.sort((a,b)=>b.score-a.score);
+const unique=new Map();
+for(const s of found){
+const old=unique.get(s.key);
+if(!old||s.score>old.score)unique.set(s.key,s);
+}
+allSignals=[...unique.values()].sort((a,b)=>b.score-a.score);
 
 $("scanned").textContent=universe.length;
-$("longCount").textContent=
-allSignals.filter(s=>s.dir==="LONG").length;
-$("shortCount").textContent=
-allSignals.filter(s=>s.dir==="SHORT").length;
+$("longCount").textContent=allSignals.filter(s=>s.dir==="LONG").length;
+$("shortCount").textContent=allSignals.filter(s=>s.dir==="SHORT").length;
 $("qualified").textContent=allSignals.length;
 $("lastScan").textContent=pktTime();
 
@@ -885,236 +844,160 @@ notifyNewSignals();
 
 $("connection").textContent="CONNECTED";
 $("statusDot").style.background="var(--green)";
-
 $("scanStatus").textContent=
 `Completed ${universe.length} markets. ${allSignals.length} qualified setups.`;
-
-log("Scan completed: "+allSignals.length+" signals.");
-
+log("Scan completed: "+allSignals.length+" setups.");
 }catch(e){
-
 $("connection").textContent="ERROR";
 $("statusDot").style.background="var(--red)";
 $("scanStatus").textContent="Error: "+e.message;
 log("SCAN ERROR: "+e.message);
-
 }finally{
-
 scanning=false;
 $("refreshBtn").disabled=false;
 $("progressBar").style.width="0%";
-
 }
 }
 
-/* SIGNAL HISTORY */
+/* HISTORY */
 
 function recordHistory(){
-
 for(const s of allSignals){
-
-const key=s.symbol+"_"+s.dir;
-
 const recent=history.find(h=>
-h.key===key&&Date.now()-h.timestamp<4*60*60*1000
+h.key===s.key&&Date.now()-h.timestamp<4*60*60*1000
 );
-
-if(!recent){
-history.unshift({
-...s,
-key,
-timestamp:Date.now()
-});
+if(!recent)history.unshift({...s,timestamp:Date.now()});
 }
-}
-
-history=history.slice(0,50);
+history=history.slice(0,60);
 renderHistory();
 }
 
 function renderHistory(){
-
-$("history").innerHTML=history.length?
-history.map(s=>`
+$("history").innerHTML=history.length?history.map(s=>`
 <tr>
-<td>${new Date(s.timestamp).toLocaleTimeString("en-GB",{
-timeZone:"Asia/Karachi"
-})}</td>
-<td><b>${s.symbol}</b></td>
+<td>${new Date(s.timestamp).toLocaleTimeString("en-GB",{timeZone:"Asia/Karachi"})}</td>
+<td>${s.symbol}</td>
 <td><span class="signal ${s.dir==="LONG"?"long":"short"}">${s.dir}</span></td>
-<td>${s.score}/100</td>
-<td>${fmt(s.entry)}</td>
-</tr>
-`).join(""):
-
-`<tr><td colspan="5" class="empty">No signals yet.</td></tr>`;
+<td>${s.strategy}</td><td>${s.score}/100</td><td>${fmt(s.entry)}</td>
+</tr>`).join(""):`<tr><td colspan="6" class="empty">No signals yet.</td></tr>`;
 }
 
 /* SIGNAL TABLE */
 
 function renderSignals(){
-
 const search=$("search").value.toUpperCase().trim();
-
+const strategy=$("strategyFilter").value;
 const filtered=allSignals.filter(s=>
 (activeFilter==="ALL"||s.dir===activeFilter)&&
+(strategy==="ALL"||s.strategy===strategy)&&
 s.symbol.includes(search)
 );
 
-$("signals").innerHTML=filtered.length?
-
-filtered.map(s=>`
-<tr data-symbol="${s.symbol}">
-<td>
-<span class="coin">${s.symbol.replace("USDT","")}</span><br>
-<small style="color:var(--muted)">USDT PERPETUAL</small>
-</td>
+$("signals").innerHTML=filtered.length?filtered.map(s=>`
+<tr data-key="${s.key}">
+<td><span class="coin">${s.symbol.replace("USDT","")}</span><br>
+<small style="color:var(--muted)">USDT PERPETUAL</small></td>
 <td>${fmt(s.price)}</td>
 <td><span class="signal ${s.dir==="LONG"?"long":"short"}">${s.dir==="LONG"?"🟢 LONG":"🔴 SHORT"}</span></td>
+<td><span class="strategy-tag">${s.strategy}</span></td>
 <td class="score">${s.score}/100</td>
-<td>${fmt(s.rsi15)}</td>
-<td>${fmt(s.rsi1)}</td>
-<td>${fmt(s.rsi4)}</td>
+<td>${fmt(s.rsi15)}</td><td>${fmt(s.rsi1)}</td><td>${fmt(s.rsi4)}</td>
 <td>${s.volumeRatio.toFixed(2)}x</td>
-<td class="blue">${fmt(s.entry)}</td>
-<td class="red">${fmt(s.stop)}</td>
-<td class="green">${fmt(s.tp1)}</td>
-<td class="green">${fmt(s.tp2)}</td>
+<td class="${s.rs15>=0?"green":"red"}">${s.rs15>=0?"+":""}${s.rs15.toFixed(2)}%</td>
+<td class="blue">${fmt(s.entry)}</td><td class="red">${fmt(s.stop)}</td>
+<td class="green">${fmt(s.tp1)}</td><td class="green">${fmt(s.tp2)}</td>
 <td class="green">${fmt(s.tp3)}</td>
-<td>${s.btcBias||"--"}</td>
-</tr>
-`).join(""):
-
-`<tr><td colspan="14" class="empty">
-No qualifying signals. Wait for stronger market conditions.
+</tr>`).join(""):`<tr><td colspan="15" class="empty">
+No qualifying setups. Try a lower score threshold or wait for confirmation.
 </td></tr>`;
 
-document.querySelectorAll("#signals tr[data-symbol]").forEach(row=>{
+document.querySelectorAll("#signals tr[data-key]").forEach(row=>{
 row.addEventListener("click",()=>{
-const s=allSignals.find(x=>x.symbol===row.dataset.symbol);
+const s=allSignals.find(x=>x.key===row.dataset.key);
 if(s)showDetails(s);
 });
 });
 }
 
-/* SELECTED COIN DETAILS */
+/* DETAILS */
 
 function showDetails(s){
-
 selectedSymbol=s.symbol;
 $("selectedCoin").textContent=s.symbol;
 loadChart();
-
 $("details").className="";
-
+const checks=Object.entries(s.checks||{});
 $("details").innerHTML=`
 <div class="controls" style="justify-content:space-between">
 <b style="font-size:20px">${s.symbol}</b>
 <span class="signal ${s.dir==="LONG"?"long":"short"}">${s.dir}</span>
 </div>
-
+<p><span class="strategy-tag">${s.strategy} SETUP</span></p>
 <h2 class="${s.dir==="LONG"?"green":"red"}">${s.score}/100 CONFLUENCE</h2>
-
 <div class="session"><span>Live price</span><b>${fmt(s.price)}</b></div>
-<div class="session"><span>Entry price</span><b class="blue">${fmt(s.entry)}</b></div>
-<div class="session"><span>Stop loss</span><b class="red">${fmt(s.stop)}</b></div>
+<div class="session"><span>Entry estimate</span><b class="blue">${fmt(s.entry)}</b></div>
+<div class="session"><span>Stop loss estimate</span><b class="red">${fmt(s.stop)}</b></div>
 <div class="session"><span>Take profit 1</span><b class="green">${fmt(s.tp1)}</b></div>
 <div class="session"><span>Take profit 2</span><b class="green">${fmt(s.tp2)}</b></div>
 <div class="session"><span>Take profit 3</span><b class="green">${fmt(s.tp3)}</b></div>
 <div class="session"><span>15M RSI</span><b>${fmt(s.rsi15)}</b></div>
 <div class="session"><span>1H RSI</span><b>${fmt(s.rsi1)}</b></div>
 <div class="session"><span>4H RSI</span><b>${fmt(s.rsi4)}</b></div>
+<div class="session"><span>Relative strength vs BTC 15M</span><b class="${s.rs15>=0?"green":"red"}">${s.rs15.toFixed(3)}%</b></div>
+<div class="session"><span>Relative strength vs BTC 1H</span><b class="${s.rs1>=0?"green":"red"}">${s.rs1.toFixed(3)}%</b></div>
+<div class="session"><span>Relative strength vs BTC 4H</span><b class="${s.rs4>=0?"green":"red"}">${s.rs4.toFixed(3)}%</b></div>
 <div class="session"><span>Relative volume</span><b>${s.volumeRatio.toFixed(2)}x</b></div>
-<div class="session"><span>BTC direction</span><b>${s.btcBias}</b></div>
-
-<h4>CONFIRMATION CHECKLIST</h4>
-
-${s.reasons.map(([name,ok])=>`
-<div class="session">
-<span>${name}</span>
-<b class="${ok?"green":"red"}">${ok?"CONFIRMED":"NOT CONFIRMED"}</b>
-</div>
-`).join("")}
-
-<p class="info">
-Stop loss and targets are ATR-based estimates. Confirm live price,
-spread, fees and execution before entering a trade.
-</p>
-`;
+<div class="session"><span>BTC regime</span><b>${s.btcBias}</b></div>
+<h4>STRATEGY CHECKLIST</h4>
+${checks.map(([name,ok])=>`<div class="session"><span>${name}</span><b class="${ok?"green":"red"}">${ok?"YES":"NO"}</b></div>`).join("")}
+<p class="info">Targets are ATR-based estimates calculated from the latest completed 15M candle.
+The displayed live price may have moved. Recheck the setup before trading.</p>`;
 }
 
 /* TRADINGVIEW */
 
 function loadChart(){
-
 $("tvChart").innerHTML="";
-
 const script=document.createElement("script");
-
 script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
 script.async=true;
-
 script.innerHTML=JSON.stringify({
-autosize:true,
-symbol:"BINANCE:"+selectedSymbol,
-interval:$("chartTf").value,
-timezone:"Asia/Karachi",
-theme:"dark",
-style:"1",
-locale:"en",
-allow_symbol_change:true,
-calendar:false,
+autosize:true,symbol:"BINANCE:"+selectedSymbol,
+interval:$("chartTf").value,timezone:"Asia/Karachi",
+theme:"dark",style:"1",locale:"en",
+allow_symbol_change:true,calendar:false,
 support_host:"https://www.tradingview.com"
 });
-
 $("tvChart").appendChild(script);
 }
 
 /* PHONE ALERTS */
 
 async function enablePhoneAlerts(){
-
 try{
-
-if(!("Notification" in window)){
-alert("This browser does not support notifications.");
-return;
+if(!("Notification"in window)){
+alert("This browser does not support notifications.");return;
 }
-
 if(!window.isSecureContext){
-alert("Notifications require HTTPS or localhost. Open the scanner from a secure website.");
-return;
+alert("Notifications require HTTPS or localhost.");return;
 }
-
 const permission=await Notification.requestPermission();
-
 if(permission!=="granted"){
-alert("Please allow notifications in your browser settings.");
-return;
+alert("Please allow notifications in browser settings.");return;
 }
-
-const AudioContextClass=window.AudioContext||
-window.webkitAudioContext;
-
+const AudioContextClass=window.AudioContext||window.webkitAudioContext;
 if(AudioContextClass){
 alertAudio=new AudioContextClass();
 await alertAudio.resume();
 }
-
 alertEnabled=true;
-
 $("alertButton").classList.add("alert-on");
 $("alertButton").textContent="🔔 ALERTS ENABLED";
-
 if(navigator.vibrate)navigator.vibrate([150,80,150]);
-
 new Notification("INSTITUTIONAL CONFLUENCE",{
-body:"Crypto signal notifications are enabled.",
-tag:"scanner-enabled"
+body:"Crypto signal notifications are enabled."
 });
-
 log("Phone alerts enabled.");
-
 }catch(e){
 log("Notification error: "+e.message);
 alert("Could not enable notifications: "+e.message);
@@ -1122,91 +1005,49 @@ alert("Could not enable notifications: "+e.message);
 }
 
 function playSignalAlarm(){
-
 if(alertAudio){
 try{
-
 const now=alertAudio.currentTime;
-
-[0,0.35,0.7].forEach((delay,i)=>{
-
+[0,.35,.7].forEach((delay,i)=>{
 const osc=alertAudio.createOscillator();
 const gain=alertAudio.createGain();
-
-osc.type="sine";
-osc.frequency.value=i===1?1050:800;
-
-gain.gain.setValueAtTime(0.001,now+delay);
-gain.gain.exponentialRampToValueAtTime(
-0.25,now+delay+0.03
-);
-gain.gain.exponentialRampToValueAtTime(
-0.001,now+delay+0.25
-);
-
-osc.connect(gain);
-gain.connect(alertAudio.destination);
-
-osc.start(now+delay);
-osc.stop(now+delay+0.27);
-
+osc.type="sine";osc.frequency.value=i===1?1050:800;
+gain.gain.setValueAtTime(.001,now+delay);
+gain.gain.exponentialRampToValueAtTime(.2,now+delay+.03);
+gain.gain.exponentialRampToValueAtTime(.001,now+delay+.25);
+osc.connect(gain);gain.connect(alertAudio.destination);
+osc.start(now+delay);osc.stop(now+delay+.27);
 });
-
 }catch(e){}
 }
-
-if(navigator.vibrate){
-navigator.vibrate([300,150,300,150,500]);
-}
+if(navigator.vibrate)navigator.vibrate([300,150,300,150,500]);
 }
 
 function notifyNewSignals(){
-
 if(!alertEnabled)return;
-
-const topSignals=allSignals.slice(0,4);
-
-topSignals.forEach(s=>{
-
-const key=s.symbol+"_"+s.dir;
+allSignals.slice(0,5).forEach(s=>{
+const key=s.key;
 const previous=alertedSignals.get(key)||0;
-
 if(Date.now()-previous<4*60*60*1000)return;
-
 alertedSignals.set(key,Date.now());
-
 playSignalAlarm();
-
-const title=s.dir==="LONG"?
-"🟢 STRONG LONG SIGNAL":
-"🔴 STRONG SHORT SIGNAL";
-
-if(Notification.permission==="granted"){
-
-const notification=new Notification(title,{
-body:
-s.symbol+
-"\nScore: "+s.score+"/100"+
-"\nBTC: "+s.btcBias+
-"\nEntry: "+fmt(s.entry)+
-"\nStop: "+fmt(s.stop)+
-"\nTP1: "+fmt(s.tp1),
-tag:key,
-requireInteraction:true
-});
-
+const notification=new Notification(
+(s.dir==="LONG"?"🟢 LONG ":"🔴 SHORT ")+s.symbol,
+{
+body:s.strategy+" · Score "+s.score+
+"/100 · BTC "+s.btcBias+
+" · Entry "+fmt(s.entry)+" · SL "+fmt(s.stop),
+tag:key,requireInteraction:true
+}
+);
 notification.onclick=()=>{
-window.focus();
-showDetails(s);
-notification.close();
+window.focus();showDetails(s);notification.close();
 };
-}
-
-log("PHONE ALERT: "+s.symbol+" "+s.dir+" "+s.score+"/100");
+log("PHONE ALERT: "+s.symbol+" "+s.dir+" "+s.strategy);
 });
 }
 
-/* CRYPTO NEWS */
+/* NEWS TERMINAL - LAST DASHBOARD SECTION */
 
 const NEWS_FEEDS=[
 "https://www.coindesk.com/arc/outboundfeeds/rss/",
@@ -1215,14 +1056,12 @@ const NEWS_FEEDS=[
 ];
 
 const newsKeywords=[
-"bitcoin","btc","ethereum","eth","crypto",
-"binance","sec","etf","fed","interest rate",
-"regulation","hack","exploit","liquidation",
-"whale","stablecoin","solana","xrp",
-"market crash","bullish","bearish",
-"exchange","trading","altcoin","inflation",
-"treasury","reserve","tariff","lawsuit",
-"token","blockchain","market"
+"bitcoin","btc","ethereum","eth","crypto","binance",
+"sec","etf","fed","interest rate","regulation","hack",
+"exploit","liquidation","whale","stablecoin","solana",
+"xrp","market crash","bullish","bearish","exchange",
+"trading","altcoin","inflation","treasury","tariff",
+"lawsuit","token","blockchain","market"
 ];
 
 function escapeHTML(value){
@@ -1233,151 +1072,85 @@ return String(value).replace(/[&<>"']/g,c=>({
 }
 
 async function loadCryptoNews(){
-
 const box=$("newsList");
 box.innerHTML='<div class="empty">Fetching latest crypto headlines...</div>';
-
-const results=await Promise.allSettled(
-NEWS_FEEDS.map(async(feed)=>{
-
-const url=
-"https://api.rss2json.com/v1/api.json?rss_url="+
-encodeURIComponent(feed);
-
+const results=await Promise.allSettled(NEWS_FEEDS.map(async(feed)=>{
+const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feed);
 const response=await fetch(url);
-
 if(!response.ok)throw new Error("News request failed");
-
 const data=await response.json();
-
 if(data.status!=="ok")throw new Error("Feed unavailable");
-
 return (data.items||[]).map(item=>({
-title:item.title,
-link:item.link,
-date:item.pubDate,
+title:item.title,link:item.link,date:item.pubDate,
 source:data.feed?.title||"Crypto News",
 description:item.description||""
 }));
+}));
 
-})
-);
-
-let articles=results
-.filter(r=>r.status==="fulfilled")
-.flatMap(r=>r.value);
-
+let articles=results.filter(r=>r.status==="fulfilled").flatMap(r=>r.value);
 articles=articles.filter(item=>{
 const text=(item.title+" "+item.description).toLowerCase();
 return newsKeywords.some(word=>text.includes(word));
 });
 
 const seen=new Set();
-
 articles=articles.filter(item=>{
 const key=item.title.toLowerCase();
 if(seen.has(key))return false;
-seen.add(key);
-return true;
+seen.add(key);return true;
 });
-
-articles.sort((a,b)=>
-new Date(b.date)-new Date(a.date)
-);
+articles.sort((a,b)=>new Date(b.date)-new Date(a.date));
 
 if(!articles.length){
-box.innerHTML=
-'<div class="empty">News feeds unavailable. Try again later.</div>';
+box.innerHTML='<div class="empty">News feeds unavailable. Try again later.</div>';
 return;
 }
 
-box.innerHTML=articles.slice(0,20).map(item=>`
-
+box.innerHTML=articles.slice(0,25).map(item=>`
 <div class="news-card">
 <span class="news-tag">MARKET NEWS</span>
-<a href="${escapeHTML(item.link)}"
-target="_blank" rel="noopener noreferrer">
-${escapeHTML(item.title)}
-</a>
-<small>
-${escapeHTML(item.source)} · ${escapeHTML(item.date)}
-</small>
-</div>
-
-`).join("");
-
+<a href="${escapeHTML(item.link)}" target="_blank" rel="noopener noreferrer">
+${escapeHTML(item.title)}</a>
+<small>${escapeHTML(item.source)} · ${escapeHTML(item.date)}</small>
+</div>`).join("");
 log("News updated: "+articles.length+" relevant headlines.");
 }
 
 /* CONTROLS */
 
 function start(){
-
 if(running)return;
-
 running=true;
-
 $("startBtn").disabled=true;
 $("pauseBtn").disabled=false;
-
 log("Scanner started.");
-
 scan();
-
-timer=setInterval(
-scan,
-Number($("refreshRate").value)*60000
-);
+timer=setInterval(scan,Number($("refreshRate").value)*60000);
 }
 
 function pause(){
-
 running=false;
-
-clearInterval(timer);
-timer=null;
-
+clearInterval(timer);timer=null;
 $("startBtn").disabled=false;
 $("pauseBtn").disabled=true;
-
 $("connection").textContent="PAUSED";
 $("statusDot").style.background="var(--yellow)";
-
 log("Scanner paused.");
 }
-
-/* EVENT LISTENERS */
 
 $("startBtn").addEventListener("click",start);
 $("pauseBtn").addEventListener("click",pause);
 $("refreshBtn").addEventListener("click",scan);
-
 $("alertButton").addEventListener("click",enablePhoneAlerts);
 $("newsButton").addEventListener("click",loadCryptoNews);
-
-$("search").addEventListener("input",()=>{
-renderSignals();
-
-if($("search").value.trim()){
-$("signalPanel").scrollIntoView({
-behavior:"smooth",
-block:"start"
-});
-}
-});
+$("search").addEventListener("input",renderSignals);
+$("strategyFilter").addEventListener("change",renderSignals);
 
 document.querySelectorAll("[data-filter]").forEach(btn=>{
-
 btn.addEventListener("click",()=>{
-
 activeFilter=btn.dataset.filter;
-
-document.querySelectorAll("[data-filter]").forEach(b=>
-b.classList.remove("active")
-);
-
+document.querySelectorAll("[data-filter]").forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
-
 renderSignals();
 });
 });
@@ -1387,15 +1160,9 @@ $("scoreLabel").textContent=$("minScore").value+" / 100";
 });
 
 $("refreshRate").addEventListener("change",()=>{
-
 if(running){
-
 clearInterval(timer);
-
-timer=setInterval(
-scan,
-Number($("refreshRate").value)*60000
-);
+timer=setInterval(scan,Number($("refreshRate").value)*60000);
 }
 });
 
@@ -1405,14 +1172,10 @@ $("chartTf").addEventListener("change",loadChart);
 
 loadChart();
 loadCryptoNews();
-
 setInterval(loadCryptoNews,5*60*1000);
-
 log("System ready.");
-log("Strict BTC direction filter initialized.");
-log("Countertrend signals disabled.");
-log("Waiting for scanner activation.");
-
+log("Trend, reversal and relative-strength strategies loaded.");
+log("BTC opposite-direction signals are allowed when independently confirmed.");
 </script>
 </body>
 </html>
