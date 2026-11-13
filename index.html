@@ -28,6 +28,7 @@ button{background:#1b2b43;color:white;border:1px solid #395274;border-radius:8px
 button.primary{background:#2366a9}
 button.danger{background:#48202d}
 button.active{border-color:var(--blue);background:#24466d}
+button:disabled{opacity:.5;cursor:not-allowed}
 .pill{display:inline-block;border-radius:20px;padding:4px 9px;font-size:10px;font-weight:bold;border:1px solid #34455e;margin:2px}
 .long{color:var(--green);border-color:#1d785d}
 .short{color:var(--red);border-color:#8d394d}
@@ -38,7 +39,7 @@ button.active{border-color:var(--blue);background:#24466d}
 .progress{height:8px;background:#0a1220;border-radius:20px;overflow:hidden;margin:12px 0}
 .progress i{display:block;height:100%;width:0;background:var(--green)}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:12px}
-.coin{background:#152237;border:1px solid #2a3b55;border-radius:13px;padding:14px}
+.coin{background:#152237;border:1px solid #2a3b55;border-radius:13px;padding:14px;min-width:0}
 .coinhead{display:flex;justify-content:space-between;gap:8px}
 .symbol{font-size:18px;font-weight:bold}
 .price{font-size:24px;font-weight:bold;margin:12px 0;color:white;overflow-wrap:anywhere}
@@ -48,22 +49,40 @@ button.active{border-color:var(--blue);background:#24466d}
 .level small{display:block;color:var(--muted);font-size:10px}
 .positive{color:var(--green)}
 .negative{color:var(--red)}
-.cardactions{display:flex;gap:6px}
-.cardactions button{flex:1;font-size:11px}
+.cardactions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.cardactions button{width:100%;font-size:11px;margin:0}
 .newsitem a{color:#dce9ff;text-decoration:none;font-weight:bold}
 .newsitem small{display:block;color:var(--muted);margin-top:5px}
 .empty{padding:25px;text-align:center;border:1px dashed #34445b;border-radius:10px;color:var(--muted)}
 .warning{color:var(--amber);font-size:11px;margin-top:10px}
 .footer{color:var(--muted);font-size:11px;margin:18px 0}
+
+/* Two-step liquidity roadmap */
+.trade-step{border-radius:11px;padding:12px;margin-top:12px;border:1px solid}
+.trade-step.short-step{background:linear-gradient(145deg,#291722,#171522);border-color:#874052}
+.trade-step.long-step{background:linear-gradient(145deg,#102c27,#14231f);border-color:#247b60}
+.step-heading{font-size:12px;font-weight:900;letter-spacing:.5px;margin-bottom:10px;line-height:1.5}
+.short-step .step-heading{color:var(--red)}
+.long-step .step-heading{color:var(--green)}
+.step-entry{background:#080e19;border:1px solid #34445b;border-radius:9px;padding:10px;margin-bottom:9px}
+.step-entry small,.trade-value small{display:block;color:var(--muted);font-size:10px}
+.step-entry strong{font-size:21px;overflow-wrap:anywhere}
+.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.trade-value{background:#0a1321;border:1px solid #263650;border-radius:8px;padding:9px;min-width:0}
+.trade-value b{display:block;font-size:14px;overflow-wrap:anywhere;margin-top:3px}
+.step-note{font-size:10px;color:var(--muted);margin-top:8px}
+.copy-step1{background:#24466d;border-color:#477bb2}
+.copy-step2{background:#245541;border-color:#328966}
+.roadmap-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:13px}
 @media(max-width:850px){.topgrid,.lower{grid-template-columns:1fr}}
-@media(max-width:550px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:550px){.stats{grid-template-columns:1fr 1fr}.trade-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <header>
 <div>
 <div class="brand">WHALE<span>SCOPE</span></div>
-<div class="muted">Dynamic Binance Futures Limit Order Scanner</div>
+<div class="muted">Dynamic Binance Futures Limit Order Scanner · Two-Step Liquidity Roadmap</div>
 </div>
 <div>
 <span id="apiStatus" class="pill">NOT CONNECTED</span>
@@ -96,7 +115,7 @@ button.active{border-color:var(--blue);background:#24466d}
 <span id="btcOi">OI: —</span>
 <span id="btcFunding">Funding: —</span>
 </div>
-<p class="warning">Negative BTC projection = SHORT signals. Positive BTC projection = LONG signals. Manual BTC percentage recalculates all altcoin entries.</p>
+<p class="warning">Negative BTC projection = SHORT first, then LONG at the bottom. Positive BTC projection = LONG first, then SHORT at the top. Manual BTC percentage recalculates all altcoin roadmaps.</p>
 </div>
 
 <div class="panel">
@@ -122,11 +141,11 @@ button.active{border-color:var(--blue);background:#24466d}
 
 <section class="lower">
 <div class="panel">
-<h2>Predictive Limit Orders</h2>
+<h2>Two-Step Predictive Limit Orders</h2>
 <div class="toolbar">
 <button class="filter active" data-filter="all">All</button>
-<button class="filter" data-filter="long">Long</button>
-<button class="filter" data-filter="short">Short</button>
+<button class="filter" data-filter="long">Long First</button>
+<button class="filter" data-filter="short">Short First</button>
 <button class="filter" data-filter="news">News</button>
 <button class="filter" data-filter="favorites">Top Beta</button>
 </div>
@@ -154,7 +173,7 @@ button.active{border-color:var(--blue);background:#24466d}
 </section>
 
 <div class="footer">
-Beta is calculated using matched hourly returns. ATR and recent velocity estimate arrival time. Liquidity walls are inferred from visible depth. This scanner does not execute trades. Signals and fill times are estimates, not guarantees.
+Beta is calculated using matched hourly returns. ATR estimates stop distances. Liquidity walls are inferred from visible order-book depth; VWAP is calculated from recent hourly candles. This scanner does not execute trades. Both steps are proposed limit-order plans, not guaranteed fills or financial advice. Verify liquidity, spread, fees, funding, and order-book changes before placing orders.
 </div>
 </main>
 
@@ -183,7 +202,7 @@ const fmt=(n,d=2)=>Number.isFinite(n)?
 n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
 
 const money=n=>Number.isFinite(n)?
-'$'+n.toLocaleString(undefined,{maximumFractionDigits:4}):'—';
+'$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:4}):'—';
 
 const pct=n=>(n>=0?'+':'')+fmt(n,2)+'%';
 const localTime=d=>d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
@@ -241,7 +260,6 @@ const ask=book.asks.slice(0,100).reduce((s,x)=>s+(+x[0])*(+x[1]),0);
 return(bid-ask)/(bid+ask||1);
 }
 
-/* ETA: minimum 15 minutes, maximum 24 hours. */
 function estimateMinutes(distance,speed){
 if(!(distance>0)||!(speed>0))return 15;
 const calculated=Math.ceil(distance/speed*60);
@@ -258,16 +276,11 @@ const safeMinutes=Math.max(15,Number(min)||15);
 return localTime(new Date(Date.now()+safeMinutes*60000));
 }
 
-/* BTC projection fallback using 1H ATR. */
 function safeBtcProjectionPct(price,atr,direction,target){
 const sign=direction==='down'?-1:1;
-
 const wallMove=Number.isFinite(target)&&price>0?
 ((target/price)-1)*100:0;
-
-const atrPct=price>0&&Number.isFinite(atr)?
-(atr/price)*100:0;
-
+const atrPct=price>0&&Number.isFinite(atr)?(atr/price)*100:0;
 const minimumWallMove=Math.max(.10,atrPct*.80);
 
 if(Number.isFinite(wallMove)&&
@@ -278,32 +291,20 @@ return wallMove;
 
 let fallback=atrPct*1.15;
 if(!Number.isFinite(fallback)||fallback<=0)fallback=.50;
-
 fallback=Math.max(.10,Math.min(3.00,fallback));
 return sign*fallback;
 }
 
-/* LONG: 1%-4% below current price.
-   SHORT: 1%-4% above current price. */
 function limitDistanceFraction(movePct){
 return Math.max(.01,Math.min(.04,Math.abs(Number(movePct)||0)/100));
 }
 
 function enforceLimitDistance(direction,current,candidate,movePct){
 if(!(current>0))return candidate;
-
-let fraction=Number.isFinite(candidate)?
-Math.abs(candidate/current-1):0;
-
-if(!Number.isFinite(fraction)||fraction===0){
-fraction=limitDistanceFraction(movePct);
-}
-
+let fraction=Number.isFinite(candidate)?Math.abs(candidate/current-1):0;
+if(!Number.isFinite(fraction)||fraction===0)fraction=limitDistanceFraction(movePct);
 fraction=Math.max(.01,Math.min(.04,fraction));
-
-return direction==='long'?
-current*(1-fraction):
-current*(1+fraction);
+return direction==='long'?current*(1-fraction):current*(1+fraction);
 }
 
 function levels1h(rows,price){
@@ -313,6 +314,18 @@ return{
 support:lows[0]||price*.985,
 resistance:highs[0]||price*1.015
 };
+}
+
+/* Hourly typical-price VWAP approximation. */
+function calculateVWAP(rows){
+const usable=rows.slice(-24);
+let totalPV=0,totalVolume=0;
+for(const r of usable){
+const typical=(r.h+r.l+r.c)/3;
+totalPV+=typical*r.v;
+totalVolume+=r.v;
+}
+return totalVolume>0?totalPV/totalVolume:null;
 }
 
 async function analyzeBTC(){
@@ -329,8 +342,6 @@ const s1=candleStats(k1);
 const imb=bookImbalance(book);
 const flow=s15.buyRatio-.5;
 const score=flow*1.7+imb*.9+s1.velocity15*.035;
-
-/* Down = negative BTC projection; Up = positive BTC projection. */
 const direction=score<-.035?'down':'up';
 
 const wall=findWall(book,direction==='down'?'bid':'ask',s1.price);
@@ -355,8 +366,7 @@ state.btc={
 price:s1.price,direction,target,move,minutes,
 atr:s1.atr,hourlySpeed:speed,
 buyRatio:s15.buyRatio,imbalance:imb,
-oi:+oi.openInterest,
-funding:+funding.lastFundingRate
+oi:+oi.openInterest,funding:+funding.lastFundingRate
 };
 
 state.liveMove=move;
@@ -369,7 +379,6 @@ $('btcFunding').textContent=`Funding ${(Number(funding.lastFundingRate)*100).toF
 
 $('btcDirection').textContent=move<0?'BTC SELLERS · DROP':'BTC BUYERS · PUMP';
 $('btcDirection').className='pill '+(move<0?'short':'long');
-
 $('btcArrival').textContent=estimateAt(minutes)+' · '+durationLabel(minutes);
 $('btcPrice').textContent=money(s1.price);
 $('btcTarget').textContent=money(target);
@@ -378,16 +387,12 @@ $('btcMove').textContent=pct(move);
 return state.btc;
 }
 
-/* IMPORTANT FIX:
-   Negative BTC percentage now means SHORT.
-   Positive BTC percentage now means LONG. */
 function directionFromBtcMove(move){
 return move<0?'short':'long';
 }
 
 function applyProjection(move){
 if(!Number.isFinite(move)||move===0)return;
-
 state.btcMove=move;
 $('btcSlider').value=Math.max(-5,Math.min(5,move));
 $('btcCustom').value=fmt(move,2);
@@ -398,56 +403,119 @@ $('btcTarget').textContent=money(state.btc.price*(1+move/100));
 $('btcDirection').textContent=move<0?'BTC SELLERS · DROP':'BTC BUYERS · PUMP';
 $('btcDirection').className='pill '+(move<0?'short':'long');
 }
-
 recalcCards();
 }
 
 function betaOf(altRows,btcRows){
 const n=Math.min(32,altRows.length-1,btcRows.length-1);
 if(n<12)return null;
-
 const ar=[],br=[];
 
 for(let i=altRows.length-n;i<altRows.length;i++)
 ar.push(Math.log(altRows[i].c/altRows[i-1].c));
-
 for(let i=btcRows.length-n;i<btcRows.length;i++)
 br.push(Math.log(btcRows[i].c/btcRows[i-1].c));
 
 const mx=br.reduce((a,b)=>a+b,0)/n;
 const my=ar.reduce((a,b)=>a+b,0)/n;
-
 let cov=0,v=0;
 
 for(let i=0;i<n;i++){
 cov+=(br[i]-mx)*(ar[i]-my);
 v+=(br[i]-mx)**2;
 }
-
 return v?cov/v:null;
 }
 
-function makeLevels(direction,limit,atr){
-const dist=Math.max(atr*1.15,limit*.006);
+/*
+Builds BOTH planned orders for one coin.
 
-return direction==='long'?
-{
-sl:limit-dist,
-t1:limit+dist*1.25,
-t2:limit+dist*2.1,
-profit:dist*2.1/limit*100
-}:
-{
-sl:limit+dist,
-t1:limit-dist*1.25,
-t2:limit-dist*2.1,
-profit:dist*2.1/limit*100
+Bearish:
+Step 1 short above current.
+Step 1 target = bottom liquidity wall.
+Step 2 long entry = exact same bottom wall.
+
+Bullish:
+Step 1 long below current.
+Step 1 target = overhead liquidity wall.
+Step 2 short entry = exact same overhead wall.
+*/
+function buildRoadmap(r,direction,movePct){
+const current=r.current;
+const atr=Math.max(Number(r.atr)||0,current*.001);
+const stopDistance=atr*1.2;
+const absMove=Math.abs(movePct);
+
+const betaMove=Math.max(.25,Math.min(5,Math.abs(r.beta)));
+const projectedFraction=Math.max(.01,Math.min(.04,absMove*betaMove/100));
+
+let entryCandidate;
+let liquidityTarget;
+
+if(direction==='short'){
+/* Primary short: use overhead ask wall as resistance. */
+entryCandidate=current*(1+projectedFraction)*.42+
+(r.wallAsk||current*(1+projectedFraction))*.58;
+
+/* Bottom target: prefer actual bid wall, then hourly support. */
+liquidityTarget=r.wallBid||r.support;
+
+/* Keep the target below current price. */
+if(!(liquidityTarget>0&&liquidityTarget<current)){
+liquidityTarget=current-Math.max(stopDistance*2.5,current*.015);
+}
+}else{
+/* Primary long: use lower bid wall as support. */
+entryCandidate=current*(1-projectedFraction)*.42+
+(r.wallBid||current*(1-projectedFraction))*.58;
+
+/* Top target: prefer actual ask wall, then hourly resistance. */
+liquidityTarget=r.wallAsk||r.resistance;
+
+/* Keep the target above current price. */
+if(!(liquidityTarget>current)){
+liquidityTarget=current+Math.max(stopDistance*2.5,current*.015);
+}
+}
+
+const step1Entry=enforceLimitDistance(direction,current,entryCandidate,movePct);
+
+/* Step 2 entry is deliberately identical to Step 1 take profit. */
+const step2Entry=liquidityTarget;
+const vwap=Number.isFinite(r.vwap)?r.vwap:null;
+
+let reversalTarget;
+if(direction==='short'){
+/* After a bearish move, long bounce target must be above bottom entry. */
+reversalTarget=(vwap&&vwap>step2Entry)?vwap:(current+step2Entry)/2;
+}else{
+/* After a bullish move, short drop target must be below top entry. */
+reversalTarget=(vwap&&vwap<step2Entry)?vwap:(current+step2Entry)/2;
+}
+
+return{
+direction,
+step1:{
+entry:step1Entry,
+sl:direction==='short'?step1Entry+stopDistance:step1Entry-stopDistance,
+tp:step2Entry
+},
+step2:{
+entry:step2Entry,
+sl:direction==='short'?step2Entry-stopDistance:step2Entry+stopDistance,
+tp:reversalTarget
+},
+stopDistance,
+vwap,
+targetSource:direction==='short'?
+(r.wallBid?'Visible bid liquidity wall':r.support?'Hourly support':'ATR fallback'):
+(r.wallAsk?'Visible ask liquidity wall':r.resistance?'Hourly resistance':'ATR fallback')
 };
 }
 
 async function scanCoin(symbol,btcRows){
 const [klines,book,ticker]=await Promise.all([
-get('/fapi/v1/klines',{symbol,interval:'1h',limit:40}),
+get('/fapi/v1/klines',{symbol,interval:'1h',limit:60}),
 get('/fapi/v1/depth',{symbol,limit:100}),
 get('/fapi/v1/ticker/price',{symbol})
 ]);
@@ -461,9 +529,7 @@ Math.abs(beta)<.15||Math.abs(beta)>8)return null;
 const current=+ticker.price;
 if(!(current>0))return null;
 
-/* FIXED: BTC negative = SHORT, BTC positive = LONG. */
 const direction=directionFromBtcMove(state.btcMove);
-
 const imb=bookImbalance(book);
 const flow=s.buyRatio;
 
@@ -474,34 +540,29 @@ const aligned=direction==='long'?
 if(!aligned)return null;
 
 const b=Math.max(.25,Math.min(5,Math.abs(beta)));
-const proportional=state.btcMove*b;
-
-const betaTarget=current*(1+proportional/100);
 const wallBid=findWall(book,'bid',current);
 const wallAsk=findWall(book,'ask',current);
-const wall=direction==='long'?wallBid:wallAsk;
+const sr=levels1h(s.rows,current);
 
-let candidate=betaTarget*.42+(wall?.p||betaTarget)*.58;
-const limit=enforceLimitDistance(direction,current,candidate,proportional);
-
-const speed=Math.max(
-s.atr,
-Math.abs(s.velocity15/100)*current,
-.0005*current
-);
-
-const minutes=estimateMinutes(Math.abs(current-limit),speed);
-const lv=makeLevels(direction,limit,s.atr);
-
-return{
-symbol,direction,beta:b,betaSigned:beta,current,limit,
-sl:lv.sl,t1:lv.t1,t2:lv.t2,profit:lv.profit,
-minutes,arrival:estimateAt(minutes),
-imbalance:imb,buyRatio:flow,atr:s.atr,
-volume:0,news:false,
+const r={
+symbol,direction,beta:b,betaSigned:beta,current,
+atr:s.atr,
+vwap:calculateVWAP(s.rows),
+support:sr.support,
+resistance:sr.resistance,
 wallBid:wallBid?.p||null,
-wallAsk:wallAsk?.p||null
+wallAsk:wallAsk?.p||null,
+imbalance:imb,buyRatio:flow,
+volume:0,news:false
 };
+
+r.roadmap=buildRoadmap(r,direction,state.btcMove);
+
+const speed=Math.max(s.atr,Math.abs(s.velocity15/100)*current,.0005*current);
+r.minutes=estimateMinutes(Math.abs(current-r.roadmap.step1.entry),speed);
+r.arrival=estimateAt(r.minutes);
+
+return r;
 }
 
 async function runPool(items,worker){
@@ -518,7 +579,6 @@ if(r)state.results.set(r.symbol,r);
 }catch(e){}
 
 done++;
-
 $('scanCount').textContent=done+' / '+items.length;
 $('progressBar').style.width=(done/items.length*100)+'%';
 $('setupCount').textContent=state.results.size;
@@ -533,7 +593,6 @@ await Promise.all(workers);
 
 async function fullScan(){
 if(state.running)return;
-
 state.running=true;
 state.results.clear();
 
@@ -542,14 +601,12 @@ $('apiStatus').textContent='SCANNING';
 
 try{
 $('scanStatus').textContent='Step 1: BTC analysis';
-
-const btc=await analyzeBTC();
+await analyzeBTC();
 
 const btcK=await get('/fapi/v1/klines',{
-symbol:'BTCUSDT',interval:'1h',limit:40
+symbol:'BTCUSDT',interval:'1h',limit:60
 });
-
-btc.rows=candleStats(btcK).rows;
+const btcRows=candleStats(btcK).rows;
 
 $('scanStatus').textContent='Step 2: Loading markets';
 
@@ -572,58 +629,39 @@ $('eligibleCount').textContent=state.markets.length;
 $('scanCount').textContent='0 / '+state.markets.length;
 
 await runPool(state.markets,async symbol=>{
-const r=await scanCoin(symbol,btc.rows);
+const r=await scanCoin(symbol,btcRows);
 if(r)r.volume=+(tmap.get(symbol)?.quoteVolume||0);
 return r;
 });
 
 if(state.running){
-$('scanStatus').textContent='Scan completed: '+state.results.size+' setups';
+$('scanStatus').textContent='Scan completed: '+state.results.size+' two-step roadmaps';
 $('lastUpdated').textContent='Last scan: '+localTime(new Date());
 $('apiStatus').textContent='LIVE · COMPLETE';
 }
-
 }catch(e){
 $('scanStatus').textContent='Error: '+e.message+' — check API access.';
 $('apiStatus').textContent='API ERROR';
-}
-
-finally{
+}finally{
 state.running=false;
 renderCards();
 }
 }
 
-/* Manual BTC changes use exactly the same direction rule. */
 function recalcCards(){
 if(!state.btc)return;
 
 for(const [sym,r] of state.results){
 const direction=directionFromBtcMove(state.btcMove);
-const move=state.btcMove*r.beta;
-const betaPrice=r.current*(1+move/100);
-const wall=direction==='long'?r.wallBid:r.wallAsk;
-
-const candidate=betaPrice*.42+(wall||betaPrice)*.58;
-
-r.limit=enforceLimitDistance(direction,r.current,candidate,move);
 r.direction=direction;
-
-const l=makeLevels(direction,r.limit,r.atr);
-
-r.sl=l.sl;
-r.t1=l.t1;
-r.t2=l.t2;
-r.profit=l.profit;
+r.roadmap=buildRoadmap(r,direction,state.btcMove);
 
 r.minutes=estimateMinutes(
-Math.abs(r.current-r.limit),
+Math.abs(r.current-r.roadmap.step1.entry),
 Math.max(r.atr,.0005*r.current)
 );
-
 r.arrival=estimateAt(r.minutes);
 }
-
 renderCards();
 }
 
@@ -632,12 +670,8 @@ let rows=[...state.results.values()].sort((a,b)=>b.volume-a.volume);
 
 if(state.filter==='long'||state.filter==='short')
 rows=rows.filter(r=>r.direction===state.filter);
-
-if(state.filter==='news')
-rows=rows.filter(r=>r.news);
-
-if(state.filter==='favorites')
-rows=rows.filter(r=>r.beta>=2);
+if(state.filter==='news')rows=rows.filter(r=>r.news);
+if(state.filter==='favorites')rows=rows.filter(r=>r.beta>=2);
 
 $('shownCount').textContent=rows.length+' cards';
 
@@ -647,15 +681,34 @@ return;
 }
 
 $('cards').innerHTML=rows.map(r=>{
+const direction=r.direction;
+const bearish=direction==='short';
+const roadmap=r.roadmap||buildRoadmap(r,direction,state.btcMove);
 const altMove=state.btcMove*r.beta;
+
+const step1Title=bearish?
+'STEP 1 — PRIMARY LIMIT SHORT · TOP RESISTANCE':
+'STEP 1 — PRIMARY LIMIT LONG · BOTTOM SUPPORT';
+
+const step2Title=bearish?
+'STEP 2 — FUTURE LIMIT LONG AT BOTTOM WALL':
+'STEP 2 — FUTURE LIMIT SHORT AT TOP WALL';
+
+const step1EntryLabel=bearish?'LIMIT SHORT ENTRY':'LIMIT LONG ENTRY';
+const step1StopLabel=bearish?'SHORT STOP LOSS':'LONG STOP LOSS';
+const step1TargetLabel=bearish?'TAKE PROFIT · LIQUIDITY FLOOR':'TAKE PROFIT · LIQUIDITY CEILING';
+
+const step2EntryLabel=bearish?'LIMIT LONG ENTRY · BOTTOM WALL':'LIMIT SHORT ENTRY · TOP WALL';
+const step2StopLabel=bearish?'LONG STOP LOSS':'SHORT STOP LOSS';
+const step2TargetLabel=bearish?'LONG BOUNCE TARGET · VWAP':'SHORT DROP TARGET · VWAP';
 
 return`
 <article class="coin">
 <div class="coinhead">
 <div>
-<div class="symbol">${r.symbol}</div>
+<div class="symbol">${escapeHtml(r.symbol)}</div>
 <div>
-<span class="pill ${r.direction}">LIMIT ${r.direction.toUpperCase()}</span>
+<span class="pill ${direction}">${bearish?'BEARISH · SHORT FIRST':'BULLISH · LONG FIRST'}</span>
 <span class="pill beta">Beta ${fmt(r.beta)}x BTC</span>
 ${r.news?'<span class="pill news">NEWS</span>':''}
 </div>
@@ -663,39 +716,96 @@ ${r.news?'<span class="pill news">NEWS</span>':''}
 <a href="https://www.binance.com/en/futures/${encodeURIComponent(r.symbol)}" target="_blank" rel="noopener">Chart ↗</a>
 </div>
 
-<div class="price-label">LIMIT ENTRY PRICE</div>
-<div class="price">${money(r.limit)}</div>
+<div class="price-label">CURRENT MARKET PRICE</div>
+<div class="price">${money(r.current)}</div>
 
 <div class="math">
 <b>${localTime(new Date())} → ${r.arrival} (~${durationLabel(r.minutes)})</b><br>
-BTC est. ${pct(state.btcMove)} × Beta ${fmt(r.beta)}x = ${pct(altMove)} alt move<br>
-<span class="muted">Current: ${money(r.current)}</span>
+BTC projection ${pct(state.btcMove)} × Beta ${fmt(r.beta)}x = ${pct(altMove)} estimated alt move<br>
+<span class="muted">ATR: ${money(r.atr)} · 1.2x ATR stop distance: ${money(roadmap.stopDistance)}</span>
 </div>
 
-<div class="levels">
-<div class="level"><small>STOP LOSS</small><b class="negative">${money(r.sl)}</b></div>
-<div class="level"><small>TARGET 1</small><b class="positive">${money(r.t1)}</b></div>
-<div class="level"><small>TARGET 2</small><b class="positive">${money(r.t2)}</b></div>
-<div class="level"><small>REVERSAL PROFIT</small><b class="positive">${fmt(r.profit)}%</b></div>
+<div class="roadmap-label">Complete two-step liquidity cycle · one coin / two planned orders</div>
+
+<section class="trade-step ${bearish?'short-step':'long-step'}">
+<div class="step-heading">${step1Title}</div>
+<div class="step-entry">
+<small>${step1EntryLabel}</small>
+<strong>${money(roadmap.step1.entry)}</strong>
 </div>
+<div class="trade-grid">
+<div class="trade-value">
+<small>${step1StopLabel}</small>
+<b class="negative">${money(roadmap.step1.sl)}</b>
+</div>
+<div class="trade-value">
+<small>${step1TargetLabel}</small>
+<b class="positive">${money(roadmap.step1.tp)}</b>
+</div>
+</div>
+<div class="step-note">Primary entry is positioned ${bearish?'above':'below'} current price. Stop distance = 1.2 × ATR. The target is the next liquidity wall.</div>
+</section>
+
+<section class="trade-step ${bearish?'long-step':'short-step'}">
+<div class="step-heading">${step2Title}</div>
+<div class="step-entry">
+<small>${step2EntryLabel}</small>
+<strong>${money(roadmap.step2.entry)}</strong>
+</div>
+<div class="trade-grid">
+<div class="trade-value">
+<small>${step2StopLabel} · 1.2x ATR</small>
+<b class="negative">${money(roadmap.step2.sl)}</b>
+</div>
+<div class="trade-value">
+<small>${step2TargetLabel}</small>
+<b class="positive">${money(roadmap.step2.tp)}</b>
+</div>
+</div>
+<div class="step-note">Step 2 entry is exactly the same price as Step 1 take profit. VWAP reference: ${money(roadmap.vwap)}. If VWAP is on the wrong side of the entry, the card uses the midpoint fallback.</div>
+</section>
 
 <div class="cardactions">
-<button data-copy="${r.limit}">Copy Price</button>
-<button data-copy="${r.symbol}">Copy Pair</button>
+<button class="copy-step1" data-copy-price="${roadmap.step1.entry}">Copy Step 1 Price</button>
+<button class="copy-step2" data-copy-price="${roadmap.step2.entry}">Copy Step 2 Price</button>
 </div>
+<div class="cardactions">
+<button data-copy-value="${r.symbol}">Copy Pair</button>
+<button data-copy-value="${roadmap.step1.entry} / ${roadmap.step2.entry}">Copy Both Prices</button>
+</div>
+<div class="step-note">Target source: ${escapeHtml(roadmap.targetSource)}. Prices are estimates from visible order-book depth and recent candles.</div>
 </article>`;
 }).join('');
 
-$('cards').querySelectorAll('[data-copy]').forEach(b=>{
-b.addEventListener('click',async()=>{
-try{
-await navigator.clipboard.writeText(b.dataset.copy);
-b.textContent='Copied ✓';
-}catch(e){
-prompt('Copy value:',b.dataset.copy);
+$('cards').querySelectorAll('[data-copy-price]').forEach(b=>{
+b.addEventListener('click',()=>copyToClipboard(b,b.dataset.copyPrice));
+});
+$('cards').querySelectorAll('[data-copy-value]').forEach(b=>{
+b.addEventListener('click',()=>copyToClipboard(b,b.dataset.copyValue));
+});
 }
-});
-});
+
+async function copyToClipboard(button,value){
+const original=button.textContent;
+try{
+if(navigator.clipboard&&window.isSecureContext){
+await navigator.clipboard.writeText(String(value));
+}else{
+const field=document.createElement('textarea');
+field.value=String(value);
+field.style.position='fixed';
+field.style.opacity='0';
+document.body.appendChild(field);
+field.select();
+const ok=document.execCommand('copy');
+field.remove();
+if(!ok)throw Error('Copy unavailable');
+}
+button.textContent='Copied ✓';
+}catch(e){
+prompt('Copy this value:',String(value));
+}
+setTimeout(()=>button.textContent=original,1400);
 }
 
 async function loadNews(){
@@ -713,12 +823,9 @@ $('newsFeed').innerHTML=state.news.map(n=>`
 </div>`).join('')||'<div class="empty">No headlines.</div>';
 
 const text=state.news.map(n=>n.title||'').join(' ').toUpperCase();
-
 for(const [sym,r] of state.results)
 r.news=text.includes(sym.replace('USDT',''));
-
 renderCards();
-
 }catch(e){
 $('newsFeed').innerHTML='<div class="empty">News API unavailable.</div>';
 }
@@ -735,11 +842,7 @@ return '#';
 
 function escapeHtml(s){
 return String(s).replace(/[&<>"']/g,c=>({
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#39;'
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
 }[c]));
 }
 
@@ -752,25 +855,18 @@ const now=ctx.currentTime;
 for(let i=0;i<6;i++){
 const osc=ctx.createOscillator();
 const gain=ctx.createGain();
-
 osc.type='square';
 osc.frequency.value=i%2?1050:780;
-
 gain.gain.setValueAtTime(.0001,now+i*.22);
 gain.gain.exponentialRampToValueAtTime(.35,now+i*.22+.02);
 gain.gain.exponentialRampToValueAtTime(.0001,now+i*.22+.19);
-
 osc.connect(gain);
 gain.connect(ctx.destination);
-
 osc.start(now+i*.22);
 osc.stop(now+i*.22+.2);
 }
-
 setTimeout(()=>ctx.close(),1800);
-}catch(e){
-console.warn(e);
-}
+}catch(e){console.warn(e);}
 }
 
 $('scanBtn').onclick=fullScan;
@@ -783,7 +879,6 @@ $('scanStatus').textContent='Pause requested.';
 $('btcSlider').oninput=e=>{
 const v=+e.target.value;
 $('btcCustom').value=v;
-
 if(v!==0){
 state.manual=true;
 applyProjection(v);
@@ -793,7 +888,6 @@ applyProjection(v);
 $('btcCustom').oninput=e=>{
 const v=+e.target.value;
 $('btcSlider').value=Math.max(-5,Math.min(5,v||0));
-
 if(Number.isFinite(v)&&v!==0){
 state.manual=true;
 applyProjection(v);
@@ -802,10 +896,8 @@ applyProjection(v);
 
 $('applyManual').onclick=()=>{
 const v=+$('btcCustom').value;
-
 if(!Number.isFinite(v)||v===0)
 return alert('Enter a non-zero BTC move.');
-
 state.manual=true;
 applyProjection(v);
 };
@@ -836,16 +928,13 @@ $('toggleAlarm').textContent=state.alarm?'Disable Alerts':'Enable Alerts';
 function clock(){
 $('clockNow').textContent='Local time: '+localTime(new Date());
 }
-
 clock();
 setInterval(clock,1000);
 loadNews();
 
 $('refreshEvery').onchange=()=>{
 if(state.refreshTimer)clearInterval(state.refreshTimer);
-
 const m=+$('refreshEvery').value;
-
 if(m){
 state.refreshTimer=setInterval(()=>{
 if(!state.running)fullScan();
@@ -856,7 +945,6 @@ if(!state.running)fullScan();
 state.refreshTimer=setInterval(()=>{
 if(!state.running)fullScan();
 },15*60000);
-
 </script>
 </body>
 </html>
