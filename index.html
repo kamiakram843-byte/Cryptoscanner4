@@ -4,982 +4,948 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Crypto Scanner Pro</title>
-
+<title>Crypto Scanner Pro V2</title>
 <style>
-:root {
-  --bg:#080d18;
-  --panel:#111b2d;
-  --panel2:#17243a;
-  --text:#edf3ff;
-  --muted:#91a2bd;
-  --green:#00d69a;
-  --red:#ff536b;
-  --yellow:#ffc857;
-  --blue:#3996ff;
-  --border:#263650;
+:root{
+--bg:#080d18;--panel:#111c2e;--panel2:#1a2940;
+--border:#293b55;--text:#edf4ff;--muted:#9aabc2;
+--green:#00d69a;--red:#ff536b;--yellow:#ffc857;--blue:#469cff;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Arial,sans-serif;
-}
-header{
-  background:#101a2b;padding:17px;
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:5;
-}
-.header-row{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{background:#101a2b;padding:16px;position:sticky;top:0;z-index:10;border-bottom:1px solid var(--border)}
 h1{font-size:21px;margin:0}
-h2{font-size:17px;margin:0 0 14px}
-h3{font-size:15px;margin:0 0 10px}
+h2{font-size:17px;margin:0 0 13px}
+h3{font-size:15px}
 small,.muted{color:var(--muted)}
-.container{padding:15px;max-width:1500px;margin:auto}
-.grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:12px;margin:15px 0;
-}
-.card{
-  background:var(--panel);border:1px solid var(--border);
-  padding:15px;border-radius:12px;min-width:0;
-}
-.value{font-size:22px;font-weight:bold;margin-top:8px}
-.green{color:var(--green)}
-.red{color:var(--red)}
-.yellow{color:var(--yellow)}
-.blue{color:var(--blue)}
-button,select,input{
-  background:var(--panel2);color:var(--text);
-  border:1px solid var(--border);padding:10px;
-  border-radius:7px;cursor:pointer;
-}
-button.active{background:var(--blue);border-color:var(--blue)}
-button:disabled{opacity:.5;cursor:not-allowed}
-.controls{
-  display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;
-}
-.signal-buttons{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:10px;margin:15px 0;
-}
-.signal-buttons button{
-  font-size:16px;font-weight:bold;padding:17px 5px;
-}
-.long-btn{color:var(--green);border-color:var(--green)}
-.short-btn{color:var(--red);border-color:var(--red)}
-.normal-btn{color:var(--blue)}
-.breakout-btn{color:var(--yellow)}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:650px}
-th,td{
-  padding:11px 9px;text-align:left;
-  border-bottom:1px solid var(--border);
-  font-size:12px;white-space:nowrap;
-}
-th{color:var(--muted);background:#142039}
-tr:hover{background:#1b2a43}
-.coin{font-weight:bold;cursor:pointer}
-.badge{
-  padding:5px 8px;border-radius:5px;
-  font-size:10px;font-weight:bold;
-  display:inline-block;
-}
+.container{max-width:1500px;margin:auto;padding:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.card{background:var(--panel);border:1px solid var(--border);padding:14px;border-radius:11px;margin-bottom:13px}
+.value{font-size:22px;font-weight:bold;margin:8px 0}
+.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
+button,select,input{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:10px;border-radius:7px;cursor:pointer}
+button.active{border-color:var(--blue);background:#214a78}
+button:disabled{opacity:.5}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.nav button{font-weight:bold;padding:15px 5px}
+.nav .normal{color:var(--blue)}
+.nav .break{color:var(--yellow)}
+.nav .down{color:var(--red)}
+.nav .up{color:var(--green)}
+table{border-collapse:collapse;width:100%;min-width:850px}
+th,td{padding:11px 8px;border-bottom:1px solid var(--border);font-size:12px;text-align:left;white-space:nowrap}
+th{color:var(--muted);background:#17243a;position:sticky;top:0}
+tr:hover{background:#1c2b43;cursor:pointer}
+.table-wrap{overflow:auto;max-height:650px}
+.badge{display:inline-block;padding:5px 8px;border-radius:5px;font-size:10px;font-weight:bold}
 .bull{background:#073b30;color:var(--green)}
 .bear{background:#461c2a;color:var(--red)}
-.wait{background:#44371d;color:var(--yellow)}
-#chart{width:100%;height:470px;background:white;border-radius:8px}
-#chart-box{overflow:hidden}
-.news{
-  overflow:hidden;white-space:nowrap;
-  background:#15243a;padding:12px;
-  border-radius:8px;margin:12px 0;
-}
-.news span{
-  display:inline-block;
-  animation:slide 40s linear infinite;
-}
-.news a{color:var(--yellow);margin-right:35px;text-decoration:none}
-@keyframes slide{
-  from{transform:translateX(100%)}
-  to{transform:translateX(-100%)}
-}
-.detail-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:9px;
-}
-.detail-grid div{
-  background:var(--panel2);padding:12px;border-radius:8px;
-}
-.detail-grid strong{display:block;margin-top:7px}
-.section{margin:18px 0}
+.wait{background:#45381d;color:var(--yellow)}
+.detail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.detail div{padding:12px;background:var(--panel2);border-radius:8px;font-size:12px}
+.detail strong{display:block;font-size:15px;margin-top:7px}
+.news{overflow:hidden;white-space:nowrap;background:var(--panel2);padding:12px;border-radius:8px}
+.news span{display:inline-block;animation:slide 45s linear infinite}
+.news a{color:var(--yellow);margin-right:30px;text-decoration:none}
+@keyframes slide{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+#chart{height:450px;background:white;border-radius:8px}
 .status{font-size:12px;color:var(--muted)}
-#log{font-size:12px;color:var(--muted);margin-top:10px}
-footer{text-align:center;padding:20px;color:var(--muted);font-size:11px}
+.warning{border-color:#8e6723}
 @media(max-width:750px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .signal-buttons{grid-template-columns:repeat(2,1fr)}
-  .detail-grid{grid-template-columns:repeat(2,1fr)}
-  #chart{height:380px}
+.grid{grid-template-columns:repeat(2,1fr)}
+.nav{grid-template-columns:repeat(2,1fr)}
+.detail{grid-template-columns:repeat(2,1fr)}
+#chart{height:350px}
 }
 </style>
 </head>
-
 <body>
 
 <header>
- <div class="header-row">
+ <div class="row">
   <div>
-   <h1>⚡ CRYPTO SCANNER PRO</h1>
-   <small>Binance Market Intelligence</small>
+   <h1>⚡ CRYPTO SCANNER PRO V2</h1>
+   <small>Binance All-Market Intelligence</small>
   </div>
   <div>
    <span id="connection" class="badge wait">CONNECTING</span>
-   <button onclick="scanMarket()">↻ SCAN NOW</button>
+   <button onclick="startScan()">SCAN NOW</button>
   </div>
  </div>
 </header>
 
-<div class="container">
-
-<!-- TIME AND SESSION -->
+<main class="container">
 
 <div class="grid">
  <div class="card">
   <small>PAKISTAN TIME</small>
-  <div class="value" id="clock">--:--:--</div>
+  <div class="value" id="clock">--</div>
   <small id="date"></small>
  </div>
  <div class="card">
-  <small>ACTIVE SESSION</small>
+  <small>MARKET SESSION</small>
   <div class="value blue" id="session">--</div>
-  <small>Global market sessions</small>
+  <small>UTC+5</small>
  </div>
  <div class="card">
   <small>BTC PRICE</small>
-  <div class="value" id="btcPrice">Loading</div>
-  <small id="btcChange">24h change</small>
+  <div class="value" id="btcPrice">--</div>
+  <small id="btcChange">--</small>
  </div>
  <div class="card">
-  <small>BTC MARKET BIAS</small>
-  <div class="value" id="btcBias">Analyzing</div>
-  <small id="btcRisk">Crash risk: --</small>
+  <small>BTC DIRECTION</small>
+  <div class="value" id="btcDirection">--</div>
+  <small id="btcRisk">--</small>
  </div>
 </div>
 
-<!-- BTC ANALYSIS -->
-
-<div class="card section">
- <h2>₿ BITCOIN MARKET INTELLIGENCE</h2>
- <div class="detail-grid">
-  <div>15m Trend<strong id="btc15">--</strong></div>
-  <div>1h Trend<strong id="btc1h">--</strong></div>
-  <div>4h Trend<strong id="btc4h">--</strong></div>
-  <div>Nearest Support<strong id="btcSupport">--</strong></div>
-  <div>Nearest Resistance<strong id="btcResistance">--</strong></div>
-  <div>Market Risk<strong id="btcMarketRisk">--</strong></div>
+<div class="card" id="btcPanel">
+ <h2>₿ BTC ADVANCE WARNING SYSTEM</h2>
+ <div class="detail">
+  <div>15m Trend<strong id="b15">--</strong></div>
+  <div>1h Trend<strong id="b1">--</strong></div>
+  <div>4h Trend<strong id="b4">--</strong></div>
+  <div>1D Trend<strong id="b1d">--</strong></div>
+  <div>BTC Support<strong id="bs">--</strong></div>
+  <div>BTC Resistance<strong id="br">--</strong></div>
  </div>
- <p class="status" id="btcMessage">Waiting for BTC analysis...</p>
+ <div style="margin-top:12px" id="btcWarning" class="status">
+ Waiting for BTC data...
+ </div>
+ <p class="status">
+ Risk windows are monitoring horizons, not predictions of an exact crash time.
+ </p>
 </div>
 
-<!-- SIGNAL BUTTONS -->
-
-<div class="signal-buttons">
- <button class="normal-btn" onclick="showList('normal','ALL')">
-  NORMAL SIGNALS
- </button>
- <button class="breakout-btn" onclick="showList('breakout','ALL')">
-  BREAKOUT SIGNALS
- </button>
- <button class="long-btn" onclick="showList('all','LONG')">
-  ▲ LONG
- </button>
- <button class="short-btn" onclick="showList('all','SHORT')">
-  ▼ SHORT
- </button>
-</div>
-
-<!-- SIGNAL FILTERS -->
-
-<div class="card section">
- <h2>MARKET SCANNER</h2>
+<div class="card">
+ <h2>MARKET COVERAGE</h2>
  <div class="controls">
-  <select id="stageFilter" onchange="renderSignals()">
-   <option value="ALL">All stages</option>
-   <option value="PREPARING">Early preparation</option>
-   <option value="CONFIRMED">Confirmed only</option>
+  <select id="marketMode">
+   <option value="futures">All USDT-M perpetual Futures</option>
+   <option value="both">All Futures + all Spot USDT pairs</option>
+   <option value="spot">All Spot USDT pairs</option>
   </select>
-  <select id="sortFilter" onchange="renderSignals()">
+  <select id="refreshRate">
+   <option value="300000">Refresh every 5 minutes</option>
+   <option value="600000" selected>Refresh every 10 minutes</option>
+   <option value="900000">Refresh every 15 minutes</option>
+  </select>
+  <button onclick="startScan()">START / REFRESH</button>
+  <button onclick="stopScan()">STOP</button>
+ </div>
+ <div class="status" id="coverage">Waiting...</div>
+ <div class="status" id="progress"></div>
+</div>
+
+<div class="nav">
+ <button class="normal" onclick="setView('normal')">NORMAL SIGNALS</button>
+ <button class="break" onclick="setView('breakout')">BREAKOUT LONG</button>
+ <button class="down" onclick="setView('breakdown')">BREAKDOWN SHORT</button>
+ <button class="up" onclick="setView('btc')">BTC RISK ALERTS</button>
+</div>
+
+<div class="card">
+ <div class="row">
+  <h2 id="listTitle">NORMAL SIGNALS</h2>
+  <span class="badge wait" id="count">0</span>
+ </div>
+ <div class="controls">
+  <select id="directionFilter" onchange="render()">
+   <option value="ALL">LONG + SHORT</option>
+   <option value="LONG">LONG only</option>
+   <option value="SHORT">SHORT only</option>
+  </select>
+  <select id="stageFilter" onchange="render()">
+   <option value="ALL">All stages</option>
+   <option value="PREPARING">Preparation</option>
+   <option value="CONFIRMED">Confirmed</option>
+  </select>
+  <select id="sortFilter" onchange="render()">
    <option value="score">Highest score</option>
    <option value="volume">Highest volume</option>
-   <option value="rr">Best risk/reward</option>
   </select>
-  <select id="marketLimit">
-   <option value="40">Top 40 coins</option>
-   <option value="60" selected>Top 60 coins</option>
-   <option value="100">Top 100 coins</option>
-  </select>
-  <button onclick="scanMarket()">Refresh scanner</button>
- </div>
- <div class="header-row">
-  <h2 id="listTitle">NORMAL SIGNALS</h2>
-  <span id="signalCount" class="badge wait">0 SIGNALS</span>
+  <label class="status">Minimum score
+   <input id="minScore" type="number" value="75" min="50" max="100" style="width:65px" onchange="render()">
+  </label>
  </div>
  <div class="table-wrap">
   <table>
    <thead>
     <tr>
-     <th>COIN</th>
-     <th>DIRECTION</th>
-     <th>TYPE</th>
-     <th>STAGE</th>
-     <th>PRICE</th>
-     <th>VOLUME 24H</th>
-     <th>SCORE</th>
-     <th>R:R TP2</th>
+     <th>COIN / MARKET</th><th>DIRECTION</th><th>STAGE</th>
+     <th>PRICE</th><th>24H VOLUME</th><th>REL VOL</th>
+     <th>SCORE</th><th>ENTRY</th><th>SL</th>
+     <th>TP1</th><th>TP2</th><th>TP3</th>
     </tr>
    </thead>
-   <tbody id="signalRows">
-    <tr><td colspan="8">Scanning Binance market...</td></tr>
+   <tbody id="rows">
+    <tr><td colspan="12">Start scanning...</td></tr>
    </tbody>
   </table>
  </div>
- <p class="status" id="scanStatus">Scanner initializing...</p>
 </div>
 
-<!-- TRADE DETAIL -->
-
-<div class="card section" id="tradeDetail">
+<div class="card" id="tradePanel">
  <h2>TRADE ANALYSIS</h2>
- <p class="muted">Click any coin in the scanner to view its complete trade plan.</p>
- <div id="tradeInfo"></div>
+ <p class="status">Select a coin from the signal list.</p>
+ <div id="tradeDetail"></div>
 </div>
 
-<!-- TRADINGVIEW -->
-
-<div class="card section" id="chart-box">
- <h2>📈 TRADINGVIEW CHART</h2>
+<div class="card">
+ <h2>TRADINGVIEW CHART</h2>
  <div class="controls">
-  <select id="chartTime" onchange="loadChart()">
-   <option value="1">1 minute</option>
-   <option value="5">5 minutes</option>
-   <option value="15" selected>15 minutes</option>
-   <option value="30">30 minutes</option>
-   <option value="60">1 hour</option>
-   <option value="240">4 hours</option>
-   <option value="D">1 day</option>
-   <option value="W">1 week</option>
+  <select id="chartInterval" onchange="loadChart()">
+   <option value="5">5m</option>
+   <option value="15" selected>15m</option>
+   <option value="30">30m</option>
+   <option value="60">1h</option>
+   <option value="240">4h</option>
+   <option value="D">1D</option>
+   <option value="W">1W</option>
   </select>
  </div>
- <div id="chart">
-  <div id="tradingview_widget" style="height:100%"></div>
- </div>
+ <div id="chart"><div id="tv" style="height:100%"></div></div>
 </div>
 
-<!-- NEWS -->
-
-<div class="card section">
- <h2>📰 LIVE CRYPTO NEWS</h2>
- <div class="news"><span id="newsTicker">
-  Loading cryptocurrency news...
- </span></div>
- <button onclick="loadNews()">Refresh news</button>
- <div id="newsList" class="status"></div>
+<div class="card">
+ <h2>📰 CRYPTO NEWS</h2>
+ <div class="news"><span id="ticker">Loading headlines...</span></div>
+ <div id="newsLinks" class="status"></div>
+ <button onclick="loadNews()">REFRESH NEWS</button>
 </div>
 
-<div class="card section">
- <h2>⚙️ SCANNER SETTINGS</h2>
- <div class="controls">
-  <label>Minimum score
-   <input id="minScore" type="number" min="50" max="100" value="75" style="width:70px">
-  </label>
-  <label>Scan interval
-   <select id="interval">
-    <option value="60000">1 minute</option>
-    <option value="120000" selected>2 minutes</option>
-    <option value="300000">5 minutes</option>
-   </select>
-  </label>
-  <button onclick="restartScanner()">Save settings</button>
- </div>
- <p class="status">Early warnings are preparation alerts, not confirmed entries. Signals expire when their setup becomes invalid.</p>
+<div class="card warning">
+ <h2>PROFESSIONAL RISK RULES</h2>
+ <ul class="status">
+  <li>Use closed candles for signal confirmation.</li>
+  <li>Do not trade against a strong BTC move without exceptional evidence.</li>
+  <li>Do not treat a wick above resistance as a confirmed breakout.</li>
+  <li>Do not treat a wick below support as a confirmed breakdown.</li>
+  <li>Check volume, ATR, multi-timeframe trend and risk/reward.</li>
+  <li>Expire a signal when its invalidation level is reached.</li>
+  <li>Never use confidence score as a guaranteed win percentage.</li>
+ </ul>
 </div>
 
-<div id="log">Initializing...</div>
-
-</div>
-
-<footer>
- CRYPTO SCANNER PRO | Educational market analysis only.
- Not financial advice. No automatic orders are placed.
-</footer>
+<div id="log" class="status"></div>
+</main>
 
 <script>
 "use strict";
 
-// ====================================
-// CONFIGURATION
-// ====================================
+// =======================================
+// CONFIG
+// =======================================
 
-const API = "https://api.binance.com/api/v3";
-let allSignals = [];
-let selectedList = "normal";
-let selectedDirection = "ALL";
-let selectedCoin = "BTCUSDT";
-let btcData = null;
-let timer = null;
-let newsItems = [];
+const SPOT="https://api.binance.com";
+const FUT="https://fapi.binance.com";
 
-// ====================================
-// TIME AND MARKET SESSIONS
-// ====================================
+let signals=[];
+let btc=null;
+let currentView="normal";
+let selectedCoin="BTCUSDT";
+let scanTimer=null;
+let stopRequested=false;
+let news=[];
 
-function updateClock(){
- const now = new Date();
- const time = new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Karachi",
-  hour:"2-digit",minute:"2-digit",second:"2-digit",
-  hour12:false
- }).format(now);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
- const date = new Intl.DateTimeFormat("en-GB",{
-  timeZone:"Asia/Karachi",
-  weekday:"short",day:"2-digit",month:"short",year:"numeric"
- }).format(now);
+const fmt=n=>{
+ if(!Number.isFinite(n))return "--";
+ return n.toLocaleString("en-US",{maximumFractionDigits:n<1?7:3});
+};
 
- document.getElementById("clock").textContent=time;
- document.getElementById("date").textContent=date+" PKT";
+const change=(a,b)=>b?(a-b)/b*100:0;
 
- const parts = new Intl.DateTimeFormat("en-GB",{
+async function api(url){
+ let last;
+ for(let attempt=0;attempt<3;attempt++){
+  try{
+   const r=await fetch(url);
+   if(r.status===429 || r.status===418)
+    throw new Error("Binance rate limit. Pause and retry later.");
+   if(!r.ok)throw new Error("HTTP "+r.status);
+   return await r.json();
+  }catch(e){
+   last=e;
+   await sleep(1200*(attempt+1));
+  }
+ }
+ throw last;
+}
+
+// =======================================
+// PAKISTAN CLOCK
+// =======================================
+
+function clock(){
+ const now=new Date();
+ const parts=new Intl.DateTimeFormat("en-GB",{
   timeZone:"Asia/Karachi",hour:"2-digit",minute:"2-digit",
-  hour12:false
+  second:"2-digit",hour12:false
  }).formatToParts(now);
 
- const hour = Number(parts.find(p=>p.type==="hour").value);
- const sessions=[];
+ const hour=+parts.find(x=>x.type==="hour").value;
+ const time=parts.map(x=>x.value).join("");
+ document.getElementById("clock").textContent=time;
 
- // Approximate UTC+5 seasonal session windows
- if(hour>=3 && hour<12) sessions.push("SYDNEY");
- if(hour>=5 && hour<14) sessions.push("TOKYO");
- if(hour>=13 && hour<22) sessions.push("LONDON");
- if(hour>=18 || hour<3) sessions.push("NEW YORK");
+ document.getElementById("date").textContent=
+ new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Karachi",dateStyle:"medium"
+ }).format(now)+" PKT";
 
- document.getElementById("session").textContent=
- sessions.join(" + ") || "QUIET HOURS";
+ let sessions=[];
+ if(hour>=3&&hour<12)sessions.push("SYDNEY");
+ if(hour>=5&&hour<14)sessions.push("TOKYO");
+ if(hour>=13&&hour<22)sessions.push("LONDON");
+ if(hour>=18||hour<3)sessions.push("NEW YORK");
+
+ document.getElementById("session").textContent=sessions.join(" + ")||"QUIET";
+}
+setInterval(clock,1000);clock();
+
+// =======================================
+// INDICATORS
+// =======================================
+
+function avg(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0;}
+
+function ema(a,p){
+ if(a.length<p)return avg(a);
+ let v=avg(a.slice(0,p)),k=2/(p+1);
+ for(let i=p;i<a.length;i++)v=a[i]*k+v*(1-k);
+ return v;
 }
 
-setInterval(updateClock,1000);
-updateClock();
-
-// ====================================
-// HELPERS
-// ====================================
-
-async function getJSON(url){
- const r=await fetch(url);
- if(!r.ok) throw new Error("API error "+r.status);
- return await r.json();
-}
-
-function average(arr){
- return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
-}
-
-function ema(values,period){
- if(values.length<period)return average(values);
- let k=2/(period+1);
- let e=average(values.slice(0,period));
- for(let i=period;i<values.length;i++){
-  e=values[i]*k+e*(1-k);
+function rsi(a,p=14){
+ if(a.length<=p)return 50;
+ let g=0,l=0;
+ for(let i=a.length-p;i<a.length;i++){
+  let d=a[i]-a[i-1];
+  if(d>0)g+=d;else l-=d;
  }
- return e;
+ return l===0?100:100-100/(1+g/l);
 }
 
-function rsi(values,period=14){
- if(values.length<period+1)return 50;
- let gains=0,losses=0;
- for(let i=values.length-period;i<values.length;i++){
-  const d=values[i]-values[i-1];
-  if(d>0)gains+=d;else losses-=d;
+function atr(b,p=14){
+ let x=[];
+ for(let i=1;i<b.length;i++){
+  x.push(Math.max(
+   b[i].high-b[i].low,
+   Math.abs(b[i].high-b[i-1].close),
+   Math.abs(b[i].low-b[i-1].close)
+  ));
  }
- if(losses===0)return 100;
- return 100-(100/(1+gains/losses));
+ return avg(x.slice(-p));
 }
 
-function atr(bars,period=14){
- let tr=[];
- for(let i=1;i<bars.length;i++){
-  const h=bars[i][2],l=bars[i][3],pc=bars[i-1][4];
-  tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
- }
- return average(tr.slice(-period));
+function parseCandles(raw){
+ const now=Date.now();
+ return raw.filter(k=>Number(k[6])<now).map(k=>({
+  time:+k[0],
+  open:+k[1],high:+k[2],low:+k[3],close:+k[4],
+  volume:+k[5],quote:+k[7],
+  trades:+k[8],buyQuote:+k[10]
+ }));
 }
 
-function fmt(n){
- if(!Number.isFinite(n))return "--";
- return n.toLocaleString("en-US",{
-  maximumFractionDigits:n<1?6:2
- });
+function trend(b){
+ const c=b.map(x=>x.close);
+ const p=c[c.length-1],e20=ema(c,20),e50=ema(c,50);
+ return p>e20&&e20>e50?"BULLISH":
+ p<e20&&e20<e50?"BEARISH":"NEUTRAL";
 }
 
-function pct(a,b){
- return b ? ((a-b)/b)*100 : 0;
-}
-
-function supportResistance(bars){
- const closed=bars.slice(0,-1);
- const recent=closed.slice(-30);
+function levels(b,n=30){
+ const x=b.slice(-n);
  return {
-  support:Math.min(...recent.map(x=>x[3])),
-  resistance:Math.max(...recent.map(x=>x[2]))
+  support:Math.min(...x.map(k=>k.low)),
+  resistance:Math.max(...x.map(k=>k.high))
  };
 }
 
-// ====================================
-// CANDLE DATA
-// ====================================
-
-async function getCandles(symbol,interval="15m",limit=100){
- return await getJSON(
-  `${API}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
- );
+function wickBull(k){
+ const body=Math.max(Math.abs(k.close-k.open),0.00000001);
+ const lower=Math.min(k.open,k.close)-k.low;
+ return k.close>k.open && lower>body*0.7;
+}
+function wickBear(k){
+ const body=Math.max(Math.abs(k.close-k.open),0.00000001);
+ const upper=k.high-Math.max(k.open,k.close);
+ return k.close<k.open && upper>body*0.7;
 }
 
-function parseBars(raw){
- return raw.map(k=>[
-  Number(k[1]),Number(k[2]),Number(k[3]),
-  Number(k[4]),Number(k[5])
- ]);
-}
+// =======================================
+// BTC MULTI-TIMEFRAME INTELLIGENCE
+// =======================================
 
-// ====================================
-// BTC ANALYSIS
-// ====================================
+async function btcAnalysis(){
+ const frames=["15m","1h","4h","1d"];
+ const data={};
 
-async function analyzeBTC(){
- const [raw15,raw1h,raw4h,price24]=await Promise.all([
-  getCandles("BTCUSDT","15m",100),
-  getCandles("BTCUSDT","1h",100),
-  getCandles("BTCUSDT","4h",100),
-  getJSON(`${API}/ticker/24hr?symbol=BTCUSDT`)
- ]);
+ await Promise.all(frames.map(async tf=>{
+  const raw=await api(FUT+"/fapi/v1/klines?symbol=BTCUSDT&interval="+tf+"&limit=100");
+  data[tf]=parseCandles(raw);
+ }));
 
- const b15=parseBars(raw15);
- const b1=parseBars(raw1h);
- const b4=parseBars(raw4h);
-
- const closes=b15.map(x=>x[3]);
- const price=closes[closes.length-1];
-
- const s=supportResistance(b15);
- const r=rsi(closes);
- const e20=ema(closes,20);
- const e50=ema(closes,50);
+ const b15=data["15m"],b1=data["1h"],b4=data["4h"],bD=data["1d"];
+ const last=b15[b15.length-1];
+ const s=levels(b15);
+ const r=rsi(b15.map(x=>x.close));
  const a=atr(b15);
+ const t15=trend(b15),t1=trend(b1),t4=trend(b4),td=trend(bD);
 
- const direction=price>e20 && e20>e50 ? "BULLISH":
- price<e20 && e20<e50 ? "BEARISH":"NEUTRAL";
+ const nearSupport=change(last.close,s.support)<1.2;
+ const nearResistance=change(s.resistance,last.close)<1.2;
 
- function trend(b){
-  const c=b.map(x=>x[3]);
-  const p=c[c.length-1];
-  return p>ema(c,20) && ema(c,20)>ema(c,50)?"BULLISH":
-  p<ema(c,20) && ema(c,20)<ema(c,50)?"BEARISH":"NEUTRAL";
- }
+ const bearishCount=[t15,t1,t4,td].filter(x=>x==="BEARISH").length;
+ const bullishCount=[t15,t1,t4,td].filter(x=>x==="BULLISH").length;
 
- const supportDistance=Math.abs(pct(price,s.support));
- const resistanceDistance=Math.abs(pct(s.resistance,price));
+ const breaking=last.close<Math.min(...b15.slice(-21,-1).map(x=>x.low));
+ const weakening=nearSupport && (t15==="BEARISH"||t1==="BEARISH");
+ const bearishRisk=breaking||(
+  bearishCount>=3 && (nearSupport||r<40)
+ );
 
  let risk="MODERATE";
- if(direction==="BEARISH" && r<35)risk="HIGH";
- if(direction==="BULLISH" && r>45)risk="LOW";
+ if(bearishRisk)risk="HIGH";
+ if(bullishCount>=3 && !nearResistance)risk="LOW";
 
- btcData={
-  price,direction,rsi:r,atr:a,
-  support:s.support,resistance:s.resistance,
-  trend15:direction,trend1:trend(b1),trend4:trend(b4),
-  change:Number(price24.priceChangePercent),
-  supportDistance,resistanceDistance,
-  risk
+ let warning="No immediate high-risk BTC breakdown condition detected.";
+ let horizon="No defined downside window";
+
+ if(bearishRisk){
+  warning="BTC downside pressure is elevated. Protect existing LONG positions and monitor support.";
+  horizon="Immediate to next 1–4 hours: downside risk watch";
+ }else if(weakening){
+  warning="BTC is near support with weakening structure. Breakdown is possible but not confirmed.";
+  horizon="Next 30 minutes to 4 hours: monitor";
+ }else if(nearResistance && t15==="BULLISH"){
+  warning="BTC is approaching resistance. Watch breakout or rejection.";
+  horizon="Next 15 minutes to 2 hours: monitor";
+ }
+
+ btc={
+  price:last.close,rsi:r,atr:a,support:s.support,
+  resistance:s.resistance,
+  t15,t1,t4,td,risk,warning,horizon,
+  bearishRisk,weakening,breaking
  };
 
- document.getElementById("btcPrice").textContent="$"+fmt(price);
+ const rawTicker=await api(SPOT+"/api/v3/ticker/24hr?symbol=BTCUSDT");
+ document.getElementById("btcPrice").textContent="$"+fmt(last.close);
  document.getElementById("btcChange").textContent=
- "24h "+fmt(btcData.change)+"%";
- document.getElementById("btcBias").textContent=direction;
- document.getElementById("btcBias").className=
- "value "+(direction==="BULLISH"?"green":direction==="BEARISH"?"red":"yellow");
+ "24h "+fmt(+rawTicker.priceChangePercent)+"%";
 
- document.getElementById("btcRisk").textContent="Crash risk: "+risk;
- document.getElementById("btc15").textContent=direction;
- document.getElementById("btc1h").textContent=btcData.trend1;
- document.getElementById("btc4h").textContent=btcData.trend4;
- document.getElementById("btcSupport").textContent="$"+fmt(s.support);
- document.getElementById("btcResistance").textContent="$"+fmt(s.resistance);
- document.getElementById("btcMarketRisk").textContent=risk;
+ const d=document.getElementById("btcDirection");
+ d.textContent= t15==="BEARISH"&&t1==="BEARISH"?"BEARISH":
+ t15==="BULLISH"&&t1==="BULLISH"?"BULLISH":"MIXED";
+ d.className="value "+(d.textContent==="BEARISH"?"red":
+ d.textContent==="BULLISH"?"green":"yellow");
 
- document.getElementById("btcMessage").textContent=
- `RSI ${r.toFixed(1)} | Price-to-support ${supportDistance.toFixed(2)}% | Price-to-resistance ${resistanceDistance.toFixed(2)}%`;
+ document.getElementById("btcRisk").textContent="Risk: "+risk;
+ document.getElementById("b15").textContent=t15;
+ document.getElementById("b1").textContent=t1;
+ document.getElementById("b4").textContent=t4;
+ document.getElementById("b1d").textContent=td;
+ document.getElementById("bs").textContent="$"+fmt(s.support);
+ document.getElementById("br").textContent="$"+fmt(s.resistance);
+ document.getElementById("btcWarning").innerHTML=
+ `<b>${warning}</b><br>Expected monitoring horizon: ${horizon}<br>
+ RSI: ${r.toFixed(1)} | ATR: ${fmt(a)}`;
 
- return btcData;
+ document.getElementById("btcPanel").style.borderColor=
+ bearishRisk?"#ff536b":"#293b55";
 }
 
-// ====================================
-// COIN ANALYSIS
-// ====================================
+// =======================================
+// UNIVERSE: ALL ELIGIBLE PAIRS
+// =======================================
 
-async function analyzeCoin(symbol,ticker){
- const raw=await getCandles(symbol,"15m",100);
- const bars=parseBars(raw);
+async function universe(mode){
+ let result=[];
 
- if(bars.length<50)return null;
-
- const closes=bars.map(x=>x[3]);
- const vols=bars.map(x=>x[4]);
- const last=bars[bars.length-1];
- const prev=bars[bars.length-2];
-
- const price=last[3];
- const s=supportResistance(bars);
- const r=rsi(closes);
- const a=atr(bars);
- const e20=ema(closes,20);
- const e50=ema(closes,50);
-
- const avgVol=average(vols.slice(-21,-1));
- const relativeVolume=avgVol?last[4]/avgVol:0;
-
- const nearSupport=pct(price,s.support)>=-0.9 &&
- pct(price,s.support)<=1.2;
-
- const nearResistance=pct(s.resistance,price)>=-0.9 &&
- pct(s.resistance,price)<=1.2;
-
- const bullishCandle=last[3]>last[0] &&
- last[3]>prev[3];
-
- const bearishCandle=last[3]<last[0] &&
- last[3]<prev[3];
-
- const btcBull=btcData.direction==="BULLISH";
- const btcBear=btcData.direction==="BEARISH";
- const btcNeutral=btcData.direction==="NEUTRAL";
-
- let signal=null;
-
- // NORMAL SUPPORT REVERSAL LONG
- if(nearSupport && bullishCandle && r<65 &&
- (btcBull || btcNeutral)){
-  let score=65;
-  if(r<45)score+=8;
-  if(relativeVolume>1.2)score+=8;
-  if(price>e20)score+=5;
-  if(btcBull)score+=8;
-
-  signal={
-   direction:"LONG",type:"NORMAL",
-   stage:relativeVolume>=1.1?"CONFIRMED":"PREPARING",
-   score:Math.min(score,97)
-  };
- }
-
- // NORMAL RESISTANCE REJECTION SHORT
- if(nearResistance && bearishCandle && r>35 &&
- (btcBear || btcNeutral)){
-  let score=65;
-  if(r>55)score+=8;
-  if(relativeVolume>1.2)score+=8;
-  if(price<e20)score+=5;
-  if(btcBear)score+=8;
-
-  signal={
-   direction:"SHORT",type:"NORMAL",
-   stage:relativeVolume>=1.1?"CONFIRMED":"PREPARING",
-   score:Math.min(score,97)
-  };
- }
-
- // BREAKOUT / BREAKDOWN
- const previous=bars.slice(-21,-1);
- const previousHigh=Math.max(...previous.map(x=>x[1]));
- const previousLow=Math.min(...previous.map(x=>x[2]));
-
- const breakout=price>previousHigh &&
- relativeVolume>=1.5 && bullishCandle;
-
- const breakdown=price<previousLow &&
- relativeVolume>=1.5 && bearishCandle;
-
- if(breakout && !btcBear){
-  let score=70+(relativeVolume>2?12:5)+(btcBull?10:0);
-  signal={
-   direction:"LONG",type:"BREAKOUT",
-   stage:"CONFIRMED",score:Math.min(score,97)
-  };
- }
-
- if(breakdown && !btcBull){
-  let score=70+(relativeVolume>2?12:5)+(btcBear?10:0);
-  signal={
-   direction:"SHORT",type:"BREAKOUT",
-   stage:"CONFIRMED",score:Math.min(score,97)
-  };
- }
-
- // Early preparation around breakout zones
- if(!signal && !btcBear && price<previousHigh &&
- pct(previousHigh,price)<0.6 &&
- relativeVolume>1.15){
-  signal={
-   direction:"LONG",type:"BREAKOUT",
-   stage:"PREPARING",score:70
-  };
- }
-
- if(!signal && !btcBull && price>previousLow &&
- pct(price,previousLow)<0.6 &&
- relativeVolume>1.15){
-  signal={
-   direction:"SHORT",type:"BREAKOUT",
-   stage:"PREPARING",score:70
-  };
- }
-
- if(!signal)return null;
-
- // Risk calculation
- const entry=price;
- const buffer=Math.max(a*0.35,price*0.002);
-
- let sl,targets;
-
- if(signal.direction==="LONG"){
-  sl=Math.min(s.support,entry-a*1.2)-buffer;
-  if(sl>=entry)sl=entry-a*1.5;
-
-  const risk=entry-sl;
-  targets=[1,2,3].map(x=>entry+risk*x);
- }else{
-  sl=Math.max(s.resistance,entry+a*1.2)+buffer;
-  if(sl<=entry)sl=entry+a*1.5;
-
-  const risk=sl-entry;
-  targets=[1,2,3].map(x=>entry-risk*x);
- }
-
- const riskPercent=Math.abs(pct(sl,entry));
- const tpPercents=targets.map(t=>Math.abs(pct(t,entry)));
-
- return {
-  symbol,price,volume:Number(ticker.quoteVolume),
-  change:Number(ticker.priceChangePercent),
-  direction:signal.direction,type:signal.type,
-  stage:signal.stage,score:signal.score,
-  entry,sl,targets,
-  riskPercent,tpPercents,
-  support:s.support,resistance:s.resistance,
-  rsi:r,atr:a,relativeVolume,
-  rr:signal.type==="NORMAL"?1:2,
-  time:signal.type==="BREAKOUT"?"30m–4h":"1h–8h",
-  btcDirection:btcData.direction
- };
-}
-
-// ====================================
-// MARKET SCANNING
-// ====================================
-
-async function scanMarket(){
- const button=document.querySelector("header button");
- button.disabled=true;
-
- document.getElementById("connection").textContent="SCANNING";
- document.getElementById("connection").className="badge wait";
- document.getElementById("scanStatus").textContent=
- "Downloading Binance market data...";
-
- try{
-  await analyzeBTC();
-
-  const [exchange,tickers]=await Promise.all([
-   getJSON(`${API}/exchangeInfo`),
-   getJSON(`${API}/ticker/24hr`)
+ if(mode==="futures"||mode==="both"){
+  const [info,tickers]=await Promise.all([
+   api(FUT+"/fapi/v1/exchangeInfo"),
+   api(FUT+"/fapi/v1/ticker/24hr")
   ]);
 
-  const tickerMap=new Map(tickers.map(t=>[t.symbol,t]));
+  const map=new Map(tickers.map(x=>[x.symbol,x]));
 
-  const symbols=exchange.symbols.filter(s=>
+  info.symbols.filter(s=>
+   s.status==="TRADING" &&
+   s.quoteAsset==="USDT" &&
+   s.contractType==="PERPETUAL"
+  ).forEach(s=>{
+   const t=map.get(s.symbol);
+   if(t)result.push({
+    symbol:s.symbol,market:"FUTURES",
+    ticker:t,base:s.baseAsset
+   });
+  });
+ }
+
+ if(mode==="spot"||mode==="both"){
+  const [info,tickers]=await Promise.all([
+   api(SPOT+"/api/v3/exchangeInfo"),
+   api(SPOT+"/api/v3/ticker/24hr")
+  ]);
+
+  const map=new Map(tickers.map(x=>[x.symbol,x]));
+
+  info.symbols.filter(s=>
    s.status==="TRADING" &&
    s.quoteAsset==="USDT" &&
    s.isSpotTradingAllowed &&
-   !["UP","DOWN","BULL","BEAR"].some(x=>
-    s.baseAsset.endsWith(x)
-   )
-  );
+   !s.baseAsset.endsWith("UP") &&
+   !s.baseAsset.endsWith("DOWN") &&
+   !s.baseAsset.endsWith("BULL") &&
+   !s.baseAsset.endsWith("BEAR")
+  ).forEach(s=>{
+   const t=map.get(s.symbol);
+   if(t)result.push({
+    symbol:s.symbol,market:"SPOT",
+    ticker:t,base:s.baseAsset
+   });
+  });
+ }
 
-  let candidates=symbols
-   .map(s=>tickerMap.get(s.symbol))
-   .filter(t=>t && Number(t.quoteVolume)>0)
-   .sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume));
+ return result;
+}
 
-  const limit=Number(document.getElementById("marketLimit").value);
-  candidates=candidates.slice(0,limit);
+// =======================================
+// TRADE CALCULATIONS
+// =======================================
 
-  let results=[];
-  let index=0;
-  const concurrency=5;
+function makeTrade(direction,entry,support,resistance,a,structure){
+ const buffer=Math.max(a*.20,entry*.001);
 
-  async function worker(){
-   while(index<candidates.length){
-    const current=candidates[index++];
-    try{
-     const result=await analyzeCoin(current.symbol,current);
-     if(result)results.push(result);
-    }catch(e){
-     // Individual coin failures do not stop the scan
-    }
+ let sl,targets,risk;
+
+ if(direction==="LONG"){
+  sl=Math.min(support,entry-a*1.15)-buffer;
+  if(sl>=entry)sl=entry-a*1.5;
+  risk=entry-sl;
+  targets=[entry+risk,entry+2*risk,entry+3*risk];
+ }else{
+  sl=Math.max(resistance,entry+a*1.15)+buffer;
+  if(sl<=entry)sl=entry+a*1.5;
+  risk=sl-entry;
+  targets=[entry-risk,entry-2*risk,entry-3*risk];
+ }
+
+ // Enforce mathematically correct target order
+ if(direction==="SHORT" &&
+ !(targets[0]>targets[1]&&targets[1]>targets[2]&&sl>entry))
+  throw new Error("Invalid SHORT levels");
+
+ if(direction==="LONG" &&
+ !(targets[0]<targets[1]&&targets[1]<targets[2]&&sl<entry))
+  throw new Error("Invalid LONG levels");
+
+ return {
+  entry,sl,targets,
+  riskPercent:risk/entry*100,
+  tpPercent:targets.map(x=>Math.abs(x-entry)/entry*100)
+ };
+}
+
+// =======================================
+// COIN SCANNER
+// =======================================
+
+async function analyzeCoin(item){
+ const endpoint=item.market==="FUTURES"?FUT:SPOT;
+
+ const raw=await api(endpoint+
+ "/"+(item.market==="FUTURES"?"fapi":"api")+
+ "/v1/klines?symbol="+item.symbol+"&interval=15m&limit=100");
+
+ const b=parseCandles(raw);
+ if(b.length<55)return null;
+
+ const k=b[b.length-1],prev=b[b.length-2];
+ const c=b.map(x=>x.close);
+ const r=rsi(c),a=atr(b);
+ const s=levels(b,30);
+
+ const avgVol=avg(b.slice(-21,-1).map(x=>x.quote));
+ const relVol=avgVol?k.quote/avgVol:0;
+
+ const previous=b.slice(-21,-1);
+ const oldHigh=Math.max(...previous.map(x=>x.high));
+ const oldLow=Math.min(...previous.map(x=>x.low));
+
+ const nearS=change(k.close,s.support)<=1.0 &&
+ change(k.close,s.support)>=-0.3;
+
+ const nearR=change(s.resistance,k.close)<=1.0 &&
+ change(s.resistance,k.close)>=-0.3;
+
+ const breakout=k.close>oldHigh && relVol>=1.5;
+ const breakdown=k.close<oldLow && relVol>=1.5;
+
+ const bullReject=nearS && wickBull(k);
+ const bearReject=nearR && wickBear(k);
+
+ const btcBull=btc.t15==="BULLISH"&&btc.t1!=="BEARISH";
+ const btcBear=btc.t15==="BEARISH"&&btc.t1!=="BULLISH";
+
+ let direction=null,type=null,stage=null,score=0;
+
+ // BREAKOUT LONG
+ if(breakout && !btcBear){
+  direction="LONG";type="BREAKOUT";stage="CONFIRMED";
+  score=75+(relVol>2?8:0)+(btcBull?10:0);
+ }
+
+ // BREAKDOWN SHORT
+ else if(breakdown && !btcBull){
+  direction="SHORT";type="BREAKDOWN";stage="CONFIRMED";
+  score=75+(relVol>2?8:0)+(btcBear?10:0);
+ }
+
+ // NORMAL SUPPORT LONG
+ else if(bullReject && btcBull){
+  direction="LONG";type="NORMAL";stage=
+   relVol>=1.2?"CONFIRMED":"PREPARING";
+  score=67+(r<45?8:0)+(relVol>=1.2?8:0)+10;
+ }
+
+ // NORMAL RESISTANCE SHORT
+ else if(bearReject && btcBear){
+  direction="SHORT";type="NORMAL";stage=
+   relVol>=1.2?"CONFIRMED":"PREPARING";
+  score=67+(r>55?8:0)+(relVol>=1.2?8:0)+10;
+ }
+
+ // PREPARATION: approaching important level
+ else if(nearS && btcBull && r<55){
+  direction="LONG";type="NORMAL";stage="PREPARING";
+  score=68+(relVol>1?5:0);
+ }
+ else if(nearR && btcBear && r>45){
+  direction="SHORT";type="NORMAL";stage="PREPARING";
+  score=68+(relVol>1?5:0);
+ }
+
+ if(!direction)return null;
+
+ // Multi-timeframe confirmation only for promising candidates
+ if(score>=72){
+  const [h1,h4]=await Promise.all([
+   api(endpoint+"/"+(item.market==="FUTURES"?"fapi":"api")+
+   "/v1/klines?symbol="+item.symbol+"&interval=1h&limit=80"),
+   api(endpoint+"/"+(item.market==="FUTURES"?"fapi":"api")+
+   "/v1/klines?symbol="+item.symbol+"&interval=4h&limit=80")
+  ]);
+
+  const t1=trend(parseCandles(h1));
+  const t4=trend(parseCandles(h4));
+
+  const aligned=direction==="LONG"?
+   [t1,t4].filter(x=>x==="BULLISH").length:
+   [t1,t4].filter(x=>x==="BEARISH").length;
+
+  score+=aligned*5;
+
+  if(aligned===0)stage="PREPARING";
+  if(aligned===2&&stage==="CONFIRMED")score+=5;
+
+  if(direction==="LONG"&&btcBear)score-=15;
+  if(direction==="SHORT"&&btcBull)score-=15;
+ }
+
+ score=Math.max(0,Math.min(97,score));
+
+ const entry=k.close;
+ const plan=makeTrade(direction,entry,s.support,s.resistance,a);
+
+ return {
+  symbol:item.symbol,market:item.market,
+  direction,type,stage,score,
+  price:k.close,volume:+item.ticker.quoteVolume,
+  relativeVolume:relVol,rsi:r,
+  support:s.support,resistance:s.resistance,
+  ...plan,
+  time:type==="BREAKOUT"||type==="BREAKDOWN"?
+   "30m–4h":"1h–8h",
+  timestamp:Date.now(),
+  atr:a
+ };
+}
+
+// =======================================
+// ALL-MARKET SCAN
+// =======================================
+
+async function pool(items,fn,concurrency){
+ let index=0,done=0,results=[];
+ async function worker(){
+  while(index<items.length&&!stopRequested){
+   const item=items[index++];
+   try{
+    const r=await fn(item);
+    if(r)results.push(r);
+   }catch(e){}
+   done++;
+   if(done%10===0){
+    document.getElementById("progress").textContent=
+    `Analysed ${done} / ${items.length} markets`;
    }
+   await sleep(120);
   }
+ }
+ await Promise.all(
+  Array.from({length:concurrency},worker)
+ );
+ return results;
+}
 
-  await Promise.all(
-   Array.from({length:concurrency},()=>worker())
-  );
+async function startScan(){
+ stopRequested=false;
+ document.getElementById("connection").textContent="SCANNING";
+ document.getElementById("connection").className="badge wait";
 
-  allSignals=results;
+ try{
+  await btcAnalysis();
+
+  const mode=document.getElementById("marketMode").value;
+  const items=await universe(mode);
+
+  document.getElementById("coverage").textContent=
+   `${items.length} eligible markets discovered. Scanning the complete selected universe.`;
+
+  const results=await pool(items,analyzeCoin,4);
+
+  if(stopRequested)return;
+
+  signals=results;
 
   document.getElementById("connection").textContent="CONNECTED";
   document.getElementById("connection").className="badge bull";
 
-  document.getElementById("scanStatus").textContent=
-   `Scanned ${candidates.length} of ${symbols.length} eligible spot pairs. ${results.length} candidate setups found. Last scan: ${new Date().toLocaleTimeString()}`;
-
-  renderSignals();
+  document.getElementById("progress").textContent=
+   `Finished: ${items.length} markets checked. ${results.length} setups found.`;
 
   document.getElementById("log").textContent=
-   "Last successful scan: "+new Date().toLocaleString();
+   "Last complete scan: "+new Date().toLocaleString();
+
+  render();
 
  }catch(e){
-  document.getElementById("connection").textContent="API ERROR";
+  document.getElementById("connection").textContent="ERROR";
   document.getElementById("connection").className="badge bear";
-  document.getElementById("scanStatus").textContent=
-   "Scanner error: "+e.message+
-   ". Check Binance API access and internet connection.";
- }finally{
-  button.disabled=false;
+  document.getElementById("progress").textContent=e.message;
  }
 }
 
-// ====================================
-// SIGNAL LISTS
-// ====================================
-
-function showList(type,direction){
- selectedList=type;
- selectedDirection=direction;
-
- document.getElementById("listTitle").textContent=
- type==="normal"?"NORMAL REVERSAL SIGNALS":
- type==="breakout"?"BREAKOUT / BREAKDOWN SIGNALS":
- direction==="LONG"?"ALL LONG SIGNALS":
- direction==="SHORT"?"ALL SHORT SIGNALS":"ALL SIGNALS";
-
- renderSignals();
+function stopScan(){
+ stopRequested=true;
+ document.getElementById("connection").textContent="STOPPED";
+ if(scanTimer)clearInterval(scanTimer);
 }
 
-function renderSignals(){
- let list=allSignals.filter(s=>
-  selectedList==="all" || s.type===selectedList.toUpperCase()
- );
+function setAuto(){
+ if(scanTimer)clearInterval(scanTimer);
+ scanTimer=setInterval(startScan,
+ Number(document.getElementById("refreshRate").value));
+}
 
- if(selectedDirection!=="ALL"){
-  list=list.filter(s=>s.direction===selectedDirection);
- }
+// =======================================
+// SEPARATE SIGNAL LISTS
+// =======================================
 
- const stage=document.getElementById("stageFilter").value;
- if(stage!=="ALL")list=list.filter(s=>s.stage===stage);
+function setView(v){
+ currentView=v;
+ render();
+}
 
- const min=Number(document.getElementById("minScore").value)||75;
- list=list.filter(s=>s.score>=min);
-
- const sort=document.getElementById("sortFilter").value;
-
- list.sort((a,b)=>{
-  if(sort==="volume")return b.volume-a.volume;
-  if(sort==="rr")return b.rr-a.rr;
-  return b.score-a.score;
+function render(){
+ let list=signals.filter(s=>{
+  if(currentView==="normal")return s.type==="NORMAL";
+  if(currentView==="breakout")return s.type==="BREAKOUT";
+  if(currentView==="breakdown")return s.type==="BREAKDOWN";
+  return false;
  });
 
- document.getElementById("signalCount").textContent=
- list.length+" SIGNALS";
-
- const tbody=document.getElementById("signalRows");
-
- if(!list.length){
-  tbody.innerHTML=
-  '<tr><td colspan="8">No qualifying signals. WAIT for a better setup.</td></tr>';
+ if(currentView==="btc"){
+  document.getElementById("listTitle").textContent="BTC DOWNSIDE WARNING";
+  document.getElementById("count").textContent=btc?.risk||"--";
+  document.getElementById("rows").innerHTML=`
+  <tr><td colspan="12">
+   <b class="${btc?.bearishRisk?"red":"yellow"}">
+    ${btc?.warning||"Waiting for BTC analysis"}
+   </b><br><br>
+   Monitoring horizon: ${btc?.horizon||"--"}<br>
+   Support: ${fmt(btc?.support)}<br>
+   Resistance: ${fmt(btc?.resistance)}
+  </td></tr>`;
   return;
  }
 
- tbody.innerHTML=list.map(s=>`
- <tr onclick="openTrade('${s.symbol}')" class="coin">
-  <td>${s.symbol}</td>
-  <td class="${s.direction==="LONG"?"green":"red"}">
-   ${s.direction}
-  </td>
-  <td>${s.type}</td>
-  <td><span class="badge ${s.stage==="CONFIRMED"?"bull":"wait"}">${s.stage}</span></td>
-  <td>${fmt(s.price)}</td>
-  <td>$${(s.volume/1000000).toFixed(2)}M</td>
-  <td>${s.score}/100</td>
-  <td>1:${s.rr}</td>
- </tr>`).join("");
+ const dir=document.getElementById("directionFilter").value;
+ const stage=document.getElementById("stageFilter").value;
+ const min=Number(document.getElementById("minScore").value)||0;
+
+ list=list.filter(s=>
+  (dir==="ALL"||s.direction===dir)&&
+  (stage==="ALL"||s.stage===stage)&&s.score>=min
+ );
+
+ const sort=document.getElementById("sortFilter").value;
+ list.sort((a,b)=>sort==="volume"?
+  b.volume-a.volume:b.score-a.score);
+
+ document.getElementById("listTitle").textContent={
+  normal:"NORMAL REVERSAL SIGNALS",
+  breakout:"BREAKOUT LONG SIGNALS",
+  breakdown:"BREAKDOWN SHORT SIGNALS"
+ }[currentView];
+
+ document.getElementById("count").textContent=list.length+" SETUPS";
+
+ document.getElementById("rows").innerHTML=list.length?
+ list.map(s=>`
+ <tr onclick="openTrade('${s.symbol}','${s.market}')">
+ <td><b>${s.symbol}</b><br><small>${s.market}</small></td>
+ <td class="${s.direction==="LONG"?"green":"red"}">${s.direction}</td>
+ <td><span class="badge ${s.stage==="CONFIRMED"?"bull":"wait"}">${s.stage}</span></td>
+ <td>${fmt(s.price)}</td>
+ <td>$${(s.volume/1e6).toFixed(2)}M</td>
+ <td>${s.relativeVolume.toFixed(2)}x</td>
+ <td>${s.score}/100</td>
+ <td>${fmt(s.entry)}</td>
+ <td class="red">${fmt(s.sl)}</td>
+ <td class="green">${fmt(s.targets[0])}</td>
+ <td class="green">${fmt(s.targets[1])}</td>
+ <td class="green">${fmt(s.targets[2])}</td>
+ </tr>`).join("") :
+ '<tr><td colspan="12">No qualifying setups. WAIT for confirmation.</td></tr>';
 }
 
-// ====================================
+// =======================================
 // TRADE DETAILS
-// ====================================
+// =======================================
 
-function openTrade(symbol){
- const s=allSignals.find(x=>x.symbol===symbol);
+function openTrade(symbol,market){
+ const s=signals.find(x=>x.symbol===symbol&&x.market===market);
  if(!s)return;
 
  selectedCoin=symbol;
+ const sign=s.direction==="LONG"?1:-1;
 
- document.getElementById("tradeInfo").innerHTML=`
- <h3>${s.symbol} — <span class="${s.direction==="LONG"?"green":"red"}">${s.direction}</span></h3>
- <p>
+ const tpOrder=s.direction==="LONG"?
+  s.targets[0]<s.targets[1]&&s.targets[1]<s.targets[2]:
+  s.targets[0]>s.targets[1]&&s.targets[1]>s.targets[2];
+
+ document.getElementById("tradeDetail").innerHTML=`
+ <h3>${s.symbol} — ${s.market} — 
+ <span class="${s.direction==="LONG"?"green":"red"}">${s.direction}</span></h3>
  <span class="badge ${s.stage==="CONFIRMED"?"bull":"wait"}">${s.stage}</span>
  <span class="badge">${s.type}</span>
- </p>
- <div class="detail-grid">
-  <div>Expected Entry<strong>${fmt(s.entry)}</strong></div>
+ <div class="detail" style="margin-top:12px">
+  <div>Entry<strong>${fmt(s.entry)}</strong></div>
   <div>Stop Loss<strong class="red">${fmt(s.sl)}</strong></div>
-  <div>TP1<strong class="green">${fmt(s.targets[0])}</strong></div>
-  <div>TP2<strong class="green">${fmt(s.targets[1])}</strong></div>
-  <div>TP3<strong class="green">${fmt(s.targets[2])}</strong></div>
-  <div>Expected duration<strong>${s.time}</strong></div>
-  <div>SL distance<strong>${s.riskPercent.toFixed(2)}%</strong></div>
-  <div>TP1 distance<strong>${s.tpPercents[0].toFixed(2)}%</strong></div>
-  <div>TP2 distance<strong>${s.tpPercents[1].toFixed(2)}%</strong></div>
-  <div>TP3 distance<strong>${s.tpPercents[2].toFixed(2)}%</strong></div>
+  <div>Risk<strong>${s.riskPercent.toFixed(2)}%</strong></div>
+  <div>TP1<strong class="green">${fmt(s.targets[0])}</strong>
+   ${s.tpPercent[0].toFixed(2)}%</div>
+  <div>TP2<strong class="green">${fmt(s.targets[1])}</strong>
+   ${s.tpPercent[1].toFixed(2)}%</div>
+  <div>TP3<strong class="green">${fmt(s.targets[2])}</strong>
+   ${s.tpPercent[2].toFixed(2)}%</div>
   <div>Support<strong>${fmt(s.support)}</strong></div>
   <div>Resistance<strong>${fmt(s.resistance)}</strong></div>
   <div>RSI<strong>${s.rsi.toFixed(1)}</strong></div>
-  <div>Relative Volume<strong>${s.relativeVolume.toFixed(2)}x</strong></div>
-  <div>BTC direction<strong>${s.btcDirection}</strong></div>
+  <div>Relative volume<strong>${s.relativeVolume.toFixed(2)}x</strong></div>
+  <div>Expected duration<strong>${s.time}</strong></div>
+  <div>Technical score<strong>${s.score}/100</strong></div>
  </div>
- <p class="status">
- Score is a technical setup score, not a win probability.
- Expected duration is a rough estimate, not a forecast.
- </p>`;
+ <p class="status ${tpOrder?"green":"red"}">
+ Target ordering check: ${tpOrder?"PASSED":"FAILED"}
+ </p>
+ <p class="status">Expected duration is an estimate, not a guaranteed time.
+ TP percentages are price-distance percentages, before fees, slippage and funding.</p>
+ `;
 
  loadChart();
- document.getElementById("chart-box").scrollIntoView({behavior:"smooth"});
+ document.getElementById("tradePanel").scrollIntoView({behavior:"smooth"});
 }
 
-// ====================================
-// TRADINGVIEW CHART
-// ====================================
+// =======================================
+// TRADINGVIEW
+// =======================================
 
 function loadChart(){
- const container=document.getElementById("tradingview_widget");
- const interval=document.getElementById("chartTime").value;
-
- container.innerHTML="";
-
+ const box=document.getElementById("tv");
+ box.innerHTML="";
  const script=document.createElement("script");
  script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
  script.async=true;
-
- const config={
+ script.innerHTML=JSON.stringify({
   autosize:true,
   symbol:"BINANCE:"+selectedCoin,
-  interval:interval,
+  interval:document.getElementById("chartInterval").value,
   timezone:"Asia/Karachi",
-  theme:"dark",
-  style:"1",
-  locale:"en",
+  theme:"dark",style:"1",locale:"en",
   allow_symbol_change:true,
-  calendar:false,
   support_host:"https://www.tradingview.com"
- };
-
- script.innerHTML=JSON.stringify(config);
- container.appendChild(script);
+ });
+ box.appendChild(script);
 }
-
 loadChart();
 
-// ====================================
-// NEWS TICKER
-// ====================================
+// =======================================
+// NEWS
+// =======================================
 
 async function loadNews(){
- const ticker=document.getElementById("newsTicker");
- ticker.textContent="Loading crypto headlines...";
-
  try{
-  const url=
-   "https://api.rss2json.com/v1/api.json?rss_url="+
+  const url="https://api.rss2json.com/v1/api.json?rss_url="+
    encodeURIComponent("https://www.coindesk.com/arc/outboundfeeds/rss/");
+  const data=await api(url);
+  news=(data.items||[]).slice(0,15);
 
-  const data=await getJSON(url);
+  if(!news.length)throw new Error("No news");
 
-  if(data.items && data.items.length){
-   newsItems=data.items.slice(0,15);
+  document.getElementById("ticker").innerHTML=
+   news.map(n=>`<a target="_blank" rel="noopener"
+   href="${safe(n.link)}">${esc(n.title)}</a>`).join(" • ");
 
-   ticker.innerHTML=newsItems.map(n=>
-    `<a href="${safeURL(n.link)}" target="_blank" rel="noopener">
-    ${escapeHTML(n.title)}</a>`
-   ).join(" • ");
-
-   document.getElementById("newsList").textContent=
-    "Source: CoinDesk RSS. Click a headline to read the original story.";
-  }else{
-   throw new Error("No headlines returned");
-  }
+  document.getElementById("newsLinks").textContent=
+   "Source: CoinDesk. News headlines are not yet integrated into signal scoring.";
  }catch(e){
-  ticker.textContent=
-   "News feed unavailable. Open trusted sources: CoinDesk, Binance Announcements, Cointelegraph.";
-  document.getElementById("newsList").innerHTML=
-   '<a target="_blank" href="https://www.coindesk.com/">CoinDesk</a> | '+
-   '<a target="_blank" href="https://www.binance.com/en/support/announcement">Binance Announcements</a>';
+  document.getElementById("ticker").textContent=
+   "News unavailable. Check Binance announcements and CoinDesk.";
+  document.getElementById("newsLinks").innerHTML=
+   '<a href="https://www.binance.com/en/support/announcement" target="_blank">Binance announcements</a>';
  }
 }
 
-function escapeHTML(s){
+function esc(s){
  return String(s).replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",
-  '"':"&quot;","'":"&#39;"
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
-
-function safeURL(url){
+function safe(s){
  try{
-  const u=new URL(url);
+  const u=new URL(s);
   return u.protocol==="https:"?u.href:"#";
  }catch(e){return "#";}
 }
-
 loadNews();
 
-// ====================================
-// AUTO REFRESH
-// ====================================
+// =======================================
+// INITIALIZATION
+// =======================================
 
-function restartScanner(){
- if(timer)clearInterval(timer);
+document.getElementById("refreshRate").addEventListener("change",setAuto);
 
- const ms=Number(document.getElementById("interval").value);
- timer=setInterval(scanMarket,ms);
- scanMarket();
-}
-
-document.getElementById("marketLimit")
- .addEventListener("change",scanMarket);
-
-restartScanner();
+setAuto();
+startScan();
 
 </script>
 </body>
