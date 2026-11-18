@@ -1,237 +1,784 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Institutional Smart-Money Crypto Scanner (EP / SL / TP1–TP3)</title>
-  <style>
-    :root {
-      --bg: #060911;
-      --panel: #0d1322;
-      --panel-2: #131c31;
-      --border: #1e293b;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #3b82f6;
-      --green: #10b981;
-      --green-bg: rgba(16, 185, 129, 0.14);
-      --red: #ef4444;
-      --red-bg: rgba(239, 68, 68, 0.14);
-      --gold: #f59e0b;
-    }
-
-    * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); }
-    .wrap { max-width: 1500px; margin: 0 auto; }
-
-    .header {
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
-    }
-    .title-area h1 { margin: 0; font-size: 1.35rem; font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-    .pro-tag {
-      font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px;
-      background: linear-gradient(90deg, rgba(59,130,246,0.25), rgba(16,185,129,0.25));
-      border: 1px solid rgba(96,165,250,0.45); color: #93c5fd;
-    }
-    .title-area p { margin: 5px 0 0; font-size: 0.82rem; color: var(--muted); }
-
-    .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-    select, input, button {
-      background: var(--panel); color: var(--text); border: 1px solid var(--border);
-      padding: 9px 12px; border-radius: 8px; font-size: 0.84rem; outline: none; transition: 0.15s;
-    }
-    select:hover, input:focus, button:hover { border-color: var(--accent); }
-    button.scan-btn { background: var(--accent); border-color: var(--accent); font-weight: 600; cursor: pointer; }
-    button.scan-btn:hover { background: #2563eb; }
-    button.sound-on { border-color: var(--green); color: var(--green); cursor: pointer; }
-    button.sound-off { color: var(--muted); cursor: pointer; }
-
-    .kpis {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px; margin-bottom: 16px;
-    }
-    .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-    .kpi-title { font-size: 0.74rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .kpi-val { font-size: 1.32rem; font-weight: 700; margin-top: 4px; }
-    .kpi-val.green { color: var(--green); }
-    .kpi-val.red { color: var(--red); }
-    .kpi-val.gold { color: var(--gold); }
-
-    .toolbar {
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-      gap: 10px; margin-bottom: 10px;
-    }
-    .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-    .tab {
-      background: var(--panel); border: 1px solid var(--border); color: var(--muted);
-      padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
-    }
-    .tab.active { background: var(--panel-2); color: var(--text); border-color: var(--accent); }
-
-    .status-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); margin-bottom: 8px; }
-    .progress-bg { width: 100%; height: 4px; background: var(--panel); border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
-    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #10b981); transition: width 0.2s; }
-
-    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
-    .scroll-x { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 1220px; }
-    th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.84rem; white-space: nowrap; }
-    th { background: var(--panel-2); color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    tr:hover td { background: rgba(255,255,255,0.02); }
-
-    .pair-box { display: flex; flex-direction: column; }
-    .pair-name { font-weight: 700; font-size: 0.88rem; }
-    .pair-sub { font-size: 0.72rem; color: var(--muted); }
-
-    .sig { padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; display: inline-block; }
-    .sig.LONG { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,0.45); }
-    .sig.SHORT { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.45); }
-    .sig.WAIT { background: rgba(148,163,184,0.1); color: var(--muted); border: 1px solid rgba(148,163,184,0.2); }
-
-    .score-pill { font-weight: 700; font-size: 0.8rem; }
-    .score-high { color: var(--gold); }
-    .score-mid { color: #60a5fa; }
-
-    .trigger-tag {
-      font-size: 0.74rem; background: var(--panel-2); border: 1px solid var(--border);
-      padding: 3px 8px; border-radius: 5px; color: #cbd5e1;
-    }
-
-    .ep { font-weight: 700; color: #f1f5f9; }
-    .sl { color: var(--red); font-weight: 600; }
-    .tp1 { color: #6ee7b7; font-weight: 600; }
-    .tp2 { color: #34d399; font-weight: 600; }
-    .tp3 { color: #10b981; font-weight: 700; }
-
-    .copy-btn {
-      background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
-      padding: 5px 10px; border-radius: 6px; font-size: 0.77rem; cursor: pointer;
-    }
-    .copy-btn:hover { border-color: var(--accent); color: #60a5fa; }
-
-    .disclaimer { margin-top: 14px; font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>Smart Money Futures Scanner</title>
+<style>
+:root {
+ --bg:#080d18;--panel:#101a2a;--panel2:#142238;
+ --border:#24334b;--text:#e8efff;--muted:#8495b2;
+ --green:#00d69a;--red:#ff5470;--blue:#54a5ff;
+ --yellow:#ffc857;--purple:#b18cff;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,Helvetica,sans-serif;font-size:13px;
+}
+header{
+ padding:16px;background:linear-gradient(120deg,#101d32,#11152a);
+ border-bottom:1px solid var(--border);
+ position:sticky;top:0;z-index:5;
+}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.4px}
+h1 span{color:var(--green)}
+.sub{color:var(--muted);font-size:11px;margin-top:5px}
+.wrap{max-width:1500px;margin:auto;padding:14px}
+.controls{
+ display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:9px;margin:12px 0;
+}
+.control label{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
+select,input,button{
+ width:100%;border:1px solid var(--border);border-radius:7px;
+ background:#0b1423;color:var(--text);padding:10px;font-size:12px;
+ outline:none;min-width:0;
+}
+button{cursor:pointer;font-weight:bold}
+button.primary{background:#087d65;border-color:#087d65;color:white}
+button:disabled{opacity:.5}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:12px 0}
+.kpi{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:13px}
+.kpi small{color:var(--muted);font-size:10px}
+.kpi strong{display:block;font-size:22px;margin-top:8px}
+.green{color:var(--green)!important}.red{color:var(--red)!important}
+.blue{color:var(--blue)!important}.yellow{color:var(--yellow)!important}
+.status{
+ background:#0c1727;border:1px solid var(--border);
+ border-radius:8px;padding:11px;margin:12px 0;
+}
+.statusline{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#statusText{color:var(--green)}
+.progress{height:5px;background:#25334b;border-radius:9px;margin-top:9px;overflow:hidden}
+#progressBar{height:100%;width:0;background:var(--green);transition:width .2s}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:14px 0}
+.tab{white-space:nowrap;width:auto;padding:9px 13px;background:var(--panel);color:var(--muted)}
+.tab.active{background:#16483e;color:var(--green);border-color:#167e66}
+.filters{display:grid;grid-template-columns:1fr 170px;gap:8px;margin:12px 0}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.signal{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:11px;padding:13px;min-width:0;
+}
+.signal.long{border-left:3px solid var(--green)}
+.signal.short{border-left:3px solid var(--red)}
+.signalTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.symbol{font-size:16px;font-weight:800}
+.badge{border-radius:5px;padding:5px 8px;font-size:10px;font-weight:bold}
+.longBadge{background:#063b32;color:var(--green)}
+.shortBadge{background:#471c2a;color:var(--red)}
+.aplus{background:#4a3710;color:var(--yellow)}
+.meta{color:var(--muted);font-size:10px;margin:9px 0}
+.reason{font-size:11px;color:#b9c9e4;line-height:1.6;margin:9px 0}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.level{background:#0a1423;border-radius:6px;padding:8px;min-width:0}
+.level small{display:block;color:var(--muted);font-size:9px;margin-bottom:5px}
+.level b{font-size:11px;overflow-wrap:anywhere}
+.plan{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.plan div{background:#0b1525;padding:8px 5px;border-radius:6px;min-width:0}
+.plan small{display:block;color:var(--muted);font-size:9px;margin-bottom:5px}
+.plan b{font-size:10px;overflow-wrap:anywhere}
+.copy{margin-top:10px;background:#1c3656;border-color:#315781}
+.empty{grid-column:1/-1;text-align:center;padding:45px 15px;color:var(--muted);background:var(--panel);border-radius:10px}
+.footer{color:var(--muted);font-size:10px;text-align:center;padding:20px;line-height:1.7}
+@media(max-width:800px){
+ .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .results{grid-template-columns:1fr}
+ .kpi:last-child{grid-column:span 2}
+}
+@media(max-width:380px){
+ .plan{grid-template-columns:repeat(3,1fr)}
+ .filters{grid-template-columns:1fr}
+ h1{font-size:16px}
+}
+</style>
 </head>
 <body>
-<div class="wrap">
 
-  <div class="header">
-    <div class="title-area">
-      <h1>Smart-Money Crypto Futures Scanner <span class="pro-tag">EARLY CONFLUENCE ENGINE</span></h1>
-      <p>4H HTF Trend Filter + Bollinger Squeeze + Liquidity Sweep Reclaim + Volume Surge + Funding Check</p>
-    </div>
-
-    <div class="controls">
-      <select id="exchangeSelect">
-        <option value="binance" selected>Binance Futures</option>
-        <option value="bybit">Bybit Futures (Backup)</option>
-      </select>
-
-      <select id="coinScope">
-        <option value="50" selected>Top 50 Volume Coins</option>
-        <option value="120">Top 120 Volume Coins</option>
-        <option value="ALL">ALL Futures Coins</option>
-      </select>
-
-      <select id="ltfSelect">
-        <option value="15m">15m Entry (4H Filter)</option>
-        <option value="1h" selected>1H Entry (4H Filter)</option>
-      </select>
-
-      <button id="soundToggle" class="sound-on" onclick="toggleSound()">🔔 Alerts: ON</button>
-      <button class="scan-btn" onclick="runProScan()">Scan Now</button>
-    </div>
+<header>
+ <div class="head">
+  <div>
+   <h1>SMART MONEY <span>SCANNER</span></h1>
+   <div class="sub">USDT-M PERPETUALS · EARLY ENTRY INTELLIGENCE</div>
   </div>
-
-  <div class="kpis">
-    <div class="kpi">
-      <div class="kpi-title">Pairs Analyzed</div>
-      <div class="kpi-val" id="kpiTotal">0</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-title">Early Long Setups</div>
-      <div class="kpi-val green" id="kpiLong">0</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-title">Early Short Setups</div>
-      <div class="kpi-val red" id="kpiShort">0</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-title">A+ High-Confidence (85%+)</div>
-      <div class="kpi-val gold" id="kpiAPlus">0</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-title">Auto-Refresh In</div>
-      <div class="kpi-val" id="kpiTimer">60s</div>
-    </div>
+  <div style="min-width:115px">
+   <button id="scanBtn" class="primary">▶ SCAN NOW</button>
   </div>
+ </div>
+</header>
 
-  <div class="toolbar">
-    <div class="tabs">
-      <button class="tab active" onclick="setTab('ACTIVE', this)">Active Setups</button>
-      <button class="tab" onclick="setTab('APLUS', this)">A+ Setups Only (85%+)</button>
-      <button class="tab" onclick="setTab('LONG', this)">Longs</button>
-      <button class="tab" onclick="setTab('SHORT', this)">Shorts</button>
-      <button class="tab" onclick="setTab('ALL', this)">All Scanned</button>
-    </div>
-    <input type="text" id="searchBox" placeholder="Filter symbol (e.g. BTC, ETH, SOL)..." oninput="renderTable()" />
+<main class="wrap">
+
+ <div class="controls">
+  <div class="control">
+   <label>EXCHANGE</label>
+   <select id="exchange">
+    <option value="auto">AUTO (Binance → Bybit)</option>
+    <option value="binance">BINANCE FUTURES</option>
+    <option value="bybit">BYBIT LINEAR</option>
+   </select>
   </div>
-
-  <div class="status-row">
-    <span id="statusMsg">Initializing institutional scanner...</span>
-    <span>SL: 1.5×ATR | TP1: 1.5×ATR | TP2: 3.0×ATR | TP3: 5.25×ATR</span>
+  <div class="control">
+   <label>PAIR UNIVERSE</label>
+   <select id="universe">
+    <option value="30">TOP 30</option>
+    <option value="80">TOP 80</option>
+    <option value="all">ALL PAIRS</option>
+   </select>
   </div>
-  <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
-
-  <div class="card">
-    <div class="scroll-x">
-      <table>
-        <thead>
-          <tr>
-            <th>Pair (24h Vol)</th>
-            <th>Signal</th>
-            <th>Confidence</th>
-            <th>Early Trigger</th>
-            <th>Entry (EP)</th>
-            <th>Stop-Loss (SL)</th>
-            <th>TP 1 (1:1)</th>
-            <th>TP 2 (1:2)</th>
-            <th>TP 3 (1:3.5)</th>
-            <th>4H Trend</th>
-            <th>RSI / Vol</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="scannerBody"></tbody>
-      </table>
-    </div>
+  <div class="control">
+   <label>ENTRY TIMEFRAME</label>
+   <select id="timeframe">
+    <option value="15m">15 MINUTES</option>
+    <option value="1h">1 HOUR</option>
+   </select>
   </div>
-
-  <div class="disclaimer">
-    <strong>Tip for Mobile Users:</strong> Open this file directly in <strong>Google Chrome</strong> (not the built-in HTML viewer) so live exchange requests work smoothly.<br>
-    <strong>Disclaimer:</strong> Technical scanner for research and educational use only. Not financial advice. Always manage risk with stop-losses.
+  <div class="control">
+   <label>REFRESH INTERVAL</label>
+   <select id="refresh">
+    <option value="30">30 SECONDS</option>
+    <option value="60" selected>1 MINUTE</option>
+    <option value="120">2 MINUTES</option>
+    <option value="300">5 MINUTES</option>
+   </select>
   </div>
+  <div class="control">
+   <label>SOUND ALERT</label>
+   <button id="muteBtn">🔔 SOUND ON</button>
+  </div>
+ </div>
 
-</div>
+ <section class="kpis">
+  <div class="kpi"><small>PAIRS ANALYZED</small><strong id="kAnalyzed">0</strong></div>
+  <div class="kpi"><small>EARLY LONGS</small><strong id="kLong" class="green">0</strong></div>
+  <div class="kpi"><small>EARLY SHORTS</small><strong id="kShort" class="red">0</strong></div>
+  <div class="kpi"><small>A+ SETUPS (85%+)</small><strong id="kPlus" class="yellow">0</strong></div>
+  <div class="kpi"><small>NEXT AUTO SCAN</small><strong id="kCountdown" class="blue">--</strong></div>
+ </section>
+
+ <div class="status">
+  <div class="statusline">
+   <span id="statusText">● Initializing scanner...</span>
+   <span id="statusExtra">Waiting for connection</span>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+ </div>
+
+ <div class="tabs">
+  <button class="tab active" data-filter="active">ACTIVE SETUPS</button>
+  <button class="tab" data-filter="aplus">A+ ONLY</button>
+  <button class="tab" data-filter="long">LONGS</button>
+  <button class="tab" data-filter="short">SHORTS</button>
+  <button class="tab" data-filter="all">ALL SCANNED</button>
+ </div>
+
+ <div class="filters">
+  <input id="search" placeholder="⌕ Search symbol e.g. BTCUSDT">
+  <select id="minConfidence">
+   <option value="65">Confidence: 65%+</option>
+   <option value="70">Confidence: 70%+</option>
+   <option value="80">Confidence: 80%+</option>
+   <option value="85">Confidence: 85%+</option>
+   <option value="90">Confidence: 90%+</option>
+  </select>
+ </div>
+
+ <div id="results" class="results">
+  <div class="empty">Connecting to futures markets...</div>
+ </div>
+
+ <div class="footer">
+  SMART MONEY FUTURES SCANNER · PUBLIC MARKET DATA ONLY<br>
+  Technical analysis is not financial advice. Always verify entries and risk.
+ </div>
+</main>
 
 <script>
-  let scannedData = [];
-  let activeTab = "ACTIVE";
-  let audioOn = true;
-  let notifiedSet = new Set();
-  let scanning = false;
-  let timerSec = 60;
+"use strict";
 
-  if ("Notification" in window && Notification.permission === "default") {
-    Notification.requestPermission();
+const $ = id => document.getElementById(id);
+
+const state = {
+ exchange:"", pairs:[], signals:[], filter:"active",
+ running:false, muted:false, countdown:60,
+ timer:null, countdownTimer:null, known:new Set(),
+ generation:0, analyzed:0
+};
+
+const BINANCE="https://fapi.binance.com";
+const BYBIT="https://api.bybit.com";
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function number(x){return Number(x)||0}
+function fmt(x){
+ if(!Number.isFinite(x))return "-";
+ return x.toLocaleString("en-US",{maximumFractionDigits:x>=100?4:8});
+}
+function pct(x){return (x*100).toFixed(2)+"%"}
+function setStatus(msg,extra=""){
+ $("statusText").textContent=msg;
+ $("statusExtra").textContent=extra;
+}
+function progress(x){$("progressBar").style.width=Math.min(100,x)+"%"}
+
+async function getJSON(url,timeout=12000){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),timeout);
+ try{
+  const response=await fetch(url,{signal:controller.signal,cache:"no-store"});
+  if(!response.ok)throw Error("HTTP "+response.status);
+  return await response.json();
+ }finally{clearTimeout(timer)}
+}
+
+/* ---------------- EXCHANGE DATA ---------------- */
+
+async function binancePairs(){
+ const data=await getJSON(BINANCE+"/fapi/v1/exchangeInfo");
+ const active=data.symbols.filter(s=>
+  s.quoteAsset==="USDT" && s.contractType==="PERPETUAL" &&
+  s.status==="TRADING"
+ ).map(s=>s.symbol);
+
+ const tickers=await getJSON(BINANCE+"/fapi/v1/ticker/24hr");
+ return tickers.filter(t=>active.includes(t.symbol))
+  .map(t=>({symbol:t.symbol,volume:number(t.quoteVolume)}))
+  .sort((a,b)=>b.volume-a.volume);
+}
+
+async function bybitPairs(){
+ let list=[],cursor="";
+ for(let page=0;page<10;page++){
+  let url=BYBIT+"/v5/market/instruments-info?category=linear&limit=1000";
+  if(cursor)url+="&cursor="+encodeURIComponent(cursor);
+  const data=await getJSON(url);
+  if(data.retCode!==0)throw Error(data.retMsg||"Bybit instruments error");
+  list.push(...(data.result.list||[]));
+  cursor=data.result.nextPageCursor||"";
+  if(!cursor)break;
+ }
+ const active=list.filter(s=>
+  s.quoteCoin==="USDT" && s.contractType==="LinearPerpetual" &&
+  s.status==="Trading"
+ );
+ const ticks=await getJSON(BYBIT+"/v5/market/tickers?category=linear");
+ const map=new Map((ticks.result.list||[]).map(t=>[t.symbol,t]));
+ return active.map(s=>({
+  symbol:s.symbol,
+  volume:number(map.get(s.symbol)?.turnover24h)
+ })).filter(s=>s.volume>0).sort((a,b)=>b.volume-a.volume);
+}
+
+async function marketPairs(exchange){
+ return exchange==="binance"?binancePairs():bybitPairs();
+}
+
+async function candles(exchange,symbol,interval,limit){
+ if(exchange==="binance"){
+  const tf=interval==="4h"?"4h":interval==="1h"?"1h":"15m";
+  const d=await getJSON(BINANCE+"/fapi/v1/klines?symbol="+symbol+
+   "&interval="+tf+"&limit="+limit);
+  return d.map(k=>({
+   time:k[0],open:number(k[1]),high:number(k[2]),
+   low:number(k[3]),close:number(k[4]),volume:number(k[5])
+  }));
+ }
+ const tf=interval==="4h"?"240":interval==="1h"?"60":"15";
+ const d=await getJSON(BYBIT+"/v5/market/kline?category=linear&symbol="+
+  symbol+"&interval="+tf+"&limit="+limit);
+ if(d.retCode!==0)throw Error(d.retMsg);
+ return (d.result.list||[]).reverse().map(k=>({
+  time:number(k[0]),open:number(k[1]),high:number(k[2]),
+  low:number(k[3]),close:number(k[4]),volume:number(k[5])
+ }));
+}
+
+async function funding(exchange,symbol){
+ if(exchange==="binance"){
+  const d=await getJSON(BINANCE+"/fapi/v1/premiumIndex?symbol="+symbol);
+  return number(d.lastFundingRate);
+ }
+ const d=await getJSON(BYBIT+
+  "/v5/market/tickers?category=linear&symbol="+symbol);
+ return number(d.result.list?.[0]?.fundingRate);
+}
+
+/* ---------------- INDICATORS ---------------- */
+
+function ema(values,period){
+ if(values.length<period)return null;
+ let result=values.slice(0,period).reduce((a,b)=>a+b,0)/period;
+ const k=2/(period+1);
+ for(let i=period;i<values.length;i++)
+  result=values[i]*k+result*(1-k);
+ return result;
+}
+
+function sma(values,period){
+ if(values.length<period)return null;
+ return values.slice(-period).reduce((a,b)=>a+b,0)/period;
+}
+
+function rsi(values,period=14){
+ if(values.length<=period)return 50;
+ let gains=0,losses=0;
+ for(let i=values.length-period;i<values.length;i++){
+  const diff=values[i]-values[i-1];
+  if(diff>0)gains+=diff;else losses-=diff;
+ }
+ const avgGain=gains/period,avgLoss=losses/period;
+ if(avgLoss===0)return 100;
+ return 100-(100/(1+avgGain/avgLoss));
+}
+
+function atr(data,period=14){
+ if(data.length<period+1)return null;
+ const trs=[];
+ for(let i=1;i<data.length;i++){
+  const c=data[i],p=data[i-1];
+  trs.push(Math.max(
+   c.high-c.low,
+   Math.abs(c.high-p.close),
+   Math.abs(c.low-p.close)
+  ));
+ }
+ return sma(trs,period);
+}
+
+function bollinger(values,period=20){
+ if(values.length<period+1)return null;
+ const a=values.slice(-period);
+ const mid=a.reduce((x,y)=>x+y,0)/period;
+ const variance=a.reduce((x,y)=>x+(y-mid)**2,0)/period;
+ const sd=Math.sqrt(variance);
+ return {mid,upper:mid+2*sd,lower:mid-2*sd,width:4*sd/(mid||1)};
+}
+
+function averageRangeWidth(values,period=20){
+ const widths=[];
+ for(let i=0;i<values.length-period;i++){
+  const b=bollinger(values.slice(0,i+period),period);
+  if(b)widths.push(b.width);
+ }
+ return widths;
+}
+
+/* ---------------- SIGNAL ENGINE ---------------- */
+
+function analyze(data4h,dataEntry,rate){
+ if(data4h.length<55||dataEntry.length<55)return null;
+
+ // Ignore the currently forming candle.
+ const h=data4h.slice(0,-1);
+ const d=dataEntry.slice(0,-1);
+ const closes=h.map(x=>x.close);
+ const prices=d.map(x=>x.close);
+ const last=d[d.length-1],prev=d[d.length-2];
+
+ const e20=ema(closes,20),e50=ema(closes,50);
+ if(e20===null||e50===null)return null;
+
+ const trend=e20>e50?"LONG":e20<e50?"SHORT":"NEUTRAL";
+ if(trend==="NEUTRAL")return null;
+
+ const a=atr(d,14);
+ const r=rsi(prices,14);
+ const b=bollinger(prices,20);
+ if(!a||!b||a<=0)return null;
+
+ const volumes=d.map(x=>x.volume);
+ const avgVol=sma(volumes.slice(0,-1),20);
+ const volumeRatio=last.volume/(avgVol||1);
+ const volumeOK=volumeRatio>=1.3;
+
+ const recent=d.slice(-21,-1);
+ const swingHigh=Math.max(...recent.map(x=>x.high));
+ const swingLow=Math.min(...recent.map(x=>x.low));
+
+ const older=d.slice(-42,-22);
+ const priorBB=bollinger(older.map(x=>x.close),20);
+ const contraction=priorBB && b.width<priorBB.width*0.85;
+
+ const longBreak=last.close>b.upper && prev.close<=b.upper;
+ const shortBreak=last.close<b.lower && prev.close>=b.lower;
+
+ const longSweep=last.low<swingLow && last.close>swingLow;
+ const shortSweep=last.high>swingHigh && last.close<swingHigh;
+
+ const longRejection=last.low<swingLow && last.close>last.open;
+ const shortRejection=last.high>swingHigh && last.close<last.open;
+
+ const longMomentum=r>=52&&r<=76;
+ const shortMomentum=r<=48&&r>=24;
+
+ // Avoid extreme funding that is directly against the trade.
+ const longFundingOK=rate<0.001;
+ const shortFundingOK=rate>-0.001;
+
+ const reasons=[];
+ let direction="",score=65;
+
+ if(trend==="LONG" && (longBreak||longSweep) &&
+    volumeOK && longMomentum && longFundingOK){
+  direction="LONG";
+  if(longBreak){
+   reasons.push("BB upper-band breakout");
+   score+=7;
+   if(contraction)score+=5;
+  }
+  if(longSweep){reasons.push("Liquidity sweep & reclaim");score+=9}
+  if(longRejection){reasons.push("Bullish rejection");score+=3}
+  score+=Math.min(8,(volumeRatio-1.3)*5);
+  score+=Math.max(0,Math.min(5,(r-52)/4));
+  if(rate<0)score+=3;
+  if(rate>0.0005)score-=3;
+  reasons.push("4H bullish EMA trend");
+ }else if(trend==="SHORT" && (shortBreak||shortSweep) &&
+    volumeOK && shortMomentum && shortFundingOK){
+  direction="SHORT";
+  if(shortBreak){
+   reasons.push("BB lower-band breakdown");
+   score+=7;
+   if(contraction)score+=5;
+  }
+  if(shortSweep){reasons.push("Liquidity sweep & rejection");score+=9}
+  if(shortRejection){reasons.push("Bearish rejection");score+=3}
+  score+=Math.min(8,(volumeRatio-1.3)*5);
+  score+=Math.max(0,Math.min(5,(48-r)/4));
+  if(rate>0)score+=3;
+  if(rate<-0.0005)score-=3;
+  reasons.push("4H bearish EMA trend");
+ }
+
+ if(!direction)return null;
+
+ // Small quality deductions for weak momentum or non-ideal funding.
+ if((direction==="LONG"&&r>70)||(direction==="SHORT"&&r<30))score-=3;
+ score=Math.max(65,Math.min(98,Math.round(score)));
+
+ const entry=last.close;
+ const stopDistance=1.5*a;
+ const sign=direction==="LONG"?1:-1;
+
+ return {
+  direction,score,entry,
+  sl:entry-sign*stopDistance,
+  tp1:entry+sign*1.5*a,
+  tp2:entry+sign*3*a,
+  tp3:entry+sign*5.25*a,
+  atr:a,rsi:r,volumeRatio,rate,
+  trend,reasons,
+  trigger:reasons.join(" + "),
+  time:Date.now()
+ };
+}
+
+/* ---------------- SCANNING ---------------- */
+
+async function scan(){
+ if(state.running)return;
+ state.running=true;
+ const generation=++state.generation;
+ $("scanBtn").disabled=true;
+ $("scanBtn").textContent="SCANNING...";
+ state.analyzed=0;
+ progress(0);
+
+ try{
+  let selected=$("exchange").value;
+  let exchanges=selected==="auto"?["binance","bybit"]:[selected];
+  let pairData=null,errors=[];
+
+  for(const ex of exchanges){
+   try{
+    setStatus("● Connecting to "+ex.toUpperCase()+"...", "Loading USDT perpetual pairs");
+    pairData=await marketPairs(ex);
+    state.exchange=ex;
+    break;
+   }catch(e){errors.push(ex+": "+e.message)}
   }
 
-  function toggleSound() {
-    audioOn = !audioOn;
-    const btn = document.getElementById("soundToggle");
-    btn.textContent = audioOn ? "🔔 Alerts: ON" : "🔕 Alerts: OFF";
-    btn.className = audioOn ? "sound-on" : "sound-off";
+  if(!pairData)throw Error(errors.join(" | ")||"All exchanges unavailable");
+
+  state.pairs=pairData;
+  const choice=$("universe").value;
+  const selectedPairs=choice==="all"?pairData:
+   pairData.slice(0,Number(choice));
+
+  const total=selectedPairs.length;
+  setStatus("● Connected: "+state.exchange.toUpperCase(),
+   total+" perpetual pairs selected");
+
+  const signals=[];
+  let index=0;
+  const concurrency=5;
+
+  async function worker(){
+   while(index<total){
+    if(generation!==state.generation)return;
+    const i=index++;
+    const pair=selectedPairs[i];
+
+    try{
+     const tf=$("timeframe").value;
+     const [htf,ltf,rate]=await Promise.all([
+      candles(state.exchange,pair.symbol,"4h",100),
+      candles(state.exchange,pair.symbol,tf,100),
+      funding(state.exchange,pair.symbol)
+     ]);
+
+     const result=analyze(htf,ltf,rate);
+     if(result){
+      result.symbol=pair.symbol;
+      result.quoteVolume=pair.volume;
+      signals.push(result);
+     }
+    }catch(e){
+     // Individual symbol failures do not stop the entire scan.
+    }
+
+    state.analyzed++;
+    progress(state.analyzed/total*100);
+    $("statusExtra").textContent=
+     state.analyzed+" / "+total+" pairs checked";
+   }
   }
 
-  function beepAlert() {
+  await Promise.all(Array.from({length:concurrency},worker));
+  if(generation!==state.generation)return;
+
+  state.signals=signals.sort((a,b)=>b.score-a.score);
+  updateKpis(total);
+  detectNewSignals();
+  render();
+
+  setStatus("● SCAN COMPLETE",
+   state.signals.length+" setups found · "+state.exchange.toUpperCase());
+  state.countdown=Number($("refresh").value);
+
+ }catch(e){
+  setStatus("● API / NETWORK ERROR",e.message);
+  $("results").innerHTML=
+   '<div class="empty">Unable to fetch market data.<br><br>'+
+   escapeHTML(e.message)+
+   '<br><br>Try Bybit manually, switch your internet connection, or retry.</div>';
+ }finally{
+  state.running=false;
+  $("scanBtn").disabled=false;
+  $("scanBtn").textContent="▶ SCAN NOW";
+ }
+}
+
+/* ---------------- ALERTS ---------------- */
+
+function soundAlert(){
+ if(state.muted)return;
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC)return;
+  const ctx=new AC();
+  const now=ctx.currentTime;
+  [660,880,1100].forEach((f,i)=>{
+   const osc=ctx.createOscillator();
+   const gain=ctx.createGain();
+   osc.type="sine";
+   osc.frequency.value=f;
+   gain.gain.setValueAtTime(0.0001,now+i*.13);
+   gain.gain.exponentialRampToValueAtTime(.15,now+i*.13+.02);
+   gain.gain.exponentialRampToValueAtTime(.0001,now+i*.13+.16);
+   osc.connect(gain);gain.connect(ctx.destination);
+   osc.start(now+i*.13);
+   osc.stop(now+i*.13+.18);
+  });
+  setTimeout(()=>ctx.close(),1000);
+ }catch(e){}
+}
+
+function detectNewSignals(){
+ let found=false;
+ for(const s of state.signals){
+  const key=s.symbol+"_"+s.direction;
+  if(s.score>=85&&!state.known.has(key)){
+   found=true;
+  }
+  state.known.add(key);
+ }
+ if(found)soundAlert();
+}
+
+/* ---------------- DASHBOARD ---------------- */
+
+function updateKpis(total){
+ $("kAnalyzed").textContent=total;
+ $("kLong").textContent=state.signals.filter(x=>x.direction==="LONG").length;
+ $("kShort").textContent=state.signals.filter(x=>x.direction==="SHORT").length;
+ $("kPlus").textContent=state.signals.filter(x=>x.score>=85).length;
+}
+
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function copyPlan(s){
+ const message=
+ "SMART MONEY FUTURES SIGNAL\n"+
+ "Symbol: "+s.symbol+"\n"+
+ "Direction: "+s.direction+"\n"+
+ "Confidence: "+s.score+"%\n"+
+ "Entry Price: "+fmt(s.entry)+"\n"+
+ "Stop Loss: "+fmt(s.sl)+"\n"+
+ "Take Profit 1: "+fmt(s.tp1)+"\n"+
+ "Take Profit 2: "+fmt(s.tp2)+"\n"+
+ "Take Profit 3: "+fmt(s.tp3)+"\n"+
+ "ATR14: "+fmt(s.atr)+"\n"+
+ "RSI14: "+s.rsi.toFixed(2)+"\n"+
+ "Volume: "+s.volumeRatio.toFixed(2)+"x\n"+
+ "Funding: "+(s.rate*100).toFixed(4)+"%\n"+
+ "Trigger: "+s.trigger+"\n"+
+ "Exchange: "+state.exchange.toUpperCase();
+
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(message).then(()=>{
+   setStatus("● PLAN COPIED",s.symbol+" trade plan copied");
+  }).catch(()=>fallbackCopy(message));
+ }else fallbackCopy(message);
+}
+
+function fallbackCopy(text){
+ const el=document.createElement("textarea");
+ el.value=text;
+ el.style.position="fixed";
+ el.style.opacity="0";
+ document.body.appendChild(el);
+ el.select();
+ try{
+  document.execCommand("copy");
+  setStatus("● PLAN COPIED","Trade plan copied");
+ }catch(e){
+  setStatus("● COPY FAILED","Clipboard unavailable in this browser");
+ }
+ el.remove();
+}
+
+function render(){
+ const search=$("search").value.toUpperCase().trim();
+ const min=Number($("minConfidence").value);
+ let list=state.signals.filter(s=>
+  s.score>=min&&s.symbol.includes(search)
+ );
+
+ if(state.filter==="aplus")list=list.filter(s=>s.score>=85);
+ if(state.filter==="long")list=list.filter(s=>s.direction==="LONG");
+ if(state.filter==="short")list=list.filter(s=>s.direction==="SHORT");
+ if(state.filter==="active")list=list.filter(s=>s.score>=65);
+
+ const root=$("results");
+ if(!list.length){
+  root.innerHTML='<div class="empty">No matching signals currently.<br><br>'+
+   'The scanner will keep monitoring the selected market.</div>';
+  return;
+ }
+
+ root.innerHTML=list.map(s=>{
+  const isLong=s.direction==="LONG";
+  const cls=isLong?"long":"short";
+  const badge=isLong?"longBadge":"shortBadge";
+  return `
+  <article class="signal ${cls}">
+   <div class="signalTop">
+    <span class="symbol">${escapeHTML(s.symbol)}</span>
+    <span class="badge ${badge}">${s.direction}</span>
+    ${s.score>=85?'<span class="badge aplus">★ A+ SETUP</span>':''}
+   </div>
+   <div class="meta">
+    ${state.exchange.toUpperCase()} · ${$("timeframe").value} ENTRY ·
+    ${new Date(s.time).toLocaleTimeString()}
+   </div>
+   <div class="reason">
+    <b>Confidence: ${s.score}%</b><br>
+    ${escapeHTML(s.trigger)}
+   </div>
+   <div class="levels">
+    <div class="level"><small>RSI 14</small><b>${s.rsi.toFixed(1)}</b></div>
+    <div class="level"><small>VOLUME / AVG</small><b>${s.volumeRatio.toFixed(2)}x</b></div>
+    <div class="level"><small>FUNDING</small><b>${(s.rate*100).toFixed(4)}%</b></div>
+   </div>
+   <div class="plan">
+    <div><small>EP</small><b>${fmt(s.entry)}</b></div>
+    <div><small>SL</small><b class="red">${fmt(s.sl)}</b></div>
+    <div><small>TP1 · 1R</small><b class="green">${fmt(s.tp1)}</b></div>
+    <div><small>TP2 · 2R</small><b class="green">${fmt(s.tp2)}</b></div>
+    <div><small>TP3 · 3.5R</small><b class="green">${fmt(s.tp3)}</b></div>
+   </div>
+   <button class="copy" data-copy="${escapeHTML(s.symbol)}_${s.direction}">
+    COPY TRADE PLAN
+   </button>
+  </article>`;
+ }).join("");
+
+ root.querySelectorAll("[data-copy]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   const key=btn.dataset.copy;
+   const s=list.find(x=>x.symbol+"_"+x.direction===key);
+   if(s)copyPlan(s);
+  });
+ });
+}
+
+/* ---------------- CONTROLS ---------------- */
+
+document.querySelectorAll(".tab").forEach(tab=>{
+ tab.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  tab.classList.add("active");
+  state.filter=tab.dataset.filter;
+  render();
+ });
+});
+
+$("search").addEventListener("input",render);
+$("minConfidence").addEventListener("change",render);
+
+$("scanBtn").addEventListener("click",scan);
+
+$("muteBtn").addEventListener("click",()=>{
+ state.muted=!state.muted;
+ $("muteBtn").textContent=state.muted?"🔕 SOUND OFF":"🔔 SOUND ON";
+});
+
+$("refresh").addEventListener("change",()=>{
+ state.countdown=Number($("refresh").value);
+});
+
+$("exchange").addEventListener("change",scan);
+$("universe").addEventListener("change",scan);
+$("timeframe").addEventListener("change",scan);
+
+function startClock(){
+ if(state.countdownTimer)clearInterval(state.countdownTimer);
+ state.countdownTimer=setInterval(()=>{
+  if(state.running)return;
+  state.countdown--;
+  if(state.countdown<=0){
+   state.countdown=Number($("refresh").value);
+   scan();
+  }
+  $("kCountdown").textContent=Math.max(0,state.countdown)+"s";
+ },1000);
+}
+
+// Start scanner
+startClock();
+scan();
+
+</script>
+</body>
+</html>
