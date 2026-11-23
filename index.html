@@ -3,242 +3,347 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d18">
 <title>Crypto Radar Pro</title>
+
 <style>
 :root{
- --bg:#080d18;--panel:#111a2b;--panel2:#172238;
- --text:#eaf1ff;--muted:#8fa2c2;--line:#273650;
- --green:#00d69a;--red:#ff526b;--yellow:#ffc857;--blue:#55a7ff;
+ --bg:#080d18;
+ --panel:#111a2b;
+ --panel2:#1a2840;
+ --text:#edf3ff;
+ --muted:#91a3c2;
+ --line:#293954;
+ --green:#00d69a;
+ --red:#ff526b;
+ --yellow:#ffc857;
+ --blue:#55a7ff;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
- font-family:Arial,sans-serif}
-header{padding:17px;background:#101a2d;border-bottom:1px solid var(--line)}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,sans-serif
+}
+header{
+ background:#101a2d;padding:18px;
+ border-bottom:1px solid var(--line)
+}
 h1{font-size:23px;margin:0 0 8px}
+h2{font-size:17px;margin:0 0 14px}
 .sub{color:var(--muted);font-size:12px}
-.clock{font-size:19px;color:var(--green);font-weight:bold}
-.session{margin-top:7px;color:var(--yellow);font-size:13px}
-.container{padding:12px;max-width:1600px;margin:auto}
-.panel{background:var(--panel);border:1px solid var(--line);
- border-radius:12px;padding:14px;margin-bottom:13px}
+.clock{font-size:22px;color:var(--green);font-weight:bold;margin-top:13px}
+.session{color:var(--yellow);font-size:13px;margin-top:7px}
+.container{max-width:1500px;margin:auto;padding:12px}
+.panel{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:12px;padding:14px;margin-bottom:13px
+}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.stat{background:var(--panel2);padding:13px;border-radius:9px}
+.stat{background:var(--panel2);padding:14px;border-radius:9px}
 .stat small{color:var(--muted)}
-.stat strong{display:block;font-size:23px;margin-top:7px}
-.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-button,select,input{
+.stat strong{display:block;font-size:24px;margin-top:8px}
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+button,input,select{
  background:#202e47;color:white;border:1px solid #344967;
- padding:10px 12px;border-radius:7px;font-size:13px;
+ padding:11px;border-radius:8px;font-size:13px
 }
 button{cursor:pointer;font-weight:bold}
-button:hover{filter:brightness(1.3)}
-.active{outline:2px solid white}
-.long{background:#087c60}.short{background:#a72d48}
-.breakout{background:#145a9d}.breakdown{background:#8b4c19}
+button:active{transform:scale(.98)}
+button:hover{filter:brightness(1.2)}
+input{min-width:140px;flex:1}
+.long{background:#087c60}
+.short{background:#a72d48}
+.breakout{background:#145a9d}
+.breakdown{background:#8b4c19}
 .neutral{background:#263750}
-input{min-width:150px;flex:1}
-h2{font-size:17px;margin:0 0 12px}
-table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
-th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--muted);background:#162239;position:sticky;top:0}
-.tablewrap{overflow:auto;max-height:480px}
-tr.coinrow{cursor:pointer}
-tr.coinrow:hover{background:#1c2b43}
+.active{outline:2px solid white}
 .green{color:var(--green);font-weight:bold}
 .red{color:var(--red);font-weight:bold}
 .yellow{color:var(--yellow)}
 .muted{color:var(--muted)}
+.progress-container{
+ background:#172238;border:1px solid #344967;
+ border-radius:10px;padding:13px;margin-top:12px
+}
+.progress-track{
+ width:100%;height:17px;background:#080d18;
+ border-radius:20px;overflow:hidden;margin:12px 0
+}
+.progress-fill{
+ width:0%;height:100%;
+ background:linear-gradient(90deg,#008c67,#00e5a0);
+ transition:width .2s;border-radius:20px
+}
+.progress-info{
+ display:flex;justify-content:space-between;
+ gap:7px;flex-wrap:wrap;font-size:12px;color:#aabbd4
+}
+.tablewrap{overflow:auto;max-height:500px}
+table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+th,td{
+ padding:11px 9px;border-bottom:1px solid var(--line);
+ text-align:left
+}
+th{color:var(--muted);background:#162239;position:sticky;top:0}
+.coinrow{cursor:pointer}
+.coinrow:hover{background:#1c2b43}
 .detailgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .detail{padding:12px;background:var(--panel2);border-radius:8px}
 .detail small{color:var(--muted)}
 .detail strong{display:block;margin-top:7px;overflow-wrap:anywhere}
+.chartbuttons{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 #chart{height:470px;width:100%;border:0}
-.chartbuttons{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
-.newsitem{padding:12px 4px;border-bottom:1px solid var(--line)}
+#news{max-height:350px;overflow:auto}
+.newsitem{padding:12px 3px;border-bottom:1px solid var(--line)}
 .newsitem a{color:#d9e8ff;text-decoration:none;font-weight:bold}
-.newsitem small{display:block;color:var(--muted);margin-top:5px}
-#news{max-height:330px;overflow:auto}
-.badge{border-radius:5px;padding:4px 7px;font-size:11px}
-footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
-#status{font-size:12px;color:var(--yellow);margin-top:9px}
+.newsitem small{display:block;color:var(--muted);margin-top:6px}
+footer{text-align:center;color:var(--muted);padding:22px;font-size:12px}
 @media(max-width:650px){
  .grid{grid-template-columns:repeat(2,1fr)}
  .detailgrid{grid-template-columns:repeat(2,1fr)}
- h1{font-size:19px}
+ h1{font-size:20px}
  th,td{padding:9px 7px}
  #chart{height:350px}
 }
 </style>
 </head>
+
 <body>
 
 <header>
  <h1>⚡ CRYPTO RADAR PRO</h1>
- <div class="sub">BINANCE MULTI-TIMEFRAME SCANNER | RSI 6 | BOLLINGER BANDS</div>
+ <div class="sub">BINANCE MULTI-TIMEFRAME CRYPTO SCANNER</div>
+ <div class="sub">RSI 6 | BOLLINGER BANDS | BTC CONFIRMATION</div>
  <div class="clock" id="clock">Pakistan Time</div>
- <div class="session" id="session">Market session loading...</div>
- <div id="status">Connecting to Binance...</div>
+ <div class="session" id="session">Loading sessions...</div>
+ <div id="status" class="yellow" style="margin-top:12px;font-size:13px">
+  Checking Binance connection...
+ </div>
 </header>
 
 <div class="container">
 
-<!-- MARKET SETTINGS -->
+<!-- SETTINGS -->
 <div class="panel">
- <h2>⚙ Scanner Settings</h2>
+ <h2>⚙ SCANNER SETTINGS</h2>
+
  <div class="controls">
   <select id="market">
    <option value="spot">Binance Spot</option>
    <option value="futures">Binance USD-M Futures</option>
   </select>
+
   <select id="quote">
    <option value="USDT">USDT pairs</option>
    <option value="ALL">All eligible quote pairs</option>
   </select>
+
   <select id="bbLength">
    <option value="20">BB Length 20</option>
    <option value="14">BB Length 14</option>
    <option value="30">BB Length 30</option>
   </select>
+
   <select id="bbDev">
    <option value="2">BB Deviation 2</option>
    <option value="2.5">BB Deviation 2.5</option>
    <option value="3">BB Deviation 3</option>
   </select>
+
   <select id="confirm">
    <option value="closed">Closed candles</option>
    <option value="live">Live candles</option>
   </select>
-  <button class="neutral" onclick="startScanner()">▶ START SCANNER</button>
-  <button class="neutral" onclick="stopScanner()">■ STOP</button>
+
+  <button class="long" onclick="startScanner()">▶ START</button>
+  <button class="short" onclick="stopScanner()">■ STOP</button>
   <button class="neutral" onclick="refreshScanner()">↻ REFRESH</button>
+ </div>
+
+ <div class="progress-container">
+  <div class="progress-info">
+   <span id="progressText">Waiting to start...</span>
+   <strong id="progressPercent">0%</strong>
+  </div>
+
+  <div class="progress-track">
+   <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="progress-info">
+   <span>Scanned: <b id="doneCount">0</b></span>
+   <span>Total: <b id="totalCount">0</b></span>
+   <span>Success: <b id="successCount">0</b></span>
+   <span>Failed: <b id="failedCount">0</b></span>
+  </div>
  </div>
 </div>
 
 <!-- SUMMARY -->
 <div class="grid">
- <div class="stat"><small>Coins scanned</small><strong id="total">0</strong></div>
- <div class="stat"><small>LONG signals</small><strong class="green" id="longCount">0</strong></div>
- <div class="stat"><small>SHORT signals</small><strong class="red" id="shortCount">0</strong></div>
- <div class="stat"><small>BTC direction</small><strong id="btcDirection">WAIT</strong></div>
+ <div class="stat">
+  <small>Coins scanned</small>
+  <strong id="total">0</strong>
+ </div>
+ <div class="stat">
+  <small>LONG signals</small>
+  <strong class="green" id="longCount">0</strong>
+ </div>
+ <div class="stat">
+  <small>SHORT signals</small>
+  <strong class="red" id="shortCount">0</strong>
+ </div>
+ <div class="stat">
+  <small>BTC direction</small>
+  <strong id="btcDirection">WAIT</strong>
+ </div>
 </div>
 
 <!-- SIGNAL BUTTONS -->
 <div class="panel" style="margin-top:13px">
- <h2>🎯 Signal Categories</h2>
+ <h2>🎯 SIGNAL CATEGORIES</h2>
  <div class="controls">
   <button class="long" onclick="showCategory('LONG',this)">🟢 LONG</button>
   <button class="short" onclick="showCategory('SHORT',this)">🔴 SHORT</button>
   <button class="breakout" onclick="showCategory('BREAKOUT',this)">🚀 BREAKOUT</button>
   <button class="breakdown" onclick="showCategory('BREAKDOWN',this)">📉 BREAKDOWN</button>
   <button class="neutral" onclick="showCategory('ALL',this)">ALL COINS</button>
-  <button class="neutral" onclick="showCategory('WAIT',this)">WAITING</button>
+  <button class="neutral" onclick="showCategory('WAIT',this)">WAIT</button>
  </div>
 </div>
 
 <!-- SEARCH -->
 <div class="panel">
- <h2>🔎 Coin Search Engine</h2>
+ <h2>🔎 COIN SEARCH ENGINE</h2>
  <div class="controls">
-  <input id="search" placeholder="Search BTCUSDT, ETHUSDT, SOLUSDT..." oninput="renderTable()">
-  <button onclick="searchCoin()">SEARCH</button>
+  <input id="search" placeholder="Search BTCUSDT, ETHUSDT, SOLUSDT..."
+   oninput="renderTable()">
+  <button class="neutral" onclick="searchCoin()">SEARCH</button>
  </div>
 </div>
 
 <!-- RESULTS -->
 <div class="panel">
- <h2 id="listTitle">📊 Live Coin Signals</h2>
+ <h2 id="listTitle">📊 LIVE COIN SIGNALS</h2>
  <div class="tablewrap">
- <table>
- <thead>
- <tr>
- <th>COIN</th><th>SIGNAL</th><th>PRICE</th>
- <th>RSI 6</th><th>TIME (PKT)</th>
- <th>EP</th><th>SL</th><th>TP1</th>
- <th>TP2</th><th>TP3</th>
- <th>SUPPORT</th><th>RESISTANCE</th>
- </tr>
- </thead>
- <tbody id="results">
- <tr><td colspan="12" class="muted">Waiting for scanner...</td></tr>
- </tbody>
- </table>
+  <table>
+   <thead>
+    <tr>
+     <th>COIN</th>
+     <th>SIGNAL</th>
+     <th>PRICE</th>
+     <th>RSI 6</th>
+     <th>TIME PKT</th>
+     <th>EP</th>
+     <th>SL</th>
+     <th>TP1</th>
+     <th>TP2</th>
+     <th>TP3</th>
+     <th>SUPPORT</th>
+     <th>RESISTANCE</th>
+    </tr>
+   </thead>
+   <tbody id="results">
+    <tr><td colspan="12">Waiting for Binance...</td></tr>
+   </tbody>
+  </table>
  </div>
 </div>
 
 <!-- TRADE PLAN -->
 <div class="panel" id="tradePanel">
- <h2>📋 Selected Coin Trade Plan</h2>
- <div class="muted" id="selectedName">Click any coin in the results table.</div>
+ <h2>📋 SELECTED COIN TRADE PLAN</h2>
+ <div class="muted" id="selectedName">
+  Click any coin in the results table.
+ </div>
+
  <div class="detailgrid" id="tradeDetails" style="margin-top:12px">
   <div class="detail"><small>Signal</small><strong>WAITING</strong></div>
-  <div class="detail"><small>BTC Direction</small><strong>WAITING</strong></div>
+  <div class="detail"><small>BTC direction</small><strong>WAITING</strong></div>
   <div class="detail"><small>RSI 6</small><strong>--</strong></div>
  </div>
+
  <p class="muted" id="reason"></p>
 </div>
 
-<!-- CHART -->
+<!-- TRADINGVIEW -->
 <div class="panel">
- <h2>📈 TradingView Live Chart</h2>
+ <h2>📈 TRADINGVIEW CHART</h2>
+
  <div class="chartbuttons">
-  <button onclick="setChartTime('15')">15 MIN</button>
-  <button onclick="setChartTime('60')">1 HOUR</button>
-  <button onclick="setChartTime('240')">4 HOURS</button>
-  <button onclick="setChartTime('D')">1 DAY</button>
+  <button class="neutral" onclick="setChartTime('15')">15 MIN</button>
+  <button class="neutral" onclick="setChartTime('60')">1 HOUR</button>
+  <button class="neutral" onclick="setChartTime('240')">4 HOURS</button>
+  <button class="neutral" onclick="setChartTime('D')">1 DAY</button>
  </div>
- <div id="chartBox" style="height:470px">
-  <iframe id="chart" allowfullscreen></iframe>
- </div>
- <small class="muted">TradingView market data and chart. Chart data may differ slightly from Binance calculations.</small>
+
+ <iframe id="chart"
+  src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=15&theme=dark&style=1&timezone=Asia%2FKarachi"
+  allowfullscreen>
+ </iframe>
+
+ <small class="muted">
+  Interactive TradingView chart. Market data is provided by TradingView.
+ </small>
 </div>
 
 <!-- NEWS -->
 <div class="panel">
  <h2>📰 LIVE CRYPTO NEWS</h2>
  <div class="muted" style="margin-bottom:10px">
-  Crypto headlines | Read articles by clicking their titles
+  Latest crypto headlines. Click a headline to read the article.
  </div>
- <div id="news">
-  Loading crypto news...
- </div>
- <button class="neutral" style="margin-top:12px" onclick="loadNews()">↻ REFRESH NEWS</button>
+
+ <div id="news">Loading news...</div>
+
+ <button class="neutral" style="margin-top:12px"
+  onclick="loadNews()">↻ REFRESH NEWS</button>
 </div>
 
 </div>
 
 <footer>
- CRYPTO RADAR PRO | Market analysis tool | Not financial advice
+ CRYPTO RADAR PRO | Binance Market Scanner | Educational Tool
 </footer>
 
 <script>
-// ===========================================
-// CONFIGURATION
-// ===========================================
+
+// ==========================================
+// GLOBAL VARIABLES
+// ==========================================
 
 let running=false;
+let scanning=false;
 let timer=null;
+
 let coins=[];
 let prices={};
 let signals=[];
+
 let currentCategory="ALL";
 let selectedSymbol="BTCUSDT";
 let chartInterval="15";
 let btcTrend="WAIT";
-let scanning=false;
+
+let completedScans=0;
+let successfulScans=0;
+let failedScans=0;
+let totalScans=0;
 
 const $=id=>document.getElementById(id);
 
-function apiBase(){
- return $("market").value==="spot"
- ? "https://api.binance.com/api/v3"
- : "https://fapi.binance.com/fapi/v1";
-}
+
+// ==========================================
+// PAKISTAN CLOCK AND SESSIONS
+// ==========================================
 
 function pktTime(date=new Date()){
  return new Intl.DateTimeFormat("en-PK",{
   timeZone:"Asia/Karachi",
-  hour:"2-digit",minute:"2-digit",second:"2-digit",
+  hour:"2-digit",
+  minute:"2-digit",
+  second:"2-digit",
   hour12:true
  }).format(date);
 }
@@ -246,73 +351,145 @@ function pktTime(date=new Date()){
 function pktDate(){
  return new Intl.DateTimeFormat("en-PK",{
   timeZone:"Asia/Karachi",
-  day:"2-digit",month:"short",year:"numeric"
+  day:"2-digit",
+  month:"short",
+  year:"numeric"
  }).format(new Date());
 }
 
 function updateClock(){
- $("clock").textContent="🇵🇰 PAKISTAN: "+pktDate()+" | "+pktTime();
- const p=new Intl.DateTimeFormat("en-US",{
-  timeZone:"Asia/Karachi",hour:"2-digit",minute:"2-digit",
+ $("clock").textContent="🇵🇰 PAKISTAN TIME: "+
+ pktDate()+" | "+pktTime();
+
+ const parts=new Intl.DateTimeFormat("en-US",{
+  timeZone:"Asia/Karachi",
+  hour:"2-digit",
   hourCycle:"h23"
  }).formatToParts(new Date());
- const h=Number(p.find(x=>x.type==="hour").value);
+
+ const h=Number(parts.find(x=>x.type==="hour").value);
+
  let sessions=[];
- if(h>=5&&h<14)sessions.push("ASIAN");
- if(h>=12&&h<21)sessions.push("LONDON");
- if(h>=17||h<2)sessions.push("NEW YORK");
- $("session").textContent="ACTIVE SESSION: "+(sessions.join(" + ")||"QUIET PERIOD");
+
+ if(h>=5&&h<14)sessions.push("ASIAN SESSION");
+ if(h>=12&&h<21)sessions.push("LONDON SESSION");
+ if(h>=17||h<2)sessions.push("NEW YORK SESSION");
+
+ $("session").textContent="ACTIVE: "+
+ (sessions.join(" + ")||"QUIET PERIOD");
 }
+
 setInterval(updateClock,1000);
 updateClock();
 
-// ===========================================
-// BINANCE DATA
-// ===========================================
 
-async function fetchJSON(url){
- const r=await fetch(url);
- if(!r.ok)throw Error("HTTP "+r.status);
- return r.json();
+// ==========================================
+// BINANCE API
+// ==========================================
+
+function apiBase(){
+ return $("market").value==="spot"
+  ?"https://api.binance.com/api/v3"
+  :"https://fapi.binance.com/fapi/v1";
+}
+
+async function fetchJSON(url,attempt=0){
+ try{
+  const response=await fetch(url);
+
+  if(!response.ok){
+   if((response.status===429||response.status>=500)&&attempt<3){
+    await new Promise(r=>setTimeout(r,1000*(attempt+1)));
+    return fetchJSON(url,attempt+1);
+   }
+   throw Error("HTTP "+response.status);
+  }
+
+  return await response.json();
+
+ }catch(e){
+  if(attempt<2){
+   await new Promise(r=>setTimeout(r,800*(attempt+1)));
+   return fetchJSON(url,attempt+1);
+  }
+  throw e;
+ }
+}
+
+async function testConnection(){
+ await fetchJSON(apiBase()+"/ping");
+ return true;
 }
 
 async function getExchangeCoins(){
- const market=$("market").value;
- const url=market==="spot"
- ? "https://api.binance.com/api/v3/exchangeInfo"
- : "https://fapi.binance.com/fapi/v1/exchangeInfo";
+ const url=$("market").value==="spot"
+  ?"https://api.binance.com/api/v3/exchangeInfo"
+  :"https://fapi.binance.com/fapi/v1/exchangeInfo";
 
  const data=await fetchJSON(url);
  const quote=$("quote").value;
 
  return data.symbols.filter(s=>
   s.status==="TRADING" &&
-  (quote==="ALL" || s.quoteAsset==="USDT") &&
-  (market==="futures" ? s.contractType==="PERPETUAL" : true)
+  (quote==="ALL"||s.quoteAsset==="USDT") &&
+  ($("market").value==="futures"
+   ?s.contractType==="PERPETUAL"
+   :true)
  ).map(s=>s.symbol);
 }
 
 async function getPrices(){
- const url=apiBase()+( $("market").value==="spot"
- ? "/ticker/price" : "/ticker/price");
- const data=await fetchJSON(url);
+ const data=await fetchJSON(apiBase()+"/ticker/price");
+
  prices={};
- data.forEach(x=>prices[x.symbol]=Number(x.price));
+
+ data.forEach(x=>{
+  prices[x.symbol]=Number(x.price);
+ });
 }
 
 async function getCandles(symbol,interval){
- const url=apiBase()+"/klines?symbol="+symbol+
- "&interval="+interval+"&limit=100";
+ const url=apiBase()+"/klines?symbol="+
+  encodeURIComponent(symbol)+
+  "&interval="+interval+"&limit=100";
+
  return fetchJSON(url);
 }
 
-// ===========================================
-// INDICATORS
-// ===========================================
+
+// ==========================================
+// PROGRESS BAR
+// ==========================================
+
+function updateProgress(){
+ const percent=totalScans
+  ?Math.round(completedScans/totalScans*100)
+  :0;
+
+ $("progressFill").style.width=percent+"%";
+ $("progressPercent").textContent=percent+"%";
+
+ $("doneCount").textContent=completedScans;
+ $("totalCount").textContent=totalScans;
+ $("successCount").textContent=successfulScans;
+ $("failedCount").textContent=failedScans;
+
+ $("progressText").textContent=
+  !running?"Stopped":
+  completedScans>=totalScans?"Scan completed":
+  "Scanning Binance coins...";
+}
+
+
+// ==========================================
+// RSI 6 CALCULATION
+// ==========================================
 
 function calculateRSI(values,period=6){
  if(values.length<=period)return 50;
- let gains=0,losses=0;
+
+ let gains=0;
+ let losses=0;
 
  for(let i=1;i<=period;i++){
   const d=values[i]-values[i-1];
@@ -325,42 +502,72 @@ function calculateRSI(values,period=6){
 
  for(let i=period+1;i<values.length;i++){
   const d=values[i]-values[i-1];
+
   avgGain=(avgGain*(period-1)+Math.max(d,0))/period;
   avgLoss=(avgLoss*(period-1)+Math.max(-d,0))/period;
  }
 
  if(avgLoss===0)return 100;
+
  return 100-(100/(1+avgGain/avgLoss));
 }
 
+
+// ==========================================
+// BOLLINGER BANDS
+// ==========================================
+
 function bollinger(values,length,dev){
  const slice=values.slice(-length);
+
  const mean=slice.reduce((a,b)=>a+b,0)/length;
- const variance=slice.reduce((a,b)=>a+(b-mean)**2,0)/length;
+
+ const variance=slice.reduce(
+  (a,b)=>a+(b-mean)**2,0
+ )/length;
+
  const sd=Math.sqrt(variance)*dev;
- return {mb:mean,ub:mean+sd,lb:mean-sd};
+
+ return {
+  mb:mean,
+  ub:mean+sd,
+  lb:mean-sd
+ };
 }
 
+
+// ==========================================
+// CANDLE INDICATORS
+// ==========================================
+
 function indicators(raw){
- const now=Date.now();
+
  let candles=raw.map(k=>({
-  time:k[0],open:+k[1],high:+k[2],
-  low:+k[3],close:+k[4],volume:+k[5],
+  time:k[0],
+  open:Number(k[1]),
+  high:Number(k[2]),
+  low:Number(k[3]),
+  close:Number(k[4]),
+  volume:Number(k[5]),
   closeTime:k[6]
  }));
 
  if($("confirm").value==="closed"){
-  candles=candles.filter(c=>c.closeTime<now);
+  candles=candles.filter(c=>c.closeTime<Date.now());
  }
 
  if(candles.length<30)return null;
 
  const closes=candles.map(c=>c.close);
- const len=+$("bbLength").value;
- const dev=+$("bbDev").value;
+
+ const len=Number($("bbLength").value);
+ const dev=Number($("bbDev").value);
 
  const bb=bollinger(closes,len,dev);
- const previousBB=bollinger(closes.slice(0,-1),len,dev);
+
+ const previousBB=bollinger(
+  closes.slice(0,-1),len,dev
+ );
 
  const rsi=calculateRSI(closes,6);
  const prevRsi=calculateRSI(closes.slice(0,-1),6);
@@ -368,26 +575,36 @@ function indicators(raw){
  const last=candles[candles.length-1];
  const prev=candles[candles.length-2];
 
- const support=Math.min(...candles.slice(-21,-1).map(c=>c.low));
- const resistance=Math.max(...candles.slice(-21,-1).map(c=>c.high));
+ const oldCandles=candles.slice(-21,-1);
+
+ const support=Math.min(...oldCandles.map(c=>c.low));
+ const resistance=Math.max(...oldCandles.map(c=>c.high));
 
  return {
   last,prev,bb,previousBB,rsi,prevRsi,
   support,resistance,
+
   rising:rsi>prevRsi,
   falling:rsi<prevRsi,
+
   green:last.close>last.open,
   red:last.close<last.open,
-  crossMBUp:prev.close<=previousBB.mb && last.close>bb.mb,
-  crossMBDown:prev.close>=previousBB.mb && last.close<bb.mb,
-  crossUB:prev.close<=previousBB.ub && last.close>bb.ub,
-  crossLB:prev.close>=previousBB.lb && last.close<bb.lb
+
+  aboveMB:last.close>bb.mb,
+  belowMB:last.close<bb.mb,
+
+  crossMBUp:prev.close<=previousBB.mb&&last.close>bb.mb,
+  crossMBDown:prev.close>=previousBB.mb&&last.close<bb.mb,
+
+  crossUB:prev.close<=previousBB.ub&&last.close>bb.ub,
+  crossLB:prev.close>=previousBB.lb&&last.close<bb.lb
  };
 }
 
-// ===========================================
+
+// ==========================================
 // BTC DIRECTION
-// ===========================================
+// ==========================================
 
 async function getBTCTrend(){
  try{
@@ -395,75 +612,105 @@ async function getBTCTrend(){
    getCandles("BTCUSDT","15m"),
    getCandles("BTCUSDT","1h")
   ]);
-  const x=indicators(a),y=indicators(b);
+
+  const x=indicators(a);
+  const y=indicators(b);
+
   if(!x||!y)return "WAIT";
 
-  if(x.green&&x.rising&&x.last.close>x.bb.mb&&
-     y.green&&y.rising&&y.last.close>y.bb.mb)
-    return "UP";
+  if(x.green&&x.rising&&x.aboveMB&&
+     y.green&&y.rising&&y.aboveMB){
+   return "UP";
+  }
 
-  if(x.red&&x.falling&&x.last.close<x.bb.mb&&
-     y.red&&y.falling&&y.last.close<y.bb.mb)
-    return "DOWN";
+  if(x.red&&x.falling&&x.belowMB&&
+     y.red&&y.falling&&y.belowMB){
+   return "DOWN";
+  }
 
   return "NEUTRAL";
- }catch(e){return "WAIT"}
+
+ }catch(e){
+  console.error("BTC error",e);
+  return "WAIT";
+ }
 }
 
-// ===========================================
+
+// ==========================================
 // MULTI-TIMEFRAME SCANNER
-// ===========================================
+// ==========================================
 
 async function scanCoin(symbol){
+
  try{
+
+  // FIRST: 15 MINUTES
   const raw15=await getCandles(symbol,"15m");
   const a=indicators(raw15);
+
   if(!a)return null;
 
-  const longSetup=a.green&&a.rising&&a.last.close>a.bb.mb;
-  const shortSetup=a.red&&a.falling&&a.last.close<a.bb.mb;
+  const bullish=a.green&&a.rising&&a.aboveMB;
+  const bearish=a.red&&a.falling&&a.belowMB;
 
   const breakout=a.green&&a.rising&&a.crossUB;
   const breakdown=a.red&&a.falling&&a.crossLB;
 
   let type="WAIT";
   let reason="Waiting for 15m confirmation";
+  let progress="15m";
+  let one=null;
+  let four=null;
+  let day=null;
 
-  if(longSetup&&btcTrend==="UP"){
+  const isLong=bullish&&btcTrend==="UP";
+  const isShort=bearish&&btcTrend==="DOWN";
+
+  if(isLong){
    type="LONG";
-   reason="15m bullish MB confirmation; BTC bullish";
+   reason="15m bullish candle and RSI 6 increasing; BTC upward";
   }
-  if(shortSetup&&btcTrend==="DOWN"){
+
+  if(isShort){
    type="SHORT";
-   reason="15m bearish MB confirmation; BTC bearish";
+   reason="15m bearish candle and RSI 6 decreasing; BTC downward";
   }
+
   if(breakout&&btcTrend==="UP"){
    type="BREAKOUT";
-   reason="15m UB breakout; BTC bullish";
+   reason="15m upper band breakout with BTC upward";
   }
+
   if(breakdown&&btcTrend==="DOWN"){
    type="BREAKDOWN";
-   reason="15m LB breakdown; BTC bearish";
+   reason="15m lower band breakdown with BTC downward";
   }
 
-  let one=null,four=null,day=null;
-  let progress="15m";
+  // 1H CONFIRMATION AND TP3
+  if(isLong||breakout){
 
-  // Higher timeframe validation
-  if((longSetup||breakout)&&btcTrend==="UP"){
    const raw=await getCandles(symbol,"1h");
    one=indicators(raw);
-   if(one&&one.green&&one.rising&&one.crossMBUp){
+
+   if(one&&one.green&&one.rising&&one.aboveMB){
+
     progress="1H";
+
     if(one.crossUB){
      const raw4=await getCandles(symbol,"4h");
      four=indicators(raw4);
-     if(four&&four.green&&four.rising&&four.crossMBUp){
+
+     if(four&&four.green&&four.rising&&four.aboveMB){
+
       progress="4H";
+
       if(four.crossUB){
+
        const rawD=await getCandles(symbol,"1d");
        day=indicators(rawD);
-       if(day&&day.green&&day.rising&&day.crossMBUp){
+
+       if(day&&day.green&&day.rising&&day.aboveMB){
         progress="1D";
        }
       }
@@ -472,20 +719,30 @@ async function scanCoin(symbol){
    }
   }
 
-  if((shortSetup||breakdown)&&btcTrend==="DOWN"){
+  if(isShort||breakdown){
+
    const raw=await getCandles(symbol,"1h");
    one=indicators(raw);
-   if(one&&one.red&&one.falling&&one.crossMBDown){
+
+   if(one&&one.red&&one.falling&&one.belowMB){
+
     progress="1H";
+
     if(one.crossLB){
+
      const raw4=await getCandles(symbol,"4h");
      four=indicators(raw4);
-     if(four&&four.red&&four.falling&&four.crossMBDown){
+
+     if(four&&four.red&&four.falling&&four.belowMB){
+
       progress="4H";
+
       if(four.crossLB){
+
        const rawD=await getCandles(symbol,"1d");
        day=indicators(rawD);
-       if(day&&day.red&&day.falling&&day.crossMBDown){
+
+       if(day&&day.red&&day.falling&&day.belowMB){
         progress="1D";
        }
       }
@@ -494,300 +751,507 @@ async function scanCoin(symbol){
    }
   }
 
+  // PRICES AND TRADE LEVELS
+
   const price=prices[symbol]||a.last.close;
+
   const long=type==="LONG"||type==="BREAKOUT";
-  const short=type==="SHORT"||type==="BREAKDOWN";
 
-  let ep=long?a.bb.lb:a.bb.ub;
-  let sl=long?a.bb.lb*0.997:a.bb.ub*1.003;
-  let tp1=long?a.bb.mb:a.bb.mb;
-  let tp2=long?a.bb.ub:a.bb.lb;
-  let tp3=long?(one?one.bb.ub:NaN):(one?one.bb.lb:NaN);
+  const ep=long?a.bb.lb:a.bb.ub;
 
-  const move=long
-   ? ((tp2-price)/price)*100
-   : ((price-tp2)/price)*100;
+  const sl=long?a.bb.lb*0.997:a.bb.ub*1.003;
+
+  const tp1=a.bb.mb;
+
+  const tp2=long?a.bb.ub:a.bb.lb;
+
+  const tp3=long
+   ?(one?one.bb.ub:NaN)
+   :(one?one.bb.lb:NaN);
+
+  const estimatedMove=long
+   ?((tp2-price)/price)*100
+   :((price-tp2)/price)*100;
 
   return {
    symbol,type,price,ep,sl,tp1,tp2,tp3,
-   support:a.support,resistance:a.resistance,
-   rsi:a.rsi,reason,progress,
+   support:a.support,
+   resistance:a.resistance,
+   rsi:a.rsi,
+   reason,progress,
    time:pktTime(new Date(a.last.time)),
    candle:a.last,
    indicators:a,
    one,four,day,
-   estimatedMove:move
+   estimatedMove
   };
 
  }catch(e){
+  console.error("Coin scan error:",symbol,e);
   return null;
+ }
 }
 
-// ===========================================
-// SCANNER QUEUE
-// ===========================================
+
+// ==========================================
+// CONTROLLED SCANNING QUEUE
+// ==========================================
 
 async function runQueue(items,workerCount){
+
  let index=0;
- const workers=Array.from({length:workerCount},async()=>{
+
+ totalScans=items.length;
+ completedScans=0;
+ successfulScans=0;
+ failedScans=0;
+
+ signals=[];
+
+ updateProgress();
+ renderTable();
+
+ async function worker(){
+
   while(index<items.length&&running){
-   const item=items[index++];
-   const result=await scanCoin(item);
-   if(result){
-    signals=signals.filter(x=>x.symbol!==result.symbol);
-    signals.push(result);
-    if(result.type!=="WAIT")renderTable();
+
+   const symbol=items[index++];
+
+   try{
+
+    const result=await scanCoin(symbol);
+
+    if(result){
+
+     successfulScans++;
+
+     signals=signals.filter(
+      x=>x.symbol!==result.symbol
+     );
+
+     signals.push(result);
+
+    }else{
+     failedScans++;
+    }
+
+   }catch(e){
+    failedScans++;
    }
+
+   completedScans++;
+
+   updateProgress();
+   renderTable();
   }
- });
+ }
+
+ const workers=[];
+
+ for(let i=0;i<workerCount;i++){
+  workers.push(worker());
+ }
+
  await Promise.all(workers);
 }
 
+
+// ==========================================
+// MAIN SCANNER
+// ==========================================
+
 async function refreshScanner(){
+
  if(scanning)return;
+
  scanning=true;
- $("status").textContent="Updating Binance market data...";
+ running=true;
+
  try{
+
+  $("status").textContent="Testing Binance connection...";
+
+  await testConnection();
+
+  $("status").textContent="Binance connected. Loading prices...";
+
   await getPrices();
+
+  $("status").textContent="Checking BTC direction...";
+
   btcTrend=await getBTCTrend();
+
   $("btcDirection").textContent=btcTrend;
-  $("btcDirection").className=btcTrend==="UP"?"green":
+
+  $("btcDirection").className=
+   btcTrend==="UP"?"green":
    btcTrend==="DOWN"?"red":"yellow";
 
+  $("status").textContent="Loading Binance trading pairs...";
+
   coins=await getExchangeCoins();
+
   $("total").textContent=coins.length;
 
-  signals=[];
-  renderTable();
+  $("status").textContent=
+   "Connected. Scanning "+coins.length+" eligible pairs...";
 
-  $("status").textContent="Scanning "+coins.length+
-   " coins. Controlled request queue active...";
+  await runQueue(coins,3);
 
-  await runQueue(coins,5);
+  if(running){
+   $("status").textContent=
+    "Scan completed | "+pktTime()+" PKT | Auto refresh: 5 minutes";
+  }
 
-  renderTable();
-  $("status").textContent="Scan completed: "+
-   pktTime()+" | Next refresh in 5 minutes";
  }catch(e){
-  $("status").textContent="Connection error: "+e.message+
-   ". Try refreshing or changing network.";
+
+  $("status").textContent=
+   "BINANCE ERROR: "+e.message;
+
+  $("progressText").textContent=
+   "Connection failed. Check internet or API access.";
+
+  console.error("Scanner error:",e);
+
+ }finally{
+  scanning=false;
  }
- scanning=false;
 }
 
 async function startScanner(){
+
+ if(scanning)return;
+
  running=true;
- await refreshScanner();
+
  clearInterval(timer);
- timer=setInterval(()=>{
-  if(running&&!scanning)refreshScanner();
- },300000);
+
+ await refreshScanner();
+
+ if(running){
+  timer=setInterval(()=>{
+   if(running&&!scanning){
+    refreshScanner();
+   }
+  },300000);
+ }
 }
 
 function stopScanner(){
+
  running=false;
+
  clearInterval(timer);
+
  $("status").textContent="Scanner stopped.";
+ $("progressText").textContent="Scanner stopped.";
+
 }
 
-// ===========================================
+
+// ==========================================
 // RESULTS TABLE
-// ===========================================
+// ==========================================
 
 function fmt(n){
+
  if(!Number.isFinite(n))return "--";
+
  return n.toLocaleString("en-US",{
   maximumFractionDigits:8
  });
 }
 
 function renderTable(){
+
  const search=$("search").value.toUpperCase().trim();
- let list=signals.filter(s=>{
+
+ const list=signals.filter(s=>{
+
   const match=s.symbol.includes(search);
+
   if(currentCategory==="ALL")return match;
+
   if(currentCategory==="WAIT")
    return match&&s.type==="WAIT";
+
   return match&&s.type===currentCategory;
+
  });
 
  list.sort((a,b)=>{
-  const priority={BREAKOUT:4,BREAKDOWN:4,LONG:3,SHORT:3,WAIT:1};
+
+  const priority={
+   BREAKOUT:4,
+   BREAKDOWN:4,
+   LONG:3,
+   SHORT:3,
+   WAIT:1
+  };
+
   return (priority[b.type]||0)-(priority[a.type]||0);
  });
 
- $("listTitle").textContent="📊 "+currentCategory+
-  " SIGNALS ("+list.length+")";
+ $("listTitle").textContent=
+  "📊 "+currentCategory+" ("+list.length+")";
 
  $("longCount").textContent=
-  signals.filter(s=>s.type==="LONG"||s.type==="BREAKOUT").length;
+  signals.filter(s=>
+   s.type==="LONG"||s.type==="BREAKOUT"
+  ).length;
+
  $("shortCount").textContent=
-  signals.filter(s=>s.type==="SHORT"||s.type==="BREAKDOWN").length;
+  signals.filter(s=>
+   s.type==="SHORT"||s.type==="BREAKDOWN"
+  ).length;
 
  $("results").innerHTML="";
 
  if(!list.length){
+
   $("results").innerHTML=
-   '<tr><td colspan="12" class="muted">No matching signals yet. Scanner is working or waiting for confirmation.</td></tr>';
+   '<tr><td colspan="12">No matching signals. Waiting for confirmation.</td></tr>';
+
   return;
  }
 
  list.forEach(s=>{
-  const cls=["LONG","BREAKOUT"].includes(s.type)?"green":
+
+  const cls=
+   ["LONG","BREAKOUT"].includes(s.type)?"green":
    ["SHORT","BREAKDOWN"].includes(s.type)?"red":"yellow";
 
   const tr=document.createElement("tr");
+
   tr.className="coinrow";
-  tr.innerHTML=`
-   <td><b>${s.symbol}</b></td>
-   <td class="${cls}">${s.type}</td>
-   <td>${fmt(s.price)}</td>
-   <td>${s.rsi.toFixed(2)}</td>
-   <td>${s.time}</td>
-   <td>${fmt(s.ep)}</td>
-   <td>${fmt(s.sl)}</td>
-   <td>${fmt(s.tp1)}</td>
-   <td>${fmt(s.tp2)}</td>
-   <td>${fmt(s.tp3)}</td>
-   <td>${fmt(s.support)}</td>
-   <td>${fmt(s.resistance)}</td>`;
+
+  const values=[
+   s.symbol,s.type,fmt(s.price),
+   s.rsi.toFixed(2),s.time,
+   fmt(s.ep),fmt(s.sl),
+   fmt(s.tp1),fmt(s.tp2),fmt(s.tp3),
+   fmt(s.support),fmt(s.resistance)
+  ];
+
+  values.forEach((value,i)=>{
+
+   const td=document.createElement("td");
+
+   td.textContent=value;
+
+   if(i===1)td.className=cls;
+
+   tr.appendChild(td);
+  });
+
   tr.onclick=()=>selectCoin(s.symbol);
+
   $("results").appendChild(tr);
  });
 }
 
 function showCategory(category,button){
+
  currentCategory=category;
- document.querySelectorAll(".controls button").forEach(b=>
-  b.classList.remove("active"));
+
+ document.querySelectorAll(".controls button")
+ .forEach(b=>b.classList.remove("active"));
+
  if(button)button.classList.add("active");
+
  renderTable();
 }
 
+
+// ==========================================
+// SEARCH ENGINE
+// ==========================================
+
 function searchCoin(){
+
  const q=$("search").value.toUpperCase().trim();
+
  const found=signals.find(s=>s.symbol===q);
- if(found)selectCoin(q);
- else{
-  const s=signals.find(s=>s.symbol.includes(q));
-  if(s)selectCoin(s.symbol);
+
+ if(found){
+  selectCoin(q);
+  return;
+ }
+
+ const partial=signals.find(s=>s.symbol.includes(q));
+
+ if(partial){
+  selectCoin(partial.symbol);
+ }else{
+  $("selectedName").textContent=
+   "Coin not scanned yet or no result found: "+q;
  }
 }
 
-// ===========================================
-// SELECTED COIN TRADE PLAN
-// ===========================================
+
+// ==========================================
+// TRADE PLAN
+// ==========================================
 
 function selectCoin(symbol){
+
  const s=signals.find(x=>x.symbol===symbol);
+
  if(!s)return;
+
  selectedSymbol=symbol;
 
- $("selectedName").innerHTML="<b>"+s.symbol+"</b> | "+s.type+
-  " | Signal time: "+s.time+" PKT";
+ $("selectedName").textContent=
+  s.symbol+" | "+s.type+" | Signal time: "+s.time+" PKT";
 
  const fields=[
+
   ["Current Price",fmt(s.price)],
   ["Signal",s.type],
   ["BTC Direction",btcTrend],
   ["RSI 6",s.rsi.toFixed(2)],
+
   ["Entry Price",fmt(s.ep)],
   ["Stop Loss",fmt(s.sl)],
+
   ["Take Profit 1",fmt(s.tp1)],
   ["Take Profit 2",fmt(s.tp2)],
   ["Take Profit 3",fmt(s.tp3)],
+
   ["Support",fmt(s.support)],
   ["Resistance",fmt(s.resistance)],
-  ["Higher TF progress",s.progress],
-  ["Estimated TP2 move",fmt(s.estimatedMove)+"%"]
+
+  ["Higher TF Progress",s.progress],
+  ["Estimated TP2 Move",fmt(s.estimatedMove)+"%"]
  ];
 
  $("tradeDetails").innerHTML=fields.map(([a,b])=>
   `<div class="detail"><small>${a}</small><strong>${b}</strong></div>`
  ).join("");
 
- $("reason").textContent="Strategy: "+s.reason+
-  ". Higher timeframe progress: "+s.progress+
-  ". Signal candle: "+new Date(s.candle.time).toLocaleString();
+ $("reason").textContent=
+  "Strategy: "+s.reason+
+  " | Higher timeframe progress: "+s.progress+
+  " | Signal candle: "+new Date(s.candle.time).toLocaleString();
 
  updateChart();
+
  $("tradePanel").scrollIntoView({behavior:"smooth"});
 }
 
+
+// ==========================================
+// TRADINGVIEW CHART
+// ==========================================
+
 function setChartTime(t){
+
  chartInterval=t;
+
  updateChart();
 }
 
 function updateChart(){
+
  const symbol="BINANCE:"+selectedSymbol;
- const url="https://s.tradingview.com/widgetembed/"+
-  "?frameElementId=tradingview_chart"+
-  "&symbol="+encodeURIComponent(symbol)+
+
+ const url=
+  "https://s.tradingview.com/widgetembed/"+
+  "?symbol="+encodeURIComponent(symbol)+
   "&interval="+chartInterval+
-  "&hidesidetoolbar=0&symboledit=1"+
-  "&saveimage=0&toolbarbg=111a2b"+
-  "&theme=dark&style=1&timezone=Asia%2FKarachi"+
-  "&withdateranges=1&hideideas=1"+
-  "&studies=%5B%5D&locale=en";
+  "&theme=dark"+
+  "&style=1"+
+  "&timezone=Asia%2FKarachi"+
+  "&withdateranges=1"+
+  "&hideideas=1"+
+  "&symboledit=1"+
+  "&saveimage=0"+
+  "&toolbarbg=111a2b"+
+  "&locale=en";
 
  $("chart").src=url;
 }
 
-// ===========================================
-// CRYPTO NEWS
-// ===========================================
+
+// ==========================================
+// LIVE CRYPTO NEWS
+// ==========================================
 
 async function loadNews(){
- $("news").textContent="Loading latest crypto news...";
+
+ $("news").textContent="Loading crypto news...";
+
  try{
-  // Public RSS-to-JSON service. Availability/CORS depends on provider.
-  const url="https://api.rss2json.com/v1/api.json?rss_url="+
-   encodeURIComponent("https://www.coindesk.com/arc/outboundfeeds/rss/");
+
+  const rss=
+   "https://www.coindesk.com/arc/outboundfeeds/rss/";
+
+  const url=
+   "https://api.rss2json.com/v1/api.json?rss_url="+
+   encodeURIComponent(rss);
+
   const data=await fetchJSON(url);
 
-  if(!data.items||!data.items.length)
-   throw Error("No news items");
+  if(!data.items||!data.items.length){
+   throw Error("No news");
+  }
 
   $("news").innerHTML="";
+
   data.items.slice(0,15).forEach(item=>{
+
    const div=document.createElement("div");
    div.className="newsitem";
 
    const a=document.createElement("a");
+
    a.href=item.link;
    a.target="_blank";
    a.rel="noopener noreferrer";
    a.textContent=item.title;
 
    const small=document.createElement("small");
-   small.textContent=(item.pubDate||"")+" | CoinDesk";
+
+   small.textContent=
+    (item.pubDate||"")+" | CoinDesk";
 
    div.appendChild(a);
    div.appendChild(small);
+
    $("news").appendChild(div);
   });
+
  }catch(e){
+
   $("news").innerHTML=
-   '<div class="newsitem">Live feed is unavailable. Open these crypto news sources directly:<br><br>'+
-   '<a href="https://www.coindesk.com/" target="_blank">CoinDesk News</a><br><br>'+
+   '<div class="newsitem">'+
+   '<a href="https://www.coindesk.com/" target="_blank">CoinDesk Crypto News</a><br><br>'+
    '<a href="https://cointelegraph.com/" target="_blank">Cointelegraph</a><br><br>'+
-   '<a href="https://www.binance.com/en/square" target="_blank">Binance Square</a></div>';
+   '<a href="https://www.binance.com/en/square" target="_blank">Binance Square</a>'+
+   '<p class="muted">Automatic news feed unavailable. Use these sources to read current news.</p>'+
+   '</div>';
  }
 }
 
-// ===========================================
-// INITIALIZATION
-// ===========================================
+
+// ==========================================
+// START APPLICATION
+// ==========================================
 
 function initialize(){
- updateChart();
+
+ updateClock();
+
  loadNews();
+
+ updateChart();
+
  startScanner();
 }
 
 initialize();
 
 </script>
+
 </body>
 </html>
