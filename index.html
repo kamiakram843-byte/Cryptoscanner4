@@ -3,663 +3,812 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pump Radar Pro</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pump Radar Pro - Binance Futures</title>
 <style>
 :root{
- --bg:#080d17;--panel:#111a2a;--panel2:#172338;
- --line:#26344a;--text:#edf3ff;--muted:#8fa1ba;
- --green:#20d99a;--red:#ff6277;--yellow:#f7c94b;
- --blue:#55a9ff;
+--bg:#080d17;--panel:#111b2c;--panel2:#18263b;
+--line:#293a52;--txt:#edf3ff;--muted:#8fa2bd;
+--green:#20dc9c;--red:#ff6278;--yellow:#ffd05b;--blue:#56aaff;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
- font-family:Arial,sans-serif;font-size:14px}
+body{margin:0;background:var(--bg);color:var(--txt);
+font:14px Arial,sans-serif}
 button,input,select{font:inherit}
 button{cursor:pointer}
-header{padding:17px 15px;background:#101a2b;
- border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.brand{font-size:21px;font-weight:900;letter-spacing:1px}
+header{background:#101a2b;border-bottom:1px solid var(--line);
+padding:15px;position:sticky;top:0;z-index:10}
+.top{display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:22px;font-weight:900;letter-spacing:1px}
 .brand span{color:var(--green)}
-.sub{color:var(--muted);font-size:10px;margin-top:5px}
+.sub,.small{font-size:11px;color:var(--muted)}
 .clock{text-align:right;font-weight:bold}
 .clock small{display:block;color:var(--muted);font-weight:normal;margin-top:4px}
-.container{max-width:1450px;margin:auto;padding:14px}
+.container{max-width:1450px;margin:auto;padding:13px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.panel{background:var(--panel);border:1px solid var(--line);
- border-radius:12px;padding:13px;margin-bottom:12px}
-.stat{padding:15px;border-radius:12px;background:var(--panel)}
-.stat .num{font-size:26px;font-weight:900;margin-top:8px}
+.panel,.stat{background:var(--panel);border:1px solid var(--line);
+border-radius:11px;padding:13px;margin-bottom:12px}
+.stat .num{font-size:27px;font-weight:900;margin-top:8px}
 .green{color:var(--green)}.red{color:var(--red)}
-.yellow{color:var(--yellow)}.muted{color:var(--muted)}
-.small{font-size:11px;color:var(--muted)}
-.row{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.yellow{color:var(--yellow)}.blue{color:var(--blue)}
+.muted{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:9px}
 .sessions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-.session{padding:7px 10px;border:1px solid var(--line);
- border-radius:20px;color:var(--muted);font-size:11px}
+.session{border:1px solid var(--line);padding:7px 10px;
+border-radius:20px;color:var(--muted);font-size:10px}
 .session.active{color:var(--green);border-color:var(--green)}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-input,select{background:var(--panel2);border:1px solid var(--line);
- border-radius:8px;padding:11px;color:var(--text);min-width:0}
+input,select{background:var(--panel2);color:var(--txt);
+border:1px solid var(--line);border-radius:7px;padding:11px}
 input{flex:1;min-width:130px}
-select{max-width:150px}
-.btn{padding:10px 14px;border:1px solid var(--line);
- border-radius:8px;background:var(--panel2);color:var(--text)}
-.btn.active-long{background:#123e34;border-color:var(--green);color:var(--green)}
-.btn.active-short{background:#451e2a;border-color:var(--red);color:var(--red)}
-.btn.primary{background:var(--blue);color:#07111e;border:0;font-weight:bold}
-.btn:disabled{opacity:.5}
+select{max-width:155px}
+.btn{background:var(--panel2);color:var(--txt);
+border:1px solid var(--line);border-radius:8px;padding:10px 13px}
+.btn:disabled{opacity:.45}
+.active-long{background:#123b31;color:var(--green);border-color:var(--green)}
+.active-short{background:#481f2a;color:var(--red);border-color:var(--red)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
-.section-title{font-size:16px;font-weight:bold;margin-bottom:12px}
-.signal-card{background:var(--panel);border:1px solid var(--line);
- border-radius:11px;padding:13px;margin-bottom:10px}
-.signal-card.long{border-left:3px solid var(--green)}
-.signal-card.short{border-left:3px solid var(--red)}
+.title{font-weight:bold;font-size:16px;margin-bottom:12px}
+.signal{background:var(--panel);border:1px solid var(--line);
+border-radius:10px;padding:13px;margin-bottom:10px}
+.signal.long{border-left:3px solid var(--green)}
+.signal.short{border-left:3px solid var(--red)}
 .coin{font-size:17px;font-weight:bold}
-.pill{font-size:10px;padding:5px 7px;border-radius:5px;
- background:#26344a;color:var(--muted)}
-.pill.long{background:#123e34;color:var(--green)}
-.pill.short{background:#451e2a;color:var(--red)}
+.pill{padding:5px 7px;border-radius:5px;background:#26354a;
+font-size:10px;color:var(--muted)}
+.pill.long{color:var(--green);background:#123b31}
+.pill.short{color:var(--red);background:#481f2a}
+.score{font-size:19px;font-weight:900}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);
- gap:9px;margin-top:13px}
-.metric{background:#0c1422;padding:9px;border-radius:7px;min-width:0}
-.metric b{display:block;margin-top:5px;overflow-wrap:anywhere;font-size:12px}
-.card-footer{display:flex;justify-content:space-between;
- align-items:center;margin-top:12px;gap:10px}
-.open-btn{background:#253751;color:white;border:0;
- border-radius:7px;padding:9px 13px}
-.score{font-size:19px;font-weight:bold}
-#results{margin-top:12px}
+gap:7px;margin-top:12px}
+.metric{background:#0b1422;border-radius:7px;padding:9px;min-width:0}
+.metric span{display:block;color:var(--muted);font-size:10px}
+.metric b{display:block;margin-top:6px;font-size:12px;overflow-wrap:anywhere}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;
+gap:8px;margin-top:12px}
+.open{background:#253c5b;color:white;border:0;border-radius:7px;
+padding:9px 12px}
+.pagination{display:flex;justify-content:center;gap:8px;
+align-items:center;margin:15px 0}
+.progress{height:5px;background:#27354a;border-radius:5px;overflow:hidden}
+.progress span{display:block;background:var(--green);height:100%;width:0}
 #detail{display:none}
-.back{margin-bottom:12px}
-.trade-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
-.trade-box{background:#0c1422;padding:12px;border-radius:9px}
-.trade-box b{display:block;margin-top:7px;font-size:17px}
+.tradegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.tradebox{background:#0b1422;padding:12px;border-radius:8px;min-width:0}
+.tradebox span{color:var(--muted);font-size:10px}
+.tradebox b{display:block;margin-top:7px;font-size:16px;overflow-wrap:anywhere}
 .target{color:var(--green)}.stop{color:var(--red)}
-#chart{height:440px;width:100%;overflow:hidden;border-radius:9px}
-.news-wrap{overflow:hidden;white-space:nowrap;background:#111a2a;
- border:1px solid var(--line);border-radius:8px;padding:12px}
-.news-track{display:inline-block;animation:slide 75s linear infinite}
-.news-track a{color:#d9e7ff;text-decoration:none;margin-right:40px}
+.level{font-weight:900;font-size:17px}
+#chart{height:430px;width:100%;margin-top:12px}
+.news{background:var(--panel);border:1px solid var(--line);
+border-radius:8px;overflow:hidden;white-space:nowrap;padding:12px}
+.news-track{display:inline-block;animation:slide 90s linear infinite}
+.news-track a{color:#dbeaff;text-decoration:none;margin-right:40px}
 @keyframes slide{from{transform:translateX(100%)}
- to{transform:translateX(-100%)}}
-.progress{height:5px;background:#26344a;border-radius:5px;overflow:hidden}
-.progress span{display:block;height:100%;background:var(--green)}
-.notice{padding:11px;border:1px solid #6c5727;background:#2c2413;
- color:#f7d98a;border-radius:9px;font-size:12px;line-height:1.6}
-.hidden{display:none!important}
-footer{padding:20px;text-align:center;color:var(--muted);font-size:11px}
+to{transform:translateX(-100%)}}
+.notice{background:#2b2414;border:1px solid #6b5626;
+color:#f6d98c;border-radius:9px;padding:12px;font-size:12px;line-height:1.6}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:11px}
 @media(min-width:800px){
- .grid{grid-template-columns:repeat(4,1fr)}
- .trade-grid{grid-template-columns:repeat(4,1fr)}
- .metrics{grid-template-columns:repeat(6,1fr)}
+.grid{grid-template-columns:repeat(4,1fr)}
+.tradegrid{grid-template-columns:repeat(4,1fr)}
+.metrics{grid-template-columns:repeat(6,1fr)}
 }
 @media(max-width:430px){
- .metrics{grid-template-columns:repeat(2,1fr)}
- #chart{height:360px}
- .brand{font-size:18px}
+.metrics{grid-template-columns:repeat(2,1fr)}
+#chart{height:360px}
+.brand{font-size:19px}
 }
 </style>
 </head>
 <body>
 
 <header>
- <div class="top">
-  <div>
-   <div class="brand">PUMP <span>RADAR</span> PRO</div>
-   <div class="sub">EARLY REVERSAL & FUTURES SCANNER</div>
-  </div>
-  <div class="clock">
-   <div id="clock">--:--:--</div>
-   <small>PAKISTAN TIME · PKT</small>
-  </div>
+<div class="top">
+ <div>
+  <div class="brand">PUMP <span>RADAR</span> PRO</div>
+  <div class="sub">BINANCE FUTURES · EARLY REVERSAL SCANNER</div>
  </div>
- <div class="sessions">
-  <span class="session" id="asia">ASIA</span>
-  <span class="session" id="london">LONDON</span>
-  <span class="session" id="newyork">NEW YORK</span>
-  <span class="session" id="overlap">LONDON + NY</span>
+ <div class="clock">
+  <div id="clock">--:--:--</div>
+  <small>PAKISTAN TIME · PKT</small>
  </div>
+</div>
+<div class="sessions">
+ <span class="session" id="asia">ASIA</span>
+ <span class="session" id="london">LONDON</span>
+ <span class="session" id="newyork">NEW YORK</span>
+ <span class="session" id="overlap">LONDON + NY</span>
+</div>
 </header>
 
 <div class="container">
 
- <div id="dashboard">
-  <div class="grid">
-   <div class="stat">
-    <div class="green">▲ LONG WATCHLIST</div>
-    <div class="num green" id="longCount">0</div>
-    <div class="small">Early bullish setups</div>
-   </div>
-   <div class="stat">
-    <div class="red">▼ SHORT WATCHLIST</div>
-    <div class="num red" id="shortCount">0</div>
-    <div class="small">Early bearish setups</div>
-   </div>
-   <div class="stat">
-    <div class="yellow">SCANNED PAIRS</div>
-    <div class="num" id="scanned">0</div>
-    <div class="small">USDT perpetuals</div>
-   </div>
-   <div class="stat">
-    <div class="blue">LAST SCAN</div>
-    <div class="num" style="font-size:19px" id="lastScan">Waiting</div>
-    <div class="small" id="scanStatus">Connecting...</div>
-   </div>
-  </div>
+<div id="dashboard">
 
-  <div class="panel" style="margin-top:12px">
-   <div class="row">
-    <b>MARKET SCANNER CONTROL</b>
-    <button class="btn" id="refreshBtn" onclick="scanMarket()">↻ Refresh</button>
-   </div>
-   <div class="toolbar">
-    <input id="search" placeholder="Search coin e.g. BTC, INIT"
-     oninput="renderList()">
-    <select id="tf" onchange="scanMarket()">
-     <option value="5m">5 Minutes</option>
-     <option value="15m" selected>15 Minutes</option>
-     <option value="1h">1 Hour</option>
-     <option value="4h">4 Hours</option>
-    </select>
-    <select id="minScore" onchange="renderList()">
-     <option value="40">Score 40+</option>
-     <option value="50" selected>Score 50+</option>
-     <option value="60">Score 60+</option>
-     <option value="70">Score 70+</option>
-     <option value="80">Score 80+</option>
-    </select>
-   </div>
-   <div class="row">
-    <span class="small" id="scanMessage">Ready to scan</span>
-    <span class="small">Auto refresh: 90 seconds</span>
-   </div>
-   <div class="progress" style="margin-top:9px">
-    <span id="progress" style="width:0%"></span>
-   </div>
-  </div>
+<div class="grid">
+ <div class="stat">
+  <span class="green">▲ LONG SIGNALS</span>
+  <div class="num green" id="longCount">0</div>
+  <div class="small">Bullish candidates</div>
+ </div>
+ <div class="stat">
+  <span class="red">▼ SHORT SIGNALS</span>
+  <div class="num red" id="shortCount">0</div>
+  <div class="small">Bearish candidates</div>
+ </div>
+ <div class="stat">
+  <span class="yellow">ALL FUTURES PAIRS</span>
+  <div class="num" id="totalPairs">0</div>
+  <div class="small">Eligible contracts</div>
+ </div>
+ <div class="stat">
+  <span class="blue">LAST SCAN</span>
+  <div class="num" style="font-size:19px" id="lastScan">Waiting</div>
+  <div class="small" id="connection">Connecting...</div>
+ </div>
+</div>
 
-  <div class="panel">
-   <div class="tabs">
-    <button class="btn active-long" id="longTab"
-     onclick="setSide('LONG')">▲ LONG SIGNALS</button>
-    <button class="btn" id="shortTab"
-     onclick="setSide('SHORT')">▼ SHORT SIGNALS</button>
+<div class="panel">
+ <div class="row">
+  <b>MARKET SCANNER</b>
+  <button class="btn" id="refresh" onclick="scan()">↻ SCAN NOW</button>
+ </div>
+ <div class="toolbar">
+  <input id="search" placeholder="Search any coin e.g. INIT"
+   oninput="page=1;render()">
+  <select id="timeframe" onchange="scan()">
+   <option value="5m">5 Minutes</option>
+   <option value="15m" selected>15 Minutes</option>
+   <option value="1h">1 Hour</option>
+   <option value="4h">4 Hours</option>
+  </select>
+  <select id="minimum" onchange="page=1;render()">
+   <option value="30">Score 30+</option>
+   <option value="40">Score 40+</option>
+   <option value="50" selected>Score 50+</option>
+   <option value="60">Score 60+</option>
+   <option value="70">Score 70+</option>
+   <option value="80">Score 80+</option>
+  </select>
+ </div>
+ <div class="row">
+  <span class="small" id="status">Ready</span>
+  <span class="small" id="scanCount">0 analyzed</span>
+ </div>
+ <div class="progress" style="margin-top:10px">
+  <span id="progress"></span>
+ </div>
+</div>
+
+<div class="panel">
+ <div class="tabs">
+  <button id="longTab" class="btn active-long"
+   onclick="setSide('LONG')">▲ LONG LIST</button>
+  <button id="shortTab" class="btn"
+   onclick="setSide('SHORT')">▼ SHORT LIST</button>
+ </div>
+ <div id="results" style="margin-top:14px">
+  <p class="muted">Waiting for market data...</p>
+ </div>
+ <div class="pagination">
+  <button class="btn" onclick="changePage(-1)">← PREVIOUS</button>
+  <span class="small" id="pageLabel">Page 1</span>
+  <button class="btn" onclick="changePage(1)">NEXT →</button>
+ </div>
+</div>
+</div>
+
+<div id="detail">
+ <button class="btn" onclick="back()">← BACK TO SCANNER</button>
+
+ <div class="panel" style="margin-top:12px">
+  <div class="row">
+   <div>
+    <div class="coin" id="dCoin">BTCUSDT</div>
+    <div class="small">BINANCE USDT PERPETUAL</div>
    </div>
-   <div id="results">
-    <p class="muted">Waiting for first market scan...</p>
+   <span class="pill" id="dSignal">LONG</span>
+  </div>
+  <div class="row" style="margin-top:17px">
+   <div>
+    <div class="small">CURRENT PRICE</div>
+    <div class="coin" id="dPrice">--</div>
+   </div>
+   <div style="text-align:right">
+    <div class="small">SIGNAL SCORE</div>
+    <div class="score green" id="dScore">--</div>
    </div>
   </div>
+  <p class="small" id="dReason"></p>
  </div>
 
- <div id="detail">
-  <button class="btn back" onclick="showDashboard()">← Back to scanner</button>
-  <div class="panel">
-   <div class="row">
-    <div>
-     <div class="coin" id="dCoin">BTCUSDT</div>
-     <div class="small" id="dExchange">BINANCE FUTURES</div>
-    </div>
-    <span class="pill" id="dSignal">LONG</span>
-   </div>
-   <div class="row" style="margin-top:16px">
-    <div>
-     <div class="small">CURRENT PRICE</div>
-     <div class="coin" id="dPrice">--</div>
-    </div>
-    <div style="text-align:right">
-     <div class="small">SIGNAL SCORE</div>
-     <div class="score green" id="dScore">--</div>
-    </div>
-   </div>
-   <p class="small" id="dReason"></p>
-  </div>
+ <div class="panel">
+  <div class="title">TRADE PLAN · ENTRY & TARGETS</div>
+  <div class="tradegrid">
+   <div class="tradebox"><span>ENTRY PRICE · EP</span><b id="dEP">--</b></div>
+   <div class="tradebox"><span>STOP LOSS · SL</span><b class="stop" id="dSL">--</b></div>
 
-  <div class="panel">
-   <div class="section-title">TRADE PLAN</div>
-   <div class="trade-grid">
-    <div class="trade-box"><span class="small">ENTRY PRICE (EP)</span>
-     <b id="dEntry">--</b></div>
-    <div class="trade-box"><span class="small">STOP LOSS (SL)</span>
-     <b class="stop" id="dSL">--</b></div>
-    <div class="trade-box"><span class="small">TARGET 1</span>
-     <b class="target" id="dTP1">--</b></div>
-    <div class="trade-box"><span class="small">TARGET 2</span>
-     <b class="target" id="dTP2">--</b></div>
-    <div class="trade-box"><span class="small">TARGET 3</span>
-     <b class="target" id="dTP3">--</b></div>
-    <div class="trade-box"><span class="small">RISK / REWARD</span>
-     <b id="dRR">1:3</b></div>
-    <div class="trade-box"><span class="small">SUPPORT</span>
-     <b id="dSupport">--</b></div>
-    <div class="trade-box"><span class="small">RESISTANCE</span>
-     <b id="dResistance">--</b></div>
+   <div class="tradebox">
+    <span>TARGET 1 · TP1</span>
+    <b class="target" id="dTP1">--</b>
+    <b class="target" id="dP1">--</b>
    </div>
-  </div>
-
-  <div class="panel">
-   <div class="section-title">TECHNICAL CONDITIONS</div>
-   <div class="trade-grid">
-    <div class="trade-box">Bollinger Lower<b id="dLB">--</b></div>
-    <div class="trade-box">Bollinger Upper<b id="dUB">--</b></div>
-    <div class="trade-box">RSI<b id="dRSI">--</b></div>
-    <div class="trade-box">Volume Ratio<b id="dVol">--</b></div>
-    <div class="trade-box">Open Interest Change<b id="dOI">--</b></div>
-    <div class="trade-box">Funding Rate<b id="dFunding">--</b></div>
+   <div class="tradebox">
+    <span>TARGET 2 · TP2</span>
+    <b class="target" id="dTP2">--</b>
+    <b class="target" id="dP2">--</b>
    </div>
-  </div>
-
-  <div class="panel">
-   <div class="row">
-    <b>TRADINGVIEW CHART</b>
-    <select id="chartTF" onchange="loadChart()">
-     <option value="5">5m</option>
-     <option value="15" selected>15m</option>
-     <option value="60">1h</option>
-     <option value="240">4h</option>
-     <option value="D">1D</option>
-     <option value="W">1W</option>
-    </select>
+   <div class="tradebox">
+    <span>TARGET 3 · TP3</span>
+    <b class="target" id="dTP3">--</b>
+    <b class="target" id="dP3">--</b>
    </div>
-   <div id="chart" style="margin-top:12px"></div>
+   <div class="tradebox"><span>STOP LOSS DISTANCE</span><b class="stop" id="dSLP">--</b></div>
+   <div class="tradebox"><span>RISK / REWARD TO TP3</span><b id="dRR">1:3</b></div>
+   <div class="tradebox"><span>24H CHANGE</span><b id="dChange">--</b></div>
   </div>
  </div>
 
  <div class="panel">
-  <div class="section-title">LIVE CRYPTO NEWS</div>
-  <div class="news-wrap">
-   <div class="news-track" id="newsTrack">
-    Loading crypto headlines...
+  <div class="title">SUPPORT & RESISTANCE LEVELS</div>
+  <div class="tradegrid">
+   <div class="tradebox">
+    <span>SUPPORT LEVEL</span>
+    <b class="level" id="dSupport">--</b>
+    <b id="dSupportP">--</b>
    </div>
-  </div>
-  <div class="small" style="margin-top:8px">
-   Headlines supplied by CryptoCompare. Open the headline to read the source.
+   <div class="tradebox">
+    <span>RESISTANCE LEVEL</span>
+    <b class="level" id="dResistance">--</b>
+    <b id="dResistanceP">--</b>
+   </div>
   </div>
  </div>
 
- <div class="notice">
-  <b>IMPORTANT RISK WARNING:</b> These are technical-analysis estimates,
-  not guaranteed predictions. A lower Bollinger Band touch can continue
-  falling, and an upper-band touch can continue rising. PRE signals are
-  watchlist candidates, not confirmed entries. Always verify candle
-  closes, liquidity, spread, funding and risk before trading.
+ <div class="panel">
+  <div class="title">INDICATOR ANALYSIS</div>
+  <div class="tradegrid">
+   <div class="tradebox"><span>BOLLINGER LOWER BAND</span><b id="dLB">--</b></div>
+   <div class="tradebox"><span>BOLLINGER UPPER BAND</span><b id="dUB">--</b></div>
+   <div class="tradebox"><span>RSI</span><b id="dRSI">--</b></div>
+   <div class="tradebox"><span>VOLUME RATIO</span><b id="dVolume">--</b></div>
+   <div class="tradebox"><span>MACD</span><b id="dMACD">--</b></div>
+   <div class="tradebox"><span>EMA 20</span><b id="dEMA">--</b></div>
+   <div class="tradebox"><span>BAND WIDTH</span><b id="dBand">--</b></div>
+   <div class="tradebox"><span>OPEN INTEREST</span><b id="dOI">--</b></div>
+  </div>
+ </div>
+
+ <div class="panel">
+  <div class="row">
+   <b>TRADINGVIEW LIVE CHART</b>
+   <select id="chartTF" onchange="loadChart()">
+    <option value="5">5m</option>
+    <option value="15" selected>15m</option>
+    <option value="60">1h</option>
+    <option value="240">4h</option>
+    <option value="D">1D</option>
+    <option value="W">1W</option>
+   </select>
+  </div>
+  <div id="chart"></div>
  </div>
 </div>
 
+<div class="panel">
+ <div class="title">LIVE CRYPTO NEWS</div>
+ <div class="news">
+  <div class="news-track" id="newsTrack">Loading crypto news...</div>
+ </div>
+ <p class="small">News headlines from CryptoCompare. Click to read.</p>
+</div>
+
+<div class="notice">
+ <b>RISK WARNING:</b> All signals are technical estimates, not guaranteed
+ trading predictions. PRE-LONG and PRE-SHORT are early watchlist signals,
+ not confirmed entries. TP percentages are estimated price movements
+ from entry, before fees, funding and slippage. Support and resistance
+ are calculated from recent candles. Always check liquidity and use
+ independent risk management.
+</div>
+
+</div>
+
 <footer>
- PUMP RADAR PRO · Independent market analysis tool · Not financial advice
+PUMP RADAR PRO · Binance public market data · Educational analysis only
 </footer>
 
 <script>
+"use strict";
+
 const API="https://fapi.binance.com";
 const NEWS="https://min-api.cryptocompare.com/data/v2/news/?lang=EN";
-let allSignals=[];
-let selectedSide="LONG";
-let selectedCoin=null;
-let oiHistory={};
-let scanBusy=false;
-let lastData={};
-let fundingData={};
 
+let signals=[];
+let allSymbols=[];
+let side="LONG";
+let page=1;
+let selected=null;
+let busy=false;
+let oiMemory={};
+let oiData={};
+const PAGE_SIZE=25;
 const $=id=>document.getElementById(id);
-const num=x=>Number(x);
-const fmt=(x)=>{
+const N=x=>Number(x);
+const avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
+
+function fmt(x){
  if(!Number.isFinite(x))return "--";
  if(Math.abs(x)>=1000)return x.toLocaleString("en-US",{maximumFractionDigits:2});
  if(Math.abs(x)>=1)return x.toFixed(5);
  return x.toPrecision(6);
-};
-const pct=x=>(x>=0?"+":"")+x.toFixed(2)+"%";
-
-function pktDate(){
+}
+function percent(x){
+ return (x>=0?"+":"")+x.toFixed(2)+"%";
+}
+function priceMove(target,entry,long){
+ return (long?target-entry:entry-target)/entry*100;
+}
+function pkt(){
  return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Karachi"}));
 }
-function updateClock(){
- const d=pktDate();
+function clock(){
+ const d=pkt(),h=d.getHours()+d.getMinutes()/60;
  $("clock").textContent=d.toLocaleTimeString("en-GB");
- const h=d.getHours()+d.getMinutes()/60;
- const active=(id,on)=>$(id).classList.toggle("active",on);
- // Approximate session windows in Pakistan time.
+ const set=(id,v)=>$(id).classList.toggle("active",v);
+ // Approximate session windows in Pakistan time
  const asia=h>=5&&h<14;
  const london=h>=12&&h<21;
  const ny=h>=17.5||h<2.5;
- active("asia",asia);active("london",london);active("newyork",ny);
- active("overlap",london&&ny);
+ set("asia",asia);
+ set("london",london);
+ set("newyork",ny);
+ set("overlap",london&&ny);
 }
-setInterval(updateClock,1000);updateClock();
+setInterval(clock,1000);clock();
 
-async function getJSON(url){
+async function get(url){
  const r=await fetch(url);
- if(!r.ok)throw new Error("HTTP "+r.status);
+ if(!r.ok)throw Error("HTTP "+r.status);
  return r.json();
 }
-function average(a){return a.reduce((s,v)=>s+v,0)/a.length}
 function ema(a,p){
  let k=2/(p+1),v=a[0];
  for(let i=1;i<a.length;i++)v=a[i]*k+v*(1-k);
  return v;
 }
 function rsi(a,p=14){
- if(a.length<=p)return 50;
- let gains=0,loss=0;
+ let g=0,l=0;
  for(let i=a.length-p;i<a.length;i++){
   const d=a[i]-a[i-1];
-  if(d>0)gains+=d;else loss-=d;
+  if(d>0)g+=d;else l-=d;
  }
- if(loss===0)return 100;
- return 100-100/(1+(gains/p)/(loss/p));
+ if(l===0)return 100;
+ return 100-100/(1+g/l);
 }
-function macdHist(a){
+function calcMACD(a){
  const fast=ema(a.slice(-35),12);
  const slow=ema(a.slice(-35),26);
- const prev=ema(a.slice(-36,-1),12)-ema(a.slice(-36,-1),26);
- const signal=prev;
- return {value:fast-slow,improving:(fast-slow)>signal};
+ const previous=ema(a.slice(-36,-1),12)-
+                ema(a.slice(-36,-1),26);
+ const value=fast-slow;
+ return {value,improving:value>previous};
 }
-function analyze(symbol,klines,ticker,oi,funding){
- const rows=klines.slice(0,-1);
+function wait(ms){
+ return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+function analyze(symbol,rows,ticker){
+ // Ignore the currently open candle to avoid unstable signals.
+ rows=rows.slice(0,-1);
  if(rows.length<35)return null;
- const closes=rows.map(k=>num(k[4]));
- const highs=rows.map(k=>num(k[2]));
- const lows=rows.map(k=>num(k[3]));
- const volumes=rows.map(k=>num(k[7]));
- const n=closes.length;
- const price=num(ticker.lastPrice);
- const avg=average(closes.slice(-20));
- const sd=Math.sqrt(average(closes.slice(-20).map(x=>(x-avg)**2)));
- const upper=avg+2*sd,lower=avg-2*sd;
- const prevAvg=average(closes.slice(-21,-1));
- const prevSd=Math.sqrt(average(closes.slice(-21,-1).map(x=>(x-prevAvg)**2)));
- const prevLower=prevAvg-2*prevSd;
- const prevUpper=prevAvg+2*prevSd;
- const currentRSI=rsi(closes);
- const previousRSI=rsi(closes.slice(0,-1));
- const volAvg=average(volumes.slice(-21,-1));
- const volRatio=volAvg?volumes[n-1]/volAvg:1;
- const e20=ema(closes.slice(-50),20);
- const e50=ema(closes.slice(-50),50);
- const mh=macdHist(closes);
- const candleUp=closes[n-1]>num(rows[n-1][1]);
- const candleDown=closes[n-1]<num(rows[n-1][1]);
- const swingLow=Math.min(...lows.slice(-12));
- const swingHigh=Math.max(...highs.slice(-12));
- const support=Math.min(...lows.slice(-30));
- const resistance=Math.max(...highs.slice(-30));
- const tr=[];
+
+ const c=rows.map(k=>N(k[4]));
+ const h=rows.map(k=>N(k[2]));
+ const l=rows.map(k=>N(k[3]));
+ const v=rows.map(k=>N(k[7]));
+ const n=c.length;
+ const price=N(ticker.lastPrice);
+
+ const middle=avg(c.slice(-20));
+ const deviation=Math.sqrt(avg(c.slice(-20).map(x=>(x-middle)**2)));
+ const upper=middle+2*deviation;
+ const lower=middle-2*deviation;
+
+ const oldMiddle=avg(c.slice(-21,-1));
+ const oldDev=Math.sqrt(avg(c.slice(-21,-1).map(x=>(x-oldMiddle)**2)));
+ const oldWidth=(oldDev*4/oldMiddle)*100;
+ const width=(upper-lower)/middle*100;
+
+ const currentRSI=rsi(c);
+ const previousRSI=rsi(c.slice(0,-1));
+ const currentVolume=v[n-1];
+ const avgVolume=avg(v.slice(-21,-1));
+ const volRatio=avgVolume?currentVolume/avgVolume:0;
+
+ const e20=ema(c.slice(-50),20);
+ const e50=ema(c.slice(-50),50);
+ const macd=calcMACD(c);
+
+ const atrs=[];
  for(let i=n-14;i<n;i++){
-  tr.push(Math.max(highs[i]-lows[i],
-   Math.abs(highs[i]-closes[i-1]),
-   Math.abs(lows[i]-closes[i-1])));
+  atrs.push(Math.max(h[i]-l[i],
+   Math.abs(h[i]-c[i-1]),Math.abs(l[i]-c[i-1])));
  }
- const atr=average(tr);
- const nearLB=(price-lower)/price*100;
- const nearUB=(upper-price)/price*100;
- const bandWidth=(upper-lower)/avg*100;
- const priorWidth=(prevUpper-prevLower)/prevAvg*100;
- const oiNow=num(oi.openInterest);
- const oiOld=oiHistory[symbol];
- const oiChange=oiOld&&oiOld.value?
-  (oiNow-oiOld.value)/oiOld.value*100:0;
- oiHistory[symbol]={value:oiNow,time:Date.now()};
- const oiFresh=oiOld&&Date.now()-oiOld.time<15*60*1000;
- let long=0,short=0,lr=[],sr=[];
- // LONG: proximity to lower band, RSI recovery and early demand.
- if(nearLB<0.6){long+=25;lr.push("Very close to lower Bollinger Band");}
- else if(nearLB<1.3){long+=19;lr.push("Near lower Bollinger Band");}
- else if(price<lower*1.01){long+=14;lr.push("Lower band test");}
- if(currentRSI<38&&currentRSI>previousRSI){long+=15;lr.push("RSI recovering from oversold");}
- else if(currentRSI<48&&currentRSI>previousRSI){long+=10;lr.push("RSI turning upward");}
- if(volRatio>2){long+=20;lr.push("Strong volume expansion");}
- else if(volRatio>1.3){long+=14;lr.push("Volume rising");}
- else if(volRatio>1.05){long+=7;lr.push("Volume improving");}
- if(mh.improving&&mh.value>0){long+=15;lr.push("Positive MACD momentum");}
- else if(mh.improving){long+=8;lr.push("MACD momentum improving");}
- if(price>e20&&e20>e50){long+=10;lr.push("Bullish EMA alignment");}
- else if(price>e20){long+=6;lr.push("Price reclaiming EMA20");}
- if(candleUp&&closes[n-1]>closes[n-2]){long+=10;lr.push("Bullish candle / higher close");}
- else if(closes[n-1]>closes[n-2])long+=5;
- if(oiFresh&&oiChange>0.15){long+=5;lr.push("Open interest increasing");}
- // SHORT: mirror conditions at upper band.
- if(nearUB<0.6){short+=25;sr.push("Very close to upper Bollinger Band");}
- else if(nearUB<1.3){short+=19;sr.push("Near upper Bollinger Band");}
- else if(price>upper*.99){short+=14;sr.push("Upper band test");}
- if(currentRSI>62&&currentRSI<previousRSI){short+=15;sr.push("RSI rolling over");}
- else if(currentRSI>52&&currentRSI<previousRSI){short+=10;sr.push("RSI turning downward");}
- if(volRatio>2){short+=20;sr.push("Strong volume expansion");}
- else if(volRatio>1.3){short+=14;sr.push("Volume rising");}
- else if(volRatio>1.05)short+=7;
- if(!mh.improving&&mh.value<0){short+=15;sr.push("Negative MACD momentum");}
- else if(!mh.improving){short+=8;sr.push("MACD momentum weakening");}
- if(price<e20&&e20<e50){short+=10;sr.push("Bearish EMA alignment");}
- else if(price<e20){short+=6;sr.push("Price below EMA20");}
- if(candleDown&&closes[n-1]<closes[n-2]){short+=10;sr.push("Bearish candle / lower close");}
- else if(closes[n-1]<closes[n-2])short+=5;
- if(oiFresh&&oiChange>0.15){short+=5;sr.push("Open interest increasing");}
- // Penalize weak volume and chasing extended moves.
- if(volRatio<0.8){long-=7;short-=7;}
- const longScore=Math.max(0,Math.min(100,long));
- const shortScore=Math.max(0,Math.min(100,short));
- const side=longScore>=shortScore?"LONG":"SHORT";
- const score=Math.max(longScore,shortScore);
- if(score<40)return null;
- const isLong=side==="LONG";
- const risk=Math.max(atr*1.25,price*.004);
+ const atr=avg(atrs);
+ const support=Math.min(...l.slice(-30));
+ const resistance=Math.max(...h.slice(-30));
+ const swingLow=Math.min(...l.slice(-12));
+ const swingHigh=Math.max(...h.slice(-12));
+
+ const nearLower=(price-lower)/price*100;
+ const nearUpper=(upper-price)/price*100;
+
+ let L=0,S=0,lr=[],sr=[];
+
+ // LOWER BAND / LONG CONDITIONS
+ if(nearLower<0.5){L+=25;lr.push("Very close to lower Bollinger Band");}
+ else if(nearLower<1.2){L+=20;lr.push("Near lower Bollinger Band");}
+ else if(price<lower*1.01){L+=14;lr.push("Lower band test");}
+
+ if(currentRSI<35&&currentRSI>previousRSI){
+  L+=15;lr.push("RSI recovery from oversold");
+ }else if(currentRSI<48&&currentRSI>previousRSI){
+  L+=10;lr.push("RSI turning upward");
+ }
+ if(volRatio>=2){L+=20;lr.push("Volume expansion 2x+");}
+ else if(volRatio>=1.4){L+=15;lr.push("Volume rising");}
+ else if(volRatio>=1.1){L+=8;lr.push("Volume improving");}
+
+ if(macd.improving&&macd.value>0){
+  L+=15;lr.push("Bullish MACD momentum");
+ }else if(macd.improving){
+  L+=9;lr.push("MACD momentum improving");
+ }
+ if(price>e20&&e20>e50){
+  L+=10;lr.push("Bullish EMA alignment");
+ }else if(price>e20){
+  L+=6;lr.push("Price above EMA20");
+ }
+ if(c[n-1]>c[n-2]&&c[n-1]>N(rows[n-1][1])){
+  L+=10;lr.push("Bullish candle close");
+ }else if(c[n-1]>c[n-2])L+=5;
+
+ // UPPER BAND / SHORT CONDITIONS
+ if(nearUpper<0.5){S+=25;sr.push("Very close to upper Bollinger Band");}
+ else if(nearUpper<1.2){S+=20;sr.push("Near upper Bollinger Band");}
+ else if(price>upper*.99){S+=14;sr.push("Upper band test");}
+
+ if(currentRSI>65&&currentRSI<previousRSI){
+  S+=15;sr.push("RSI rolling over");
+ }else if(currentRSI>52&&currentRSI<previousRSI){
+  S+=10;sr.push("RSI turning downward");
+ }
+ if(volRatio>=2){S+=20;sr.push("Volume expansion 2x+");}
+ else if(volRatio>=1.4){S+=15;sr.push("Volume rising");}
+ else if(volRatio>=1.1){S+=8;sr.push("Volume improving");}
+
+ if(!macd.improving&&macd.value<0){
+  S+=15;sr.push("Bearish MACD momentum");
+ }else if(!macd.improving){
+  S+=9;sr.push("MACD weakening");
+ }
+ if(price<e20&&e20<e50){
+  S+=10;sr.push("Bearish EMA alignment");
+ }else if(price<e20){
+  S+=6;sr.push("Price below EMA20");
+ }
+ if(c[n-1]<c[n-2]&&c[n-1]<N(rows[n-1][1])){
+  S+=10;sr.push("Bearish candle close");
+ }else if(c[n-1]<c[n-2])S+=5;
+
+ if(volRatio<.8){L-=7;S-=7;}
+
+ L=Math.max(0,Math.min(100,L));
+ S=Math.max(0,Math.min(100,S));
+
+ if(Math.max(L,S)<30)return null;
+
+ const long=L>=S;
+ const score=long?L:S;
  const entry=price;
- const sl=isLong?Math.min(swingLow-atr*.25,entry-risk):
-  Math.max(swingHigh+atr*.25,entry+risk);
- const r=Math.abs(entry-sl);
- const tp1=isLong?entry+r:entry-r;
- const tp2=isLong?entry+2*r:entry-2*r;
- const tp3=isLong?entry+3*r:entry-3*r;
+ const risk=Math.max(atr*1.25,entry*.004);
+ const sl=long?Math.min(swingLow-atr*.25,entry-risk):
+               Math.max(swingHigh+atr*.25,entry+risk);
+ const distance=Math.abs(entry-sl);
+
+ const tp1=long?entry+distance:entry-distance;
+ const tp2=long?entry+distance*2:entry-distance*2;
+ const tp3=long?entry+distance*3:entry-distance*3;
+
  const confirmed=score>=65&&volRatio>=1.15&&
-  (isLong?currentRSI>previousRSI:currentRSI<previousRSI);
+ (long?currentRSI>previousRSI:currentRSI<previousRSI);
+
  return {
-  symbol,side,score,price,volume:num(ticker.quoteVolume),
-  change:num(ticker.priceChangePercent),entry,sl,tp1,tp2,tp3,
-  support,resistance,lower,upper,currentRSI,volRatio,
-  oiChange,oiFresh,funding:num(funding.lastFundingRate)*100,
-  reasons:isLong?lr:sr,confirmed,nearLB,nearUB,atr,
-  bandWidth,priorWidth
+  symbol,side:long?"LONG":"SHORT",score,price,entry,sl,
+  tp1,tp2,tp3,support,resistance,lower,upper,currentRSI,
+  volRatio,e20,e50,macd:macd.value,width,oldWidth,
+  atr,change:N(ticker.priceChangePercent),
+  volume:N(ticker.quoteVolume),
+  reasons:long?lr:sr,confirmed
  };
 }
 
 async function pool(items,limit,fn){
  let index=0,done=0;
- const out=[];
+ const out=new Array(items.length);
  async function worker(){
   while(index<items.length){
    const i=index++;
-   try{out[i]=await fn(items[i]);}catch(e){out[i]=null;}
+   try{out[i]=await fn(items[i]);}
+   catch(e){out[i]=null;}
    done++;
-   $("progress").style.width=(done/items.length*100)+"%";
-   $("scanMessage").textContent="Analyzing "+done+" / "+items.length;
+   if(done%10===0||done===items.length){
+    $("progress").style.width=(done/items.length*100)+"%";
+    $("status").textContent="Scanning "+done+" / "+items.length;
+   }
   }
  }
  await Promise.all(Array.from({length:limit},worker));
  return out;
 }
 
-async function scanMarket(){
- if(scanBusy)return;
- scanBusy=true;
- $("refreshBtn").disabled=true;
- $("scanStatus").textContent="Scanning live data...";
+async function scan(){
+ if(busy)return;
+ busy=true;
+ $("refresh").disabled=true;
+ $("status").textContent="Loading Binance contracts...";
+ $("progress").style.width="0%";
+
  try{
-  const [exchange,tickers,fundings]=await Promise.all([
-   getJSON(API+"/fapi/v1/exchangeInfo"),
-   getJSON(API+"/fapi/v1/ticker/24hr"),
-   getJSON(API+"/fapi/v1/premiumIndex")
+  const [exchange,tickers]=await Promise.all([
+   get(API+"/fapi/v1/exchangeInfo"),
+   get(API+"/fapi/v1/ticker/24hr")
   ]);
-  const valid=new Set(exchange.symbols
-   .filter(s=>s.contractType==="PERPETUAL"&&s.quoteAsset==="USDT"&&s.status==="TRADING")
-   .map(s=>s.symbol));
-  const liquid=tickers.filter(t=>valid.has(t.symbol)&&
-   num(t.quoteVolume)>1000000)
-   .sort((a,b)=>num(b.quoteVolume)-num(a.quoteVolume))
-   .slice(0,40);
-  const fundMap={};
-  fundings.forEach(f=>fundMap[f.symbol]=f);
-  fundingData=fundMap;
-  const interval=$("tf").value;
-  const analyzed=await pool(liquid,5,async t=>{
-   const [k,oi]=await Promise.all([
-    getJSON(API+"/fapi/v1/klines?symbol="+t.symbol+
-     "&interval="+interval+"&limit=65"),
-    getJSON(API+"/fapi/v1/openInterest?symbol="+t.symbol)
-   ]);
-   return analyze(t.symbol,k,t,oi,fundMap[t.symbol]||{});
+
+  const eligible=exchange.symbols.filter(s=>
+   s.contractType==="PERPETUAL"&&
+   s.quoteAsset==="USDT"&&
+   s.status==="TRADING"
+  );
+
+  const tickerMap={};
+  tickers.forEach(t=>tickerMap[t.symbol]=t);
+  allSymbols=eligible.filter(s=>tickerMap[s.symbol])
+   .sort((a,b)=>N(tickerMap[b.symbol].quoteVolume)-
+                 N(tickerMap[a.symbol].quoteVolume));
+
+  $("totalPairs").textContent=allSymbols.length;
+  $("connection").textContent="Binance Futures connected";
+  $("status").textContent="Analyzing all eligible contracts...";
+  $("scanCount").textContent="0 / "+allSymbols.length;
+
+  const interval=$("timeframe").value;
+
+  // Every eligible pair is included. No minimum volume cutoff.
+  // Controlled concurrency helps avoid excessive API requests.
+  const result=await pool(allSymbols,6,async s=>{
+   const symbol=s.symbol;
+   const candles=await get(API+"/fapi/v1/klines?symbol="+
+    symbol+"&interval="+interval+"&limit=65");
+   const t=tickerMap[symbol];
+   $("scanCount").textContent="Market pairs: "+allSymbols.length;
+   return analyze(symbol,candles,t);
   });
-  allSignals=analyzed.filter(Boolean);
-  allSignals.sort((a,b)=>b.score-a.score);
-  $("scanned").textContent=liquid.length;
-  $("longCount").textContent=allSignals.filter(x=>x.side==="LONG"&&x.score>=50).length;
-  $("shortCount").textContent=allSignals.filter(x=>x.side==="SHORT"&&x.score>=50).length;
-  $("lastScan").textContent=pktDate().toLocaleTimeString("en-GB");
-  $("scanStatus").textContent="Connected · Binance Futures";
-  $("scanMessage").textContent="Scan complete · "+allSignals.length+" candidates";
-  $("progress").style.width="100%";
-  renderList();
+
+  signals=result.filter(Boolean).sort((a,b)=>b.score-a.score);
+
+  $("longCount").textContent=signals.filter(x=>x.side==="LONG").length;
+  $("shortCount").textContent=signals.filter(x=>x.side==="SHORT").length;
+  $("lastScan").textContent=pkt().toLocaleTimeString("en-GB");
+  $("connection").textContent="Live · "+allSymbols.length+" pairs";
+  $("status").textContent="Scan completed successfully";
+  page=1;
+  render();
+
  }catch(e){
-  $("scanStatus").textContent="Connection error";
-  $("scanMessage").textContent=e.message+" · Check internet or API access";
   console.error(e);
+  $("connection").textContent="Connection error";
+  $("status").textContent=e.message+" · Check API access";
  }finally{
-  scanBusy=false;
-  $("refreshBtn").disabled=false;
+  busy=false;
+  $("refresh").disabled=false;
  }
 }
 
-function setSide(side){
- selectedSide=side;
- $("longTab").className=side==="LONG"?"btn active-long":"btn";
- $("shortTab").className=side==="SHORT"?"btn active-short":"btn";
- renderList();
+function setSide(s){
+ side=s;page=1;
+ $("longTab").className=s==="LONG"?"btn active-long":"btn";
+ $("shortTab").className=s==="SHORT"?"btn active-short":"btn";
+ render();
 }
-function renderList(){
- const query=$("search").value.trim().toUpperCase();
- const minimum=num($("minScore").value);
- const list=allSignals.filter(x=>x.side===selectedSide&&
-  x.score>=minimum&&x.symbol.includes(query));
- const box=$("results");
- if(!list.length){
-  box.innerHTML='<p class="muted">No matching setups right now. Wait for the next scan.</p>';
+
+function changePage(delta){
+ const q=$("search").value.toUpperCase();
+ const min=N($("minimum").value);
+ const list=signals.filter(x=>x.side===side&&
+ x.score>=min&&x.symbol.includes(q));
+ const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+ page=Math.max(1,Math.min(pages,page+delta));
+ render();
+}
+
+function render(){
+ const q=$("search").value.toUpperCase();
+ const min=N($("minimum").value);
+ const list=signals.filter(x=>x.side===side&&
+ x.score>=min&&x.symbol.includes(q));
+ const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+ page=Math.min(page,pages);
+ $("pageLabel").textContent="Page "+page+" / "+pages;
+ const current=list.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
+
+ if(!current.length){
+  $("results").innerHTML='<p class="muted">No matching signals. Wait for a setup or lower the score filter.</p>';
   return;
  }
- box.innerHTML=list.map((x,i)=>{
+
+ $("results").innerHTML=current.map(x=>{
   const long=x.side==="LONG";
   const color=long?"long":"short";
+  const tp1=priceMove(x.tp1,x.entry,long);
+  const tp2=priceMove(x.tp2,x.entry,long);
+  const tp3=priceMove(x.tp3,x.entry,long);
+  const slp=(Math.abs(x.entry-x.sl)/x.entry)*100;
+
   return `
-  <div class="signal-card ${color}">
+  <div class="signal ${color}">
    <div class="row">
     <div>
-     <div class="coin">${x.symbol.replace("USDT","")} <span class="small">/ USDT</span></div>
-     <div class="small">${x.confirmed?"CONFIRMED":"PRE-SETUP"} · ${$("tf").value}</div>
+     <div class="coin">${x.symbol}</div>
+     <div class="small">${$("timeframe").value} · ${x.confirmed?"CONFIRMED":"PRE-SETUP"}</div>
     </div>
     <div style="text-align:right">
      <span class="pill ${color}">${x.side}</span>
      <div class="score ${long?"green":"red"}">${x.score}/100</div>
     </div>
    </div>
+
    <div class="metrics">
-    <div class="metric"><span class="small">PRICE</span><b>${fmt(x.price)}</b></div>
-    <div class="metric"><span class="small">24H VOL</span><b>${(x.volume/1e6).toFixed(2)}M</b></div>
-    <div class="metric"><span class="small">ENTRY EP</span><b>${fmt(x.entry)}</b></div>
-    <div class="metric"><span class="small">STOP SL</span><b class="red">${fmt(x.sl)}</b></div>
-    <div class="metric"><span class="small">TP1</span><b class="green">${fmt(x.tp1)}</b></div>
-    <div class="metric"><span class="small">TP2</span><b class="green">${fmt(x.tp2)}</b></div>
-    <div class="metric"><span class="small">TP3</span><b class="green">${fmt(x.tp3)}</b></div>
-    <div class="metric"><span class="small">RSI</span><b>${x.currentRSI.toFixed(1)}</b></div>
+    <div class="metric"><span>PRICE</span><b>${fmt(x.price)}</b></div>
+    <div class="metric"><span>24H VOL USDT</span><b>${(x.volume/1e6).toFixed(2)}M</b></div>
+    <div class="metric"><span>ENTRY · EP</span><b>${fmt(x.entry)}</b></div>
+    <div class="metric"><span>STOP · SL</span><b class="red">${fmt(x.sl)}</b><b class="red">-${slp.toFixed(2)}%</b></div>
+
+    <div class="metric"><span>TP1</span><b class="green">${fmt(x.tp1)}</b><b class="green">${percent(tp1)}</b></div>
+    <div class="metric"><span>TP2</span><b class="green">${fmt(x.tp2)}</b><b class="green">${percent(tp2)}</b></div>
+    <div class="metric"><span>TP3</span><b class="green">${fmt(x.tp3)}</b><b class="green">${percent(tp3)}</b></div>
+    <div class="metric"><span>RSI</span><b>${x.currentRSI.toFixed(1)}</b></div>
    </div>
-   <div class="card-footer">
-    <span class="small">S: ${fmt(x.support)} · R: ${fmt(x.resistance)}</span>
-    <button class="open-btn" onclick="openCoin('${x.symbol}')">TRADE PLAN →</button>
+
+   <div class="cardfoot">
+    <div class="small">
+     <b>SUPPORT: ${fmt(x.support)}</b><br>
+     <b>RESISTANCE: ${fmt(x.resistance)}</b>
+    </div>
+    <button class="open" onclick="openCoin('${x.symbol}')">TRADE PLAN →</button>
    </div>
   </div>`;
  }).join("");
 }
 
-function showDashboard(){
+function back(){
  $("detail").style.display="none";
  $("dashboard").style.display="block";
- selectedCoin=null;
+ selected=null;
+ window.scrollTo({top:0,behavior:"smooth"});
 }
+
 function openCoin(symbol){
- const x=allSignals.find(a=>a.symbol===symbol);
+ const x=signals.find(a=>a.symbol===symbol);
  if(!x)return;
- selectedCoin=x;
+ selected=x;
+ const long=x.side==="LONG";
  $("dashboard").style.display="none";
  $("detail").style.display="block";
- const long=x.side==="LONG";
- $("dCoin").textContent=x.symbol;
- $("dSignal").textContent=x.confirmed?"CONFIRMED "+x.side:"PRE-"+x.side;
+
+ const put=(id,val)=>$(id).textContent=val;
+ put("dCoin",x.symbol);
+ put("dSignal",(x.confirmed?"CONFIRMED ":"PRE-")+x.side);
  $("dSignal").className="pill "+(long?"long":"short");
- $("dPrice").textContent=fmt(x.price);
- $("dScore").textContent=x.score+"/100";
+ put("dPrice",fmt(x.price));
+ put("dScore",x.score+"/100");
  $("dScore").className="score "+(long?"green":"red");
- $("dReason").textContent=x.reasons.join(" · ");
- $("dEntry").textContent=fmt(x.entry);
- $("dSL").textContent=fmt(x.sl);
- $("dTP1").textContent=fmt(x.tp1);
- $("dTP2").textContent=fmt(x.tp2);
- $("dTP3").textContent=fmt(x.tp3);
- $("dRR").textContent="1 : 3";
- $("dSupport").textContent=fmt(x.support);
- $("dResistance").textContent=fmt(x.resistance);
- $("dLB").textContent=fmt(x.lower);
- $("dUB").textContent=fmt(x.upper);
- $("dRSI").textContent=x.currentRSI.toFixed(2);
- $("dVol").textContent=x.volRatio.toFixed(2)+"x";
- $("dOI").textContent=x.oiFresh?pct(x.oiChange):"Baseline pending";
- $("dFunding").textContent=x.funding.toFixed(4)+"%";
+ put("dReason",x.reasons.join(" · "));
+
+ put("dEP",fmt(x.entry));
+ put("dSL",fmt(x.sl));
+ put("dTP1",fmt(x.tp1));
+ put("dTP2",fmt(x.tp2));
+ put("dTP3",fmt(x.tp3));
+
+ put("dP1",percent(priceMove(x.tp1,x.entry,long)));
+ put("dP2",percent(priceMove(x.tp2,x.entry,long)));
+ put("dP3",percent(priceMove(x.tp3,x.entry,long)));
+ put("dSLP","-"+(Math.abs(x.entry-x.sl)/x.entry*100).toFixed(2)+"%");
+ put("dRR","1 : 3");
+ put("dChange",percent(x.change));
+
+ put("dSupport",fmt(x.support));
+ put("dResistance",fmt(x.resistance));
+ put("dSupportP",percent((x.support-x.entry)/x.entry*100)+" from EP");
+ put("dResistanceP",percent((x.resistance-x.entry)/x.entry*100)+" from EP");
+
+ put("dLB",fmt(x.lower));
+ put("dUB",fmt(x.upper));
+ put("dRSI",x.currentRSI.toFixed(2));
+ put("dVolume",x.volRatio.toFixed(2)+"x");
+ put("dMACD",fmt(x.macd));
+ put("dEMA",fmt(x.e20));
+ put("dBand",x.width.toFixed(2)+"%");
+ put("dOI","See Binance OI data");
+
  loadChart();
  window.scrollTo({top:0,behavior:"smooth"});
 }
+
 function loadChart(){
- if(!selectedCoin)return;
+ if(!selected)return;
  const tf=$("chartTF").value;
- const symbol="BINANCE:"+selectedCoin.symbol+".P";
  $("chart").innerHTML="";
- const script=document.createElement("script");
- script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
- script.async=true;
- script.innerHTML=JSON.stringify({
-  autosize:true,symbol,interval:tf,timezone:"Asia/Karachi",
-  theme:"dark",style:"1",locale:"en",allow_symbol_change:true,
-  calendar:false,hide_side_toolbar:false,details:true,
-  withdateranges:true,save_image:false,studies:[
-   "STD;Bollinger_Bands","RSI@tv-basicstudies","MACD@tv-basicstudies"
-  ],
-  support_host:"https://www.tradingview.com"
- });
  const wrap=document.createElement("div");
- wrap.className="tradingview-widget-container";
  wrap.style.height="100%";
  wrap.style.width="100%";
+ wrap.className="tradingview-widget-container";
  const inner=document.createElement("div");
  inner.className="tradingview-widget-container__widget";
  inner.style.height="calc(100% - 32px)";
  inner.style.width="100%";
- wrap.appendChild(inner);wrap.appendChild(script);
+ wrap.appendChild(inner);
+
+ const script=document.createElement("script");
+ script.async=true;
+ script.src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+ script.innerHTML=JSON.stringify({
+  autosize:true,
+  symbol:"BINANCE:"+selected.symbol+".P",
+  interval:tf,
+  timezone:"Asia/Karachi",
+  theme:"dark",
+  style:"1",
+  locale:"en",
+  allow_symbol_change:true,
+  withdateranges:true,
+  details:true,
+  hide_side_toolbar:false,
+  calendar:false,
+  save_image:false,
+  studies:[
+   "STD;Bollinger_Bands",
+   "RSI@tv-basicstudies",
+   "MACD@tv-basicstudies"
+  ],
+  support_host:"https://www.tradingview.com"
+ });
+ wrap.appendChild(script);
  $("chart").appendChild(wrap);
 }
 
 async function loadNews(){
  try{
-  const data=await getJSON(NEWS);
-  const items=(data.Data||[]).slice(0,20);
-  if(!items.length)throw new Error("No news");
+  const data=await get(NEWS);
+  const items=(data.Data||[]).slice(0,25);
+  if(!items.length)throw Error("No news");
   $("newsTrack").innerHTML=items.map(n=>
    `<a href="${n.url}" target="_blank" rel="noopener">${n.title}</a>`
-  ).join("  ◆  ");
+  ).join(" ◆ ");
  }catch(e){
   $("newsTrack").innerHTML=
-   '<a href="https://www.google.com/search?q=cryptocurrency+news" target="_blank">Open latest cryptocurrency news search ↗</a>';
+  '<a href="https://www.google.com/search?q=latest+crypto+news" target="_blank">Open latest crypto news →</a>';
  }
 }
-scanMarket();
+
+// Start and automatic refresh.
+// Full market scans are deliberately spaced to reduce API pressure.
+scan();
 loadNews();
-setInterval(scanMarket,90000);
+setInterval(scan,300000);
 setInterval(loadNews,300000);
 </script>
 </body>
